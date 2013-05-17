@@ -1,4 +1,4 @@
-Datingsim::Application.routes.draw do
+MyVisualNovel::Application.routes.draw do
 
   resources :projects do
     resources :characters

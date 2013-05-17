@@ -3468,3 +3468,14 @@ Processing by ScenesController#index as HTML
   [1m[35mScene Load (0.1ms)[0m  SELECT "scenes".* FROM "scenes" WHERE "scenes"."project_id" = 6
   Rendered scenes/index.html.erb within layouts/application (11.7ms)
 Completed 200 OK in 29ms (Views: 14.9ms | ActiveRecord: 1.1ms)
+Connecting to database specified by database.yml
+Connecting to database specified by database.yml
+
+
+Started GET "/projects/6/scenes" for 127.0.0.1 at 2013-05-17 14:57:32 -0400
+Processing by ScenesController#index as HTML
+  Parameters: {"project_id"=>"6"}
+  [1m[36mProject Load (0.2ms)[0m  [1mSELECT "projects".* FROM "projects" WHERE "projects"."id" = ? LIMIT 1[0m  [["id", "6"]]
+  [1m[35mScene Load (0.1ms)[0m  SELECT "scenes".* FROM "scenes" WHERE "scenes"."project_id" = 6
+  Rendered scenes/index.html.erb within layouts/application (29.1ms)
+Completed 200 OK in 127ms (Views: 40.7ms | ActiveRecord: 2.6ms)
