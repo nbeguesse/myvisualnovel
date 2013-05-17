@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  project_id: 1
+  order_index: 1
+  custom_description: MyString
+
+two:
+  project_id: 1
+  order_index: 1
+  custom_description: MyString

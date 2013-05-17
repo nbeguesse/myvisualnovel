@@ -1,0 +1,22 @@
+<h2>Characters</h2>
+<div class="character-list">
+	<% Character.all_available.each do |named_character| %>
+	<table class="table">
+	  <tr>
+	    <td><div style="width:200px;height:300px; background-color:lightgray"/></td>
+	   </tr>
+	   <%if character = named_character.first(:conditions=>["project_id=?",@project.id])%>
+	       <%= form_for(character, :as => :character, :url => project_character_path(@project, character)) do |f|%>
+		   <tr>
+		    <td><%=f.label :name%> <%=f.text_field :name%></td>
+		   </tr><tr>
+		    <td><%=f.label :description%> <%=f.text_area :description%> <a class="btn">Change</a></td>
+		  </tr>
+		  <%end%>
+	   <%end%>
+	</table>
+	<%end%>
+</div>
+
+
+

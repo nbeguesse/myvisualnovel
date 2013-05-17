@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  scene_id: 1
+  order_index: 1
+  character_id: 1
+  action: MyString
+  file_id: 1
+
+two:
+  scene_id: 1
+  order_index: 1
+  character_id: 1
+  action: MyString
+  file_id: 1

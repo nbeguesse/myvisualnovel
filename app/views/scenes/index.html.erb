@@ -1,0 +1,20 @@
+
+<h2>Change a Finished Scene...</h2>
+
+<ol>
+<% @scenes.each do |scene| %>
+  <li>
+    <%=scene.get_description%>
+  </li>
+<% end %>
+</ol>
+
+<h2>Or, Start A New Scene</h2>
+<%=form_for [@project, Scene.new] do |f|%>
+  <% [Gymnasium].each do |location| %>
+    <input type="radio" value="Gymnasium" name="location" id="">
+    <label for="">Gymnasium</label>
+    <%=f.submit%>
+  
+  <%end%>
+<%end%>

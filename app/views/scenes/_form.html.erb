@@ -1,0 +1,29 @@
+<%= form_for(@scene, :url => project_scene_path(@project.id, @scene.id)) do |f|%>
+  <% if @scene.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@scene.errors.count, "error") %> prohibited this scene from being saved:</h2>
+
+      <ul>
+      <% @scene.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :project_id %><br />
+    <%= f.number_field :project_id %>
+  </div>
+  <div class="field">
+    <%= f.label :order_index %><br />
+    <%= f.number_field :order_index %>
+  </div>
+  <div class="field">
+    <%= f.label :custom_description %><br />
+    <%= f.text_field :custom_description %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

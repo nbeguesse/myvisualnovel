@@ -1,0 +1,18 @@
+<p id="notice"><%= notice %></p>
+
+<h1><%=@project.title%></h1>
+<h2>What do you want to do?</h2>
+<div class="lead">
+  <ul>
+  	<%=link_to "Edit Scenes", project_scenes_path(@project)%>
+  </ul>
+  <ul>
+  	<%=link_to "Edit Characters", project_characters_path(@project)%>
+  </ul>
+  <ul>
+  	<%=link_to "Other Things", "#"%>
+  </ul>
+  <ul>
+  	<%=link_to "Play the Story!", "#"%>
+  </ul>
+</div>
