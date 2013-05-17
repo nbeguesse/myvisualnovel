@@ -15,8 +15,16 @@ class Event < ActiveRecord::Base
   	out
   end
 
+  def get_file
+    "/"+File.join(self.folder, self.filename)
+  end
+
   def self.folder
     "No Folder"
+  end
+
+  def folder
+    self.class.folder
   end
 
   def set_order_index

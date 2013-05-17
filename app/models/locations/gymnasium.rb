@@ -9,7 +9,7 @@ class Gymnasium
   end
 
   def self.background_image
-  	x = BackgroundImageEvent.new(:filename => "car1.jpg")
+  	BackgroundImageEvent.new(:filename => "car1.jpg")
   end
 
 end
