@@ -16,3 +16,86 @@
 	width:200px;
 	float:left;
 }
+.scene-index table {
+    width:100px;
+    float:left;
+    text-align:center;
+    cursor:pointer;
+}
+.scene-index table:hover {
+    background-color:lightgray;
+}
+.scene-index input.radio {
+    display:none;
+}
+.scene-index table img {
+  margin: 0 auto;
+}
+.clear {
+    clear:both;
+}
+.scene-editor .mini-editor {
+    position:relative;
+}
+.scene-editor .mini-viewer {
+}
+.scene-editor .mini-viewer img.bg{
+  height:480px;
+  width:640px;
+}
+.scene-editor table.action-items {
+    margin: 0 0 10px 0;
+    font-size: 90%;
+}
+.scene-editor table.action-items td {
+    padding: 0 5px;
+}
+.scene-editor .script {
+    min-width:344px;
+}
+.scene-editor .script hr {
+    margin: 5px 0 5px;
+}
+.scene-editor .script .more {
+  text-align:center;
+}
+.scene-editor .script .more a{
+  margin-bottom:5px;
+}
+.scene-editor .overlay-topper {
+    position:absolute;
+    background-image:url("/images/overlay_70.png");
+    height:20px;
+    width:620px;
+    top:0;
+    left:0;
+    text-align:left;
+    color:white;
+    padding:10px;
+}
+
+.scene-editor .overlay-topper a {
+ 
+    float:right;
+}
+.scene-editor .overlay{
+    position:absolute;
+    background-image:url("/images/overlay_70.png");
+    height:440px;
+    width:640px;
+    top:40px;
+    left:0;
+    overflow-y:scroll;
+}
+.scene-editor .bg-image img {
+    height:100px;
+    width:100px;
+    margin:20px;
+    float:left;
+}
+.scene-editor .overlay form {
+  margin: 0;
+}
+.scene-editor tr.selected {
+  background-color:#DFF0D8;
+}

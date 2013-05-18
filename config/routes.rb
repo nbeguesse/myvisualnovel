@@ -3,10 +3,13 @@ MyVisualNovel::Application.routes.draw do
   resources :projects do
     resources :characters
     resources :scenes do
+      member do
+        post :update_event
+      end
       resources :events
     end
   end
-
+  match 'events/:id/delete' => 'events#delete', :as => :delete_event
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

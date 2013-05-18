@@ -15,7 +15,7 @@ class ProjectsController < ApplicationController
   def show
     @project = Project.find(params[:id])
     @backlink = edit_project_url(@project)
-
+    @nextlink = project_scenes_url(@project)
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @project }

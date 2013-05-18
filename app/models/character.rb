@@ -16,6 +16,10 @@ class Character < ActiveRecord::Base
   	[Narrator, Hitomi]
   end
 
+  def is_narrator?
+    false
+  end
+
 protected
   def set_defaults
   	self.name = self.default_name

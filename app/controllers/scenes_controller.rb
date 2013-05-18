@@ -37,26 +37,49 @@ class ScenesController < ApplicationController
   # end
 
   # # GET /scenes/1/edit
-  # def edit
-  #   @scene = Scene.find(params[:id])
-  # end
+  def edit
+    @scene = Scene.find(params[:id])
+    @project = @scene.project
+    @backlink = project_scenes_path(@project)
+    @event_index =  params[:event_id] || @scene.events.count
+
+  end
 
   # # POST /scenes
   # # POST /scenes.json
   def create
     @project = Project.find(params[:project_id])
-    @scene = @project.scenes.new
+    @scene = @project.scenes.new(params[:scene])
     #load up initial background and music
-    if location = params[:location].try(:constantize)
-      @scene.events = location.events
-    end
+    # if location = params[:location].try(:constantize)
+    #   @scene.events = location.events
+    #@scene.load_initial_events
+    # end
     respond_to do |format|
       if @scene.save!
-        format.html { redirect_to project_scene_path(@project, @scene), notice: 'Scene was successfully created.' }
+        format.html { redirect_to edit_project_scene_path(@project, @scene), notice: 'Scene was successfully created.' }
         format.json { render json: @scene, status: :created, location: @scene }
       else
         flash[:notice] = @scene.errors.full_messages
         format.html { redirect_to :back }
+        format.json { render json: @scene.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def update_event
+    @scene = Scene.find(params[:id])
+    @project = @scene.project
+    @backlink = project_scenes_path(@project)
+    @event = params[:event_id].present? ? Event.find(params[:event_id]) : @scene.events.new
+    respond_to do |format|
+      if @event.update_attributes(params[:event])
+        @event_index = @event.order_index
+        format.html { render action: "edit", notice: 'Scene was successfully updated.' }
+        format.json { head :no_content }
+      else
+        @event_index = @scene.events.count
+        format.html { render action: "edit" }
         format.json { render json: @scene.errors, status: :unprocessable_entity }
       end
     end

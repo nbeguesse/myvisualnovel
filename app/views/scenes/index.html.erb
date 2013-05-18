@@ -1,20 +1,37 @@
 
 <h2>Change a Finished Scene...</h2>
 
-<ol>
-<% @scenes.each do |scene| %>
-  <li>
-    <%=scene.get_description%>
-  </li>
-<% end %>
-</ol>
+<div class="scene-index">
 
-<h2>Or, Start A New Scene</h2>
-<%=form_for [@project, Scene.new] do |f|%>
-  <% [Gymnasium].each do |location| %>
-    <input type="radio" value="Gymnasium" name="location" id="">
-    <label for=""><%=image_tag Gymnasium.background_image.get_file, :style=>"width:50px; height:50px"%></label>
-    <%=f.submit%>
-  
-  <%end%>
-<%end%>
+<% @scenes.each do |scene| %>
+  <table class="table scenes">
+	  <tr>
+	  	<td>
+		  <%=image_tag scene.sample_image.get_file, :style=>"width:50px; height:50px"%>
+		</td>
+	  </tr><tr>
+	    <td><%=link_to scene.get_description, edit_project_scene_url(@project, scene)%></td>
+	  </tr>
+	</table>
+<% end %>
+<div class="clear"></div>
+
+
+	<h2>Or, Add A New Scene</h2>
+	<%=form_for [@project, Scene.new] do |f|%>
+	  <% EventPacks.locations.each_index do |i| %>
+	    <%event_pack = EventPacks.locations[i]%>
+	    <table class="table event-packs">
+	      <tr>
+	      	<td>
+	    	  <input type="radio" value="<%=i%>" name="scene[initial_event_pack]" class="radio">
+	    	  <%=image_tag event_pack.bg_image, :style=>"width:50px; height:50px"%>
+	    	</td>
+	      </tr><tr>
+	        <td><a><%=event_pack.name%></a></td>
+	      </tr>
+	    </table>
+	  
+	  <%end%>
+	<%end%>
+</div>

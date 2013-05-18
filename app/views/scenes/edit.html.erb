@@ -1,6 +1,83 @@
-<h1>Editing scene</h1>
-
-<%= render 'form' %>
-
-<%= link_to 'Show', @scene %> |
-<%= link_to 'Back', scenes_path %>
+<table class="scene-editor">
+	<tr>
+		<td>
+			<table class="table">
+			  <tr><td><b>Story:</b> <%=@project.title%></td></tr>
+			  <tr><td><b>Scene:</b> <a title="Click to change scene description"><%=@scene.get_description%></a></td></tr>
+			  <tr><td>
+			  	 <h2>Script</h2>
+			  	 <table class="script table-bordered table-hover">
+			  	 	<tbody>
+			  	 	<%Event.for_scene(@scene).ordered.each do |event|%>
+			  	 	  <tr data-id="<%=event.id%>" id="row<%=event.id%>" class="<%="selected" if @event_index==event.order_index%>">
+			  	 	  	<td>
+			  	 	  		<%=event.to_sentence%>
+			  	 	  		<div class="more"><hr>
+			  	 	  		  <%if event.is_a?(BackgroundImageEvent)%>
+			  	 	  		    <a class="btn btn-small edit-bg-image" href="#"><i class="icon-pencil"></i> Change Image</a><br/>
+			  	 	  		  <%end%>
+			  	 	  		  <%if event.order_index != 1%>
+			  	 	  		    <a class="btn btn-small" href="#"><i class="icon-arrow-up"></i> Move Up</a>
+			  	 	  		  <%end%><%if event.order_index != @scene.events.count%>
+			  	 	  		  <a class="btn btn-small" href="#"><i class="icon-arrow-down"></i> Move Down</a>
+			  	 	  		  <%end%>
+			  	 	  		  <a class="btn btn-small confirmable" href="<%=delete_event_path(event)%>"><i class="icon-remove"></i> Remove</a>
+			  	 	  		</div>
+			  	 	  	</td>
+			  	 	  	<td>
+			  	 	  		<a class="btn btn-mini" href="#" title="Edit or Delete" id='dropdown'><i class="icon-pencil"></i></a>
+			  	 	  	</td>
+			  	 	  </tr>
+			  	 	<%end%>
+			  	    </tbody>
+			  	 </table> 
+			  	 <h3>Add to the Script!</h3>
+			  	 <%@project.characters.each do |character|%>
+			  	   <%if @scene.has_character?(character, @event_index)%>
+			  	   Found Character
+			  	   <%else%>
+			  	      <%if character.is_narrator?%>
+			  	        <table class="action-items table-bordered">
+					  	 	<tr><td rowspan=3><%=image_tag "spacer.gif", :style=>"background-color:lightgray"%></td>
+					  	 	<td><%=character.name%> narrates</td></tr>
+					  	 	<tr><td><%=character.name%> thinks</td></tr>
+					  	 	<tr><td><%=character.name%> speaks</td></tr>
+			  	        </table>
+			  	      <%else%>
+			  	        <table class="action-items table-bordered">
+					  	 	<tr><td rowspan=1><%=image_tag "spacer.gif", :style=>"background-color:lightgray"%></td>
+					  	 	<td><%=character.name%> appears</td></tr>
+					  	 </table>  
+			  	      <%end%>
+			  	   <%end%>
+			  	 <%end%>
+			  	 <table class="action-items table-bordered">
+			  	 	<tr><td rowspan=3><%=image_tag "spacer.gif", :style=>"background-color:lightgray"%></td>
+			  	 	<td><a href="#" class="edit-bg-image">Background changes</a></td></tr>
+			  	 	<tr><td>Music changes</td></tr>
+			  	 	<tr><td>Scene finished!</td></tr>
+			  	 </table>
+			  </td></tr>
+			</table>
+		</td>
+		<td>
+		  <div class="mini-editor">
+		    <div class="mini-viewer">
+			  <%=image_tag @scene.image_at(@event_index).get_file, :class=>"bg"%>
+		    </div>
+		    <div class="overlay-topper">Choose a Background Image...<a class="btn btn-small" href="#"><i class="icon-remove"></i> Go Back</a></div>
+		    <div class="overlay bg-image">
+		      <%BackgroundImageEvent.file_list.each do |option|%>
+		        <%=form_tag update_event_project_scene_path(@project, @scene)%>
+		          <input type="hidden" name="event[type]" value="BackgroundImageEvent">
+		          <input type="hidden" name="event[filename]" value="<%=option.filename%>">
+		          <input type="hidden" name="event_id" class="event_id" value="">
+		          <%=link_to image_tag(option.image_url), "#", :title=>option.title%>
+		        </form>
+		      <%end%>
+		      
+		    </div>
+		  </div>
+		</td>
+	</tr>
+</table>
