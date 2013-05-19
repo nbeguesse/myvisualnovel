@@ -74,8 +74,9 @@ class ScenesController < ApplicationController
     @event = params[:event_id].present? ? Event.find(params[:event_id]) : @scene.events.new
     respond_to do |format|
       if @event.update_attributes(params[:event])
-        @event_index = @event.order_index
-        format.html { render action: "edit", notice: 'Scene was successfully updated.' }
+        @event_index = @event.reload.order_index
+        #format.html { render action: "edit", notice: 'Scene was successfully updated.' }
+        format.html { redirect_to action: "edit", event_index: @event_index}
         format.json { head :no_content }
       else
         @event_index = @scene.events.count

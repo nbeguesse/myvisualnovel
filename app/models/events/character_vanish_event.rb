@@ -4,7 +4,7 @@ class CharacterVanishEvent < Event
   after_save :check_existence
 
   def to_sentence
-    "<span class='muted'><i class='name'>#{character.name}</i> vanishes</span>".html_safe
+     "<i>".html_safe+character.name+"</i> vanishes".html_safe
   end
 
   def check_existence

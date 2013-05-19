@@ -14,7 +14,7 @@ class BackgroundImageEvent < Event
   end
 
   def to_sentence
-  	"<span class='muted'>Background changed to <i class='name'>#{image_description}</i></span>".html_safe
+  	"Background changed to <i>".html_safe+image_description+"</i>".html_safe
   end
 
 end

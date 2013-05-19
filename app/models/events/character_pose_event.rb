@@ -24,18 +24,20 @@ class CharacterPoseEvent < Event
 
   def to_sentence
     if scene.has_character?(character, order_index-1)
-  	  "<span class='muted'><i class='name'>#{character.name}</i> changes pose</span>".html_safe
+  	  "<i>".html_safe+character.name+"</i> changes pose".html_safe
     else
-      "<span class='muted'><i class='name'>#{character.name}</i> appears</span>".html_safe
+       "<i>".html_safe+character.name+"</i> appears".html_safe
     end
   end
 
   def detail
-    "<br/><small>#{humanize(filename)}</small>".html_safe
+    "#{humanize(filename)}".html_safe
   end
 
   def get_file
     "/"+File.join("Character",character_type, "Pose", filename)
   end
+
+
 
 end

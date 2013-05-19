@@ -1,22 +1,26 @@
 <table class="scene-editor">
 	<tr>
 		<td>
-			<table class="table">
+			<table class="table table-condensed">
 			  <tr><td><b>Story:</b> <%=@project.title%></td></tr>
 			  <tr><td><b>Scene:</b> <a title="Click to change scene description"><%=@scene.get_description%></a></td></tr>
 			  <tr><td>
 			  	 <h2>Script</h2>
-			  	 <table class="script table-bordered table-hover">
+			  	 <div class="script-holder">
+			  	 <table class="script table-bordered table-hover table-condensed">
 			  	 	<tbody>
 			  	 	<%Event.for_scene(@scene).ordered.each do |event|%>
-			  	 	  <tr data-id="<%=event.id%>" id="row<%=event.id%>" class="<%="selected" if @event_index==event.order_index%>">
+			  	 	  <tr data-order-id="<%=event.order_index%>" data-id="<%=event.id%>" id="row<%=event.id%>" class="<%="selected" if @event_index==event.order_index%>">
 			  	 	  	<td><%=event.order_index%></td>
 			  	 	  	<td>
-			  	 	  		<%if @event_index==event.order_index%>
-			  	 	  		  <%=event.to_sentence%><%=event.detail%>
-			  	 	  		<%else%>
-			  	 	  		  <div class="jump-to tippable" title="Jump Here" data-url="<%=edit_project_scene_url(@project, @scene, :event_index=>event.order_index)%>"><%=event.to_sentence%><%=event.detail%></div>
+			  	 	  		<%if @event_index!=event.order_index%>
+			  	 	  		  <div class="jump-to tippable" title="Jump Here" data-url="<%=edit_project_scene_url(@project, @scene, :event_index=>event.order_index)%>">
 			  	 	  		<%end%>
+
+			  	 	  		<span class='muted'><%=event.to_sentence%></span><br/><small><%=event.detail%></small>
+
+			  	 	  		<%if @event_index!=event.order_index%></div><%end%>
+			  	 	  		
 			  	 	  		<div class="more"><hr>
 			  	 	  		  <%if event.is_a?(BackgroundImageEvent)%>
 			  	 	  		    <a class="btn btn-small edit-bg-image" href="#"><i class="icon-pencil"></i> Change Image</a><br/>
@@ -37,18 +41,19 @@
 			  	 	  </tr>
 			  	 	<%end%>
 			  	    </tbody>
-			  	 </table> 
+			  	 </table></div> 
 			  	 <h3>Add to the Script!</h3>
 			  	 <%@project.characters.each do |character|%>
 			  	   <%if @scene.has_character?(character, @event_index)%>
 			  	      <table class="action-items table-bordered">
 				  	 	<tr><td rowspan=3><%=image_tag "spacer.gif", :style=>"background-color:lightgray"%></td>
-				  	 	<td><%=character.name%> speaks</td></tr>
+				  	 	<td><a href="#" class="edit-speak" data-type="CharacterSpeaksEvent" data-character-id="<%=character.id%>" data-name="<%=character.type%>"><%=character.name%> speaks</a></td></tr>
 				  	 	<tr><td><a href="#" class="edit-pose" data-name="<%=character.type%>"><%=character.name%> changes pose</a></td></tr>
 				  	 	<tr><td>
 				  	 		<%=form_tag update_event_project_scene_path(@project, @scene)%>
 				  	 		  <input type="hidden" name="event[type]" value="CharacterVanishEvent">
 				  	 		  <input type="hidden" name="event[character_id]" value="<%=character.id%>">
+				  	 		  <input type="hidden" name="event[order_index]" class="event_order" value="<%=@event_index%>">
 				  	 		  <a href="#" class="submitable"><%=character.name%> vanishes</a>
 				  	 	    </form>
 				  	 	</td></tr>
@@ -83,10 +88,28 @@
 
 		  	<!-- Stage Viewer -->
 		    <div class="mini-viewer">
+		      <%current_event = Event.for_scene(@scene).at_or_before(@event_index).first%>
 			  <%=image_tag @scene.image_at(@event_index).get_file, :class=>"bg"%>
 			  <%@scene.character_poses(@event_index).each do |event|%>
-			    <%=image_tag event.get_file, :style=>"position:absolute; top:100px; left:50px"%>
+			      <%=image_tag event.get_file, :class=>"character1 "+event.character_type%>
 			  <%end%>
+			  
+			    <!-- edit text -->
+			    <div class="glassbox" style="<%="display:none" if !current_event.glassbox?%>">
+			    	<div class="data"><%=current_event.get_text%></div>
+			    	<div class="controls">
+			    	  <%=form_tag update_event_project_scene_path(@project, @scene)%>
+			    	  <textarea name="event[text]" value=""></textarea>
+			    	  <input type="hidden" name="event[order_index]" class="event_order" value="<%=@event_index%>">
+			    	  <input type="hidden" name="event[type]" class="event_type" value="">
+			    	  <input type="hidden" name="event_id" class="event_id" value="">
+			    	  <input type="hidden" name="event[character_id]" class="character_id" value="">
+			    	  <a class="btn btn-mini add-more-text" href="#"><i class="icon-arrow-down"></i> Add More Text</a>
+			    	  <a class="btn btn-mini submitable" href="#"><i class="icon-check"></i> Finished Adding Text</a>
+			    	  </form>
+			    	</div>
+			    </div>
+
 		    </div>
 		    <div class="overlay-topper"><span></span><a class="btn btn-small" href="#"><i class="icon-remove"></i> Close</a></div>
 
@@ -97,6 +120,7 @@
 		          <input type="hidden" name="event[type]" value="BackgroundImageEvent">
 		          <input type="hidden" name="event[filename]" value="<%=option.filename%>">
 		          <input type="hidden" name="event_id" class="event_id" value="">
+		          <input type="hidden" name="event[order_index]" class="event_order" value="<%=@event_index%>">
 		          <div class="floater">
 		          	<%=link_to image_tag(option.image_url), "#"%><%=link_to option.title, "#"%>
 		          </div>
@@ -114,6 +138,7 @@
 			        <input type="hidden" name="event[type]" value="CharacterPoseEvent">
 		            <input type="hidden" name="event[filename]" value="<%=option.filename%>">
 		            <input type="hidden" name="event[character_id]" value="<%=character.id%>">
+		            <input type="hidden" name="event[order_index]" class="event_order" value="<%=@event_index%>">
 		            <input type="hidden" name="event_id" class="event_id" value="">
 			  	    <div class="floater">
 			  	    <%=link_to image_tag(option.image_url), "#"%><%=link_to option.title, "#"%>

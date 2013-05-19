@@ -1,15 +1,16 @@
 class Event < ActiveRecord::Base
   belongs_to :scene
   belongs_to :character
-  attr_accessible :filename, :order_index, :type, :character_id
+  attr_accessible :filename, :order_index, :type, :character_id, :text
   validates_presence_of :type
   before_create :set_order_index
   before_validation :set_order_index, :on=>:create
   before_validation :set_character_type, :on=>:create
+  after_create :check_duplicate_indexes
   after_destroy :reorder_indexes
 
   #scope :latest, lambda { {:order=>"order_index DESC", :limit=>1} }
-  scope :ordered,  lambda { {:order=>"order_index ASC"} }
+  scope :ordered,  lambda { {:order=>"order_index ASC, id ASC"} }
   scope :at_or_before, lambda { |order_index| {:conditions => ["order_index <= ?", order_index], :order=>"order_index DESC", :limit=>1} }
   scope :for_scene, lambda { |scene| {:conditions => ["scene_id=? ", scene.id] } }
   scope :background_images, lambda {{:conditions=>["type=?","BackgroundImageEvent"]}}
@@ -42,7 +43,7 @@ class Event < ActiveRecord::Base
   end
 
   def set_order_index
-    self.order_index = Event.maximum('order_index', :conditions => { :scene_id => scene_id }).to_i + 1
+    self.order_index ||= Event.maximum('order_index', :conditions => { :scene_id => scene_id }).to_i + 1
   end
 
   def set_character_type
@@ -66,8 +67,20 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def check_duplicate_indexes
+    reorder_indexes if Event.where(:order_index=>self.order_index).for_scene(scene).count > 1
+  end
+
   def detail
     nil
+  end
+
+  def glassbox?
+    false
+  end
+
+  def get_text
+    ""
   end
 
 
