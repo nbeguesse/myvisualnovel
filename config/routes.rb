@@ -10,6 +10,8 @@ MyVisualNovel::Application.routes.draw do
     end
   end
   match 'events/:id/delete' => 'events#delete', :as => :delete_event
+  match 'events/:id/moveup' => 'events#moveup', :as => :moveup_event
+  match 'events/:id/movedown' => 'events#movedown', :as => :movedown_event
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

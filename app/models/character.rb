@@ -20,6 +20,24 @@ class Character < ActiveRecord::Base
     false
   end
 
+  PoseOption = Struct.new(:filename, :image_url, :title)
+  def self.pose_list
+   out = []
+   path = File.join("Character",self.to_s,"Pose")
+   Dir.new(File.join(Rails.root, "public", path)).each do |file|
+     next if file == "."
+     next if file == ".."
+     next if file.include?("DS_Store")
+     url = "/"+File.join(path,file)
+     out << PoseOption.new(file, url, humanize(file))
+   end
+   out
+  end
+
+  def self.humanize name
+    File.basename(name, File.extname(name)).humanize.titleize
+  end
+
 protected
   def set_defaults
   	self.name = self.default_name

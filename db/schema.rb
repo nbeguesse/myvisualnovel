@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130517161208) do
+ActiveRecord::Schema.define(:version => 20130518205250) do
 
   create_table "characters", :force => true do |t|
     t.integer  "project_id"
@@ -29,10 +29,12 @@ ActiveRecord::Schema.define(:version => 20130517161208) do
     t.integer  "scene_id"
     t.integer  "order_index"
     t.integer  "character_id"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
     t.string   "type"
     t.string   "filename"
+    t.string   "character_type"
+    t.string   "subfilename"
   end
 
   add_index "events", ["scene_id"], :name => "index_events_on_scene_id"

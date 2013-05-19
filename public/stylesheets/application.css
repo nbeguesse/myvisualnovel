@@ -86,16 +86,26 @@
     top:40px;
     left:0;
     overflow-y:scroll;
+    color:white;
 }
 .scene-editor .bg-image img {
+    display:block;
     height:100px;
     width:100px;
-    margin:20px;
-    float:left;
 }
-.scene-editor .overlay form {
+.scene-editor .poses img {
+    display:block;
+}
+.scene-editor form {
   margin: 0;
 }
 .scene-editor tr.selected {
   background-color:#DFF0D8;
+}
+.scene-editor .table-hover tr.selected:hover > td {
+  background-color:#DFF0D8;
+}
+.scene-editor .overlay .floater {
+  float:left;
+  margin:20px;
 }

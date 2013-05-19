@@ -23,7 +23,7 @@ class Scene < ActiveRecord::Base
   end
 
   def set_order_index
-    self.order_index ||= Scene.maximum('order_index', :conditions => { :project_id => project_id }).to_i + 1
+    self.order_index = Scene.maximum('order_index', :conditions => { :project_id => project_id }).to_i + 1
   end
 
   def sample_image
@@ -36,7 +36,24 @@ class Scene < ActiveRecord::Base
    end
 
    def has_character? character, event_index
-     !Event.for_scene(self).at_or_before(event_index).character_appears(character).empty?
+     last_appearance = Event.for_scene(self).at_or_before(event_index).character_pose(character)
+     return false if last_appearance.empty?
+     last_vanishing =  Event.for_scene(self).at_or_before(event_index).character_vanishes(character)
+     return true if last_vanishing.empty?
+     last_appearance.first.order_index > last_vanishing.first.order_index
+   end
+
+   def character_poses event_index
+     out = []
+     project.characters.each do |char|
+       last_appearance = Event.for_scene(self).at_or_before(event_index).character_pose(char)
+       next if last_appearance.empty?
+       last_vanishing =  Event.for_scene(self).at_or_before(event_index).character_vanishes(char)
+       if last_vanishing.empty? || last_appearance.first.order_index > last_vanishing.first.order_index
+         out << last_appearance.first
+       end
+     end
+     out
    end
 
 end

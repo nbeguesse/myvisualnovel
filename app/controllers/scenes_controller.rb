@@ -41,7 +41,7 @@ class ScenesController < ApplicationController
     @scene = Scene.find(params[:id])
     @project = @scene.project
     @backlink = project_scenes_path(@project)
-    @event_index =  params[:event_id] || @scene.events.count
+    @event_index =  params[:event_index] ? params[:event_index].to_i : @scene.events.count
 
   end
 
