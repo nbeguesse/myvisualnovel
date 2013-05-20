@@ -31,7 +31,7 @@ class CharacterPoseEvent < Event
   end
 
   def detail
-    "#{humanize(filename)}".html_safe
+    "Pose: #{humanize(filename)}".html_safe
   end
 
   def get_file

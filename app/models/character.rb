@@ -1,7 +1,9 @@
 class Character < ActiveRecord::Base
+  attr_accessible :name
   validates_presence_of :name, :project
   belongs_to :project
   before_validation :set_defaults, :on=>:create
+  has_many :events, :dependent=>:destroy
 
   scope :by_name_and_project, lambda { |name, project| {:conditions => ["type=? and project_id=?", name.to_s, project.id]} }
 

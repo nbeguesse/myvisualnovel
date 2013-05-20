@@ -9,6 +9,7 @@ MyVisualNovel::Application.routes.draw do
       resources :events
     end
   end
+  match 'projects/:project_id/toggle_character/:character_type' => 'characters#toggle', :as=>:toggle_character
   match 'events/:id/delete' => 'events#delete', :as => :delete_event
   match 'events/:id/moveup' => 'events#moveup', :as => :moveup_event
   match 'events/:id/movedown' => 'events#movedown', :as => :movedown_event

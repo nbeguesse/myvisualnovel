@@ -50,6 +50,26 @@ class CharactersController < ApplicationController
   #   end
   # end
 
+  def toggle
+    @project = Project.find(params[:project_id])
+    named_character = params[:character_type].constantize
+    if existing = named_character.first(:conditions=>["project_id=?",@project.id])
+      @project.characters.delete(existing)
+      existing.destroy
+    else
+      @project.characters << named_character.new
+    end
+    respond_to do |format|
+      if true
+        format.html { redirect_to project_characters_path(@project), notice: 'Character was successfully updated.' }
+        format.json { head :no_content }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @character.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
 
   def update
     @character = Character.find(params[:id])

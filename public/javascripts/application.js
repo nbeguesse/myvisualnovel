@@ -1,5 +1,9 @@
 
-
+function gup(name) { //get URL parameters
+    return decodeURI(
+        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+    );
+}
 
 
 function setCurrentEvent(obj){
@@ -16,7 +20,6 @@ function setCurrentEvent(obj){
   }
 }
 function showOverlay(name){
-	console.log('in overlay')
   $(".glassbox").hide();
   $(".overlay").slideUp("slow", function(){
   	setTimeout(
@@ -29,6 +32,9 @@ function showOverlay(name){
   });
   
 }
+function confirmCharacterRemoval(){
+  	  return confirm("This will DELETE the character from all scenes where they appear. Are you sure?");
+}
 $(document).ready(function() {
 	//enable tooltips on links
 	$("a").tooltip();
@@ -37,24 +43,19 @@ $(document).ready(function() {
 		return confirm("Are you sure?");
 	});
 
-	//scene index: enable starter location clicking
-	//TODO: Can probably use less code here
-	$(".scene-index table.event-packs").click(function(){
-	  $(this).find("input.radio").attr('checked', 'checked');
-	  $(this).closest("form").submit();
-	});
-	$(".scene-index table.scenes").click(function(){
-	   top.location.href = $(this).find("a").attr("href");
-	});
 
     $(".overlay a").addClass("submitable");
 	$(".submitable").click(function(){ $(this).closest("form").submit(); });
+	$(".hide").hide();
+
+	//CHARACTERS
+	$(".edit-name").click(function(){
+		$(this).closest('form').find('span').hide();
+		$(this).closest('form').find('.controls').show();
+	});
 
 	//SCENE EDITOR
-	$(".scene-editor .script .more").hide();
 	$(".overlay").hide();
-	$(".overlay-topper").hide();
-	$(".glassbox .controls").hide();
 	$(".scene-editor .overlay-topper a").click(function(){
 		$(".overlay").slideUp();
 		$(".overlay-topper").fadeOut();
@@ -80,24 +81,34 @@ $(document).ready(function() {
 	});
 	//edit poses
 	$(".scene-editor .edit-pose").click(function(){
-		console.log('in pose')
 		 setCurrentEvent(this);
-		 var name = $(this).attr("data-name");
-		 console.log(name)
-		 showOverlay(".poses-for-"+name);
+		 var id = $(this).attr("data-character-id");
+		 showOverlay(".poses-for-"+id);
 		 $(".overlay-topper span").text("Choose a Pose...");
 	});
 	$(".scene-editor .edit-speak").click(function(){
-		 
+		 //select current row
 		 setCurrentEvent(this);
+		 //get the speaker's name
 		 var name = $(this).attr("data-name");
+		 $(".glassbox .speaker").text(name);
+		 if(name == ""){
+		 	$(".glassbox").addClass("narration");
+		 } else {
+		 	$(".glassbox").removeClass("narration");
+		 }
+		 //transfer character id, event type, and dialogue to the glass box form
 		 var character_id = $(this).attr("data-character-id");
 		 var event_type = $(this).attr("data-type");
+		 var text = $(this).closest("tr").find(".event_text").val();
 		 $(".glassbox input.character_id").val(character_id);
 		 $(".glassbox input.event_type").val(event_type);
+		 $(".overlay").add(".overlay-topper").hide();
+		 //hide the glassbox dialogue and show the editor
 		 $(".glassbox").show();
-		 $(".glassbox .data").hide();
+		 $(".glassbox .textarea").hide();
 		 $(".glassbox .controls").show();
+		 $(".glassbox .controls textarea").val(text).focus();
 	});
 	//row jumping
 	$(".jump-to").click(function(){
@@ -109,9 +120,17 @@ $(document).ready(function() {
 	 		$(this).val( str.substring(0, str.length-1) );
 	 	}
     });
-	 $(".add-more-text").click(function(){
-	 	
+	 $(".add-more-text").click(function(){ //setup continuous text entry
+	 	$("input.more_text").val($(".glassbox input.character_id").val());
+	 	$("input.more_text_type").val($(".glassbox input.event_type").val());
+	 	$(this).closest("form").submit();
 	 });
+	 if(gup("more_text") != "null"){ //continue text entry
+	 	$(".action-items a[data-character-id="+gup("more_text")+"][data-type="+gup("more_text_type")+"]").click();
+	 }
+	 if(gup("event_index") != "null"){ //scroll current event into view
+	 	$("tr[data-order-id="+gup("event_index")+"]").get(0).scrollIntoView();
+	 }
 	//END SCENE EDITOR
 
 	//always put all content in the middle

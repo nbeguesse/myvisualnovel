@@ -1,14 +1,14 @@
-class CharacterSpeaksEvent < Event
+class NarrationEvent < Event
   belongs_to :character
   belongs_to :scene
 
 
   def to_sentence
-    "".html_safe+character.name.upcase+":".html_safe
+    ""
   end
 
   def get_text
-  	"&ldquo;".html_safe+self.text+"&rdquo;".html_safe
+  	self.text
   end
 
   def detail
@@ -17,6 +17,10 @@ class CharacterSpeaksEvent < Event
 
   def glassbox?
   	true
+  end
+
+  def get_character_name
+    ""
   end
 
 

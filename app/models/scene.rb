@@ -5,16 +5,12 @@ class Scene < ActiveRecord::Base
   has_many :events
   validates_presence_of :project
   before_validation :set_order_index, :on=>:create
-  before_create :load_initial_events
+  #after_create :load_initial_events #doesnt work
 
   def get_description
   	return custom_description if custom_description.present?
     return sample_image.image_description
   end
-
-  # def get_image
-  #   sample_image.get_file
-  # end
 
   def load_initial_events
     if i = self.initial_event_pack
@@ -26,9 +22,12 @@ class Scene < ActiveRecord::Base
     self.order_index = Scene.maximum('order_index', :conditions => { :project_id => project_id }).to_i + 1
   end
 
+  def middle_index
+    (events.count.to_f/2).ceil
+  end
+
   def sample_image
-    middle = (events.count.to_f/2).ceil
-    image_at middle
+    image_at middle_index
   end
 
    def image_at event_index

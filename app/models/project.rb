@@ -1,5 +1,5 @@
 class Project < ActiveRecord::Base
-   attr_accessible :title, :public
+   attr_accessible :title, :public, :character_ids
    before_create :setup_data
    has_many :characters
    has_many :scenes

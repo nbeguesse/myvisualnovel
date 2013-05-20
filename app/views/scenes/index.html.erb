@@ -1,37 +1,37 @@
 
-<h2>Change a Finished Scene...</h2>
+<h2>Change a Complete Scene...</h2>
 
 <div class="scene-index">
-
+ 
+ <ul class="thumbnails">
 <% @scenes.each do |scene| %>
-  <table class="table scenes">
-	  <tr>
-	  	<td>
+
+	  <li class="span2">
+	  	<a href="<%=edit_project_scene_url(@project, scene)%>" class="thumbnail">
 		  <%=image_tag scene.sample_image.get_file, :style=>"width:50px; height:50px"%>
-		</td>
-	  </tr><tr>
-	    <td><%=link_to scene.get_description, edit_project_scene_url(@project, scene)%></td>
-	  </tr>
-	</table>
+		<p><%=scene.get_description %></p></a>
+	  </li>
+	
 <% end %>
-<div class="clear"></div>
+</ul>
+
 
 
 	<h2>Or, Add A New Scene</h2>
-	<%=form_for [@project, Scene.new] do |f|%>
-	  <% EventPacks.locations.each_index do |i| %>
+	 <ul class="thumbnails">
+	  <% EventPacks.locations.each_index do |i| %><li class="span2">
+	  <%=form_for [@project, Scene.new] do |f|%>
 	    <%event_pack = EventPacks.locations[i]%>
-	    <table class="table event-packs">
-	      <tr>
-	      	<td>
-	    	  <input type="radio" value="<%=i%>" name="scene[initial_event_pack]" class="radio">
+	    
+	    	<a href="#" class="submitable thumbnail">
+	    	  <input type="radio" checked="checked" value="<%=i%>" name="scene[initial_event_pack]" class="hide radio">
 	    	  <%=image_tag event_pack.bg_image, :style=>"width:50px; height:50px"%>
-	    	</td>
-	      </tr><tr>
-	        <td><a><%=event_pack.name%></a></td>
-	      </tr>
-	    </table>
+	        
+	        <p><%=event_pack.name%></p></a>
+	        
 	  
 	  <%end%>
-	<%end%>
+	</li><%end%>
+
+  </ul>
 </div>

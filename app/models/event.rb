@@ -83,5 +83,9 @@ class Event < ActiveRecord::Base
     ""
   end
 
+  def get_character_name
+    character.try(:name)
+  end
+
 
 end
