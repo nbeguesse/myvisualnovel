@@ -31,7 +31,7 @@ class Event < ActiveRecord::Base
   end
 
   def get_file
-    "/"+File.join(self.folder, self.filename)
+    self.filename
   end
 
   def self.folder
@@ -43,7 +43,9 @@ class Event < ActiveRecord::Base
   end
 
   def set_order_index
-    self.order_index ||= Event.maximum('order_index', :conditions => { :scene_id => scene_id }).to_i + 1
+    if self.order_index.nil? || self.order_index == 0
+      self.order_index = Event.maximum('order_index', :conditions => { :scene_id => scene_id }).to_i + 1
+    end
   end
 
   def set_character_type
@@ -86,6 +88,14 @@ class Event < ActiveRecord::Base
   def get_character_name
     character.try(:name)
   end
+
+  def event_type
+    self.type
+  end
+
+def serializable_hash(options)
+  super(options).select { |_, v| v }
+end
 
 
 end

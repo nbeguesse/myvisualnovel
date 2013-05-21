@@ -1,0 +1,18 @@
+        <script>
+          var scenes = <%=json_escape(@project.scenes.ordered.map{|scene| scene.events.ordered}.flatten.to_json(:methods=>[:event_type, :get_character_name], :except=>[:created_at, :updated_at]).html_safe)%>;
+        </script>
+        <!-- Stage Viewer -->
+        <div class="mini-viewer viewer">
+        <%=image_tag BackgroundImageEvent.default.get_file, :class=>"bg bg-content hide img-rounded"%>
+        <%=image_tag BackgroundImageEvent.default.get_file, :class=>"bg bg-cover hide"%>
+        
+          <%=image_tag "", :class=>"characters character1 hide"%>
+        
+          <div class="glassbox" style="display:none">
+            <div class="speaker"></div>
+            <div class="textarea">
+
+            </div>
+          </div>
+
+        </div>

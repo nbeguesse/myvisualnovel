@@ -4,7 +4,6 @@ a {
 a.btn {
     text-decoration:none;
 }
-
 .container-narrow {
     margin: 0 auto;
     max-width: 700px;
@@ -24,33 +23,33 @@ a.btn {
 }
 .character-index input.name {
     margin-bottom:0;
-}/*
-.scene-index table {
-    width:100px;
-    float:left;
-    text-align:center;
-    cursor:pointer;
 }
-.scene-index table:hover {
-    background-color:lightgray;
+.black {
+    background-color:gray;
 }
-.scene-index input.radio {
-    display:none;
-}*/
-/*.scene-index table img {
-  margin: 0 auto;
-}*/
 .clear {
     clear:both;
 }
-.scene-editor .mini-editor {
+.scene-editor .mini-editor, .viewer {
     position:relative;
 }
-.scene-editor .mini-viewer {
+.viewer {
+  display:block;
+  height:480px;
+  width:640px;
+  cursor:pointer;
 }
 .scene-editor .mini-viewer img.bg{
   height:480px;
   width:640px;
+}
+.viewer img.bg{
+  height:480px;
+  width:640px;
+  top:0;
+  left:0;
+  position:absolute;
+
 }
 .scene-editor table.action-items {
     margin: 0 0 10px 0;
@@ -98,7 +97,7 @@ a.btn {
     width:640px;
     top:40px;
     left:0;
-    overflow-y:scroll;
+    overflow-y:auto;
     color:white;
 }
 .scene-editor .bg-image img {
@@ -118,15 +117,28 @@ a.btn {
 .scene-editor .table-hover tr.selected:hover > td {
   background-color:#DFF0D8;
 }
-.scene-editor .overlay .floater {
-  float:left;
-  margin:20px;
+.scene-editor .music a.submitable {
+  color:white;
 }
-.mini-viewer .character1 {
+.scene-editor .overlay a.thumbnail {
+    border:0;
+    cursor:pointer;
+    color:white;
+}
+.scene-editor .music .thumbnail {
+/*  border:0;*/
+font-size:90%;
+height:66px;
+margin-bottom:20px;
+}
+.scene-editor .music ul {
+    margin: 20px 0 0 0;
+}
+.mini-viewer .characters {
   position:absolute;
 }
 .mini-viewer .Hitomi {
-  top:100px; left:50px
+  top:0; left:0;
 }
 .mini-viewer .controls a {
     margin-top: 455px;
@@ -159,6 +171,10 @@ a.btn {
     overflow-y:hidden;
     position:absolute;
     text-shadow: 1px 1px 0px #444;
+}
+.glassbox .textarea, .script .detail {
+  white-space:pre-wrap;
+  word-wrap:break-word;
 }
 .mini-viewer .glassbox .speaker {
     position:absolute;

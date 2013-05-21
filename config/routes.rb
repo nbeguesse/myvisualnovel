@@ -1,5 +1,6 @@
 MyVisualNovel::Application.routes.draw do
 
+  match 'play/:id/:basename' => 'projects#play', :as=>:play
   resources :projects do
     resources :characters
     resources :scenes do

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130519045318) do
+ActiveRecord::Schema.define(:version => 20130520193719) do
 
   create_table "characters", :force => true do |t|
     t.integer  "project_id"
@@ -45,6 +45,9 @@ ActiveRecord::Schema.define(:version => 20130519045318) do
     t.boolean  "public",     :default => true
     t.datetime "created_at",                   :null => false
     t.datetime "updated_at",                   :null => false
+    t.string   "basename"
+    t.string   "owner_id"
+    t.string   "owner_type"
   end
 
   create_table "scenes", :force => true do |t|

@@ -22,7 +22,7 @@ class Character < ActiveRecord::Base
     false
   end
 
-  PoseOption = Struct.new(:filename, :image_url, :title)
+  PoseOption = Struct.new(:url, :title)
   def self.pose_list
    out = []
    path = File.join("Character",self.to_s,"Pose")
@@ -31,7 +31,7 @@ class Character < ActiveRecord::Base
      next if file == ".."
      next if file.include?("DS_Store")
      url = "/"+File.join(path,file)
-     out << PoseOption.new(file, url, humanize(file))
+     out << PoseOption.new(url, humanize(file))
    end
    out
   end

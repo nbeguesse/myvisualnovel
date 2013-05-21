@@ -1,14 +1,17 @@
 <table class="scene-editor">
 	<tr>
 		<td>
+			<p><b>Story:</b> <%=link_to @project.title, @project%></p>
+			  <p><b>Scene:</b> <%=@scene.get_description%></p>
 			<table class="table table-condensed">
-			  <tr><td><b>Story:</b> <%=link_to @project.title, @project%></td></tr>
-			  <tr><td><b>Scene:</b> <%=@scene.get_description%></td></tr>
 			  <tr><td>
 			  	 <h2>Script</h2>
 			  	 <div class="script-holder">
 			  	 <table class="script table-bordered table-hover table-condensed">
 			  	 	<tbody>
+			  	 	<%if Event.for_scene(@scene).empty?%>
+			  	 	  <tr><td>Nothing in the script yet.</td></tr>
+			  	 	<%end%>
 			  	 	<%Event.for_scene(@scene).ordered.each do |event|%>
 			  	 	  <tr data-order-id="<%=event.order_index%>" data-id="<%=event.id%>" id="row<%=event.id%>" class="<%="selected" if @event_index==event.order_index%>">
 			  	 	  	<td><%=event.order_index%></td>
@@ -20,7 +23,7 @@
 			  	 	  		<%unless event.is_a?(NarrationEvent)%>
 			  	 	  		  <span class='muted'><%=event.to_sentence%></span><br/>
 			  	 	  		<%end%>
-			  	 	  		<small><%=event.detail%></small>
+			  	 	  		<small class="detail"><%=event.detail%></small>
 
 			  	 	  		<%if @event_index!=event.order_index%></div><%end%>
 			  	 	  		
@@ -77,7 +80,7 @@
 			  	 <table class="action-items">
 			  	 	<tr><td rowspan=3 class="icon"><div class="btn"><%=image_tag "spacer.gif", :style=>"background-color:lightgray; height:56px"%></div></td>
 			  	 	<td class="btn btn-small"><a href="#" class="edit-bg-image">Background changes</a></td></tr>
-			  	 	<tr><td class="btn btn-small">Music changes</td></tr>
+			  	 	<tr><td class="btn btn-small"><a href="#" class="edit-music">Music changes</a></td></tr>
 			  	 	<tr><td class="btn btn-small">More scene options </td></tr>
 			  	 </table>
 			  </td></tr>
@@ -91,10 +94,11 @@
 		      <%current_event = Event.for_scene(@scene).at_or_before(@event_index).first%>
 			  <%=image_tag @scene.image_at(@event_index).get_file, :class=>"bg"%>
 			  <%@scene.character_poses(@event_index).each do |event|%>
-			      <%=image_tag event.get_file, :class=>"character1 "+event.character_type%>
+			      <%=image_tag event.filename, :class=>"characters "+event.character_type%>
 			  <%end%>
 			  
 			    <!-- edit text -->
+			    <%if current_event%>
 			    <div class="glassbox <%="narration" if current_event.is_a?(NarrationEvent)%>" style="<%="display:none" if !current_event.glassbox?%>">
 			    	<div class="speaker"><%=current_event.get_character_name%></div>
 			    	<div class="textarea"><%=current_event.get_text%></div>
@@ -112,42 +116,70 @@
 			    	  </form>
 			    	</div>
 			    </div>
+			    <%end%>
 
 		    </div>
 		    <div class="overlay-topper hide"><span></span><a class="btn btn-small" href="#"><i class="icon-remove"></i> Close</a></div>
 
 		    <!-- BG Images -->
 		    <div class="overlay bg-image">
+		    	<ul class="thumbnails">
 		      <%BackgroundImageEvent.file_list.each do |option|%>
+		        <li class="span2">
 		        <%=form_tag update_event_project_scene_path(@project, @scene)%>
 		          <input type="hidden" name="event[type]" value="BackgroundImageEvent">
-		          <input type="hidden" name="event[filename]" value="<%=option.filename%>">
+		          <input type="hidden" name="event[filename]" value="<%=option.url%>">
 		          <input type="hidden" name="event_id" class="event_id" value="">
 		          <input type="hidden" name="event[order_index]" class="event_order" value="<%=@event_index%>">
-		          <div class="floater">
-		          	<%=link_to image_tag(option.image_url), "#"%><%=link_to option.title, "#"%>
-		          </div>
+		          <a class="submitable thumbnail">
+		          	<%= image_tag option.url%><p><%=option.title%></p>
+		          </a>
+		          
 		        </form>
+		        </li>
 		      <%end%>
+		      </ul>
+		    </div>
+
+		    <!-- Music -->
+		    <div class="overlay music">
+		    <ul class="thumbnails">
+		      <%BackgroundMusicEvent.file_list.each do |option|%>
+		    
+		        <%=form_tag update_event_project_scene_path(@project, @scene)%>
+		          <input type="hidden" name="event[type]" value="BackgroundMusicEvent">
+		          <input type="hidden" name="event[filename]" value="<%=option.url%>">
+		          <input type="hidden" name="event_id" class="event_id" value="">
+		          <input type="hidden" name="event[order_index]" class="event_order" value="<%=@event_index%>">
+		          <li class="thumbnail span2">
+		          	<a class="btn btn-small" href="#"><i class="icon-play"></i> Preview</a><br/><a class="submitable" href="#"><%=option.title%></a>
+		          </li>
+		        </form>
+		        
+		      <%end%>
+		      </ul>
 		    </div>
 
 		    <!-- Poses -->
-		    
 		    <%@project.characters.each do |character|%>
 		    <%next if character.is_narrator?%>
 		      <div class="overlay poses-for-<%=character.id%>">
+		      	<ul class="thumbnails">
 			    <%character.type.constantize.pose_list.each do |option|%>
 			      <%=form_tag update_event_project_scene_path(@project, @scene)%>
+			        <li class="span2">
 			        <input type="hidden" name="event[type]" value="CharacterPoseEvent">
-		            <input type="hidden" name="event[filename]" value="<%=option.filename%>">
+		            <input type="hidden" name="event[filename]" value="<%=option.url%>">
 		            <input type="hidden" name="event[character_id]" value="<%=character.id%>">
 		            <input type="hidden" name="event[order_index]" class="event_order" value="<%=@event_index%>">
 		            <input type="hidden" name="event_id" class="event_id" value="">
-			  	    <div class="floater">
-			  	    <%=link_to image_tag(option.image_url), "#"%><%=link_to option.title, "#"%>
-			  	    </div>
+			  	     <a class="submitable thumbnail">
+			  	    <%=image_tag(option.url)%><p><%=option.title%></p>
+			  	    </a>
 			  	  </form>
+			  	  </li>
 			  	<%end%>
+			    </ul>
 		      </div>
 		    <%end%>
 		  </div>

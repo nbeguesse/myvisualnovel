@@ -9,6 +9,7 @@ function gup(name) { //get URL parameters
 function setCurrentEvent(obj){
   var row = $(obj).closest('tr');
   var num = row.attr("data-id");
+  console.log('num',num)
   $("input.event_id").val(num);
   if(typeof num === "undefined"){
   	//i.e. clicked "Add to Script!" instead of a row change
@@ -37,14 +38,14 @@ function confirmCharacterRemoval(){
 }
 $(document).ready(function() {
 	//enable tooltips on links
-	$("a").tooltip();
-	$(".tippable").tooltip();
+	$("a").tooltip(animation:false);
+	$(".tippable").tooltip(animation:false);
 	$(".confirmable").click(function(){
 		return confirm("Are you sure?");
 	});
 
 
-    $(".overlay a").addClass("submitable");
+   // $(".overlay a").addClass("submitable");
 	$(".submitable").click(function(){ $(this).closest("form").submit(); });
 	$(".hide").hide();
 
@@ -72,12 +73,14 @@ $(document).ready(function() {
 	});
 	//edit bg images
 	$(".scene-editor .edit-bg-image").click(function(){ //dropdown
-		var row = $(this).closest('tr');
-		var event_id = row.attr("data-id");
-		setCurrentEvent(event_id);
+		setCurrentEvent(this);
 		showOverlay(".bg-image");
-		
 		$(".overlay-topper span").text("Choose a Background Image...");
+	});
+	$(".scene-editor .edit-music").click(function(){ //dropdown
+		setCurrentEvent(this);
+		showOverlay(".music");
+		$(".overlay-topper span").text("Choose Background Music...");
 	});
 	//edit poses
 	$(".scene-editor .edit-pose").click(function(){
@@ -129,7 +132,9 @@ $(document).ready(function() {
 	 	$(".action-items a[data-character-id="+gup("more_text")+"][data-type="+gup("more_text_type")+"]").click();
 	 }
 	 if(gup("event_index") != "null"){ //scroll current event into view
-	 	$("tr[data-order-id="+gup("event_index")+"]").get(0).scrollIntoView();
+	 	try{ //will fail if event was deleted
+	 	  $("tr[data-order-id="+gup("event_index")+"]").get(0).scrollIntoView();
+	    } catch(err){}
 	 }
 	//END SCENE EDITOR
 

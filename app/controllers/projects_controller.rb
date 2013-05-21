@@ -9,12 +9,22 @@ class ProjectsController < ApplicationController
   #     format.json { render json: @projects }
   #   end
   # end
+  def play
+    @project = Project.find_by_id_and_basename(params[:id],params[:basename])
+    if @project && @project.public?
+      @scenes = @project.scenes.ordered
+      render :layout=>'viewer'
+    else
+      flash[:error] = "Sorry, we couldn't find that visual novel."
+      redirect_to root_url
+    end
+  end
 
   # GET /projects/1
   # GET /projects/1.json
   def show
     @project = Project.find(params[:id])
-    @backlink = edit_project_url(@project)
+    @backlink = root_url
     @nextlink = project_scenes_url(@project)
     respond_to do |format|
       format.html # show.html.erb

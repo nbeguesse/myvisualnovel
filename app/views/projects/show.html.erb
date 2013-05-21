@@ -10,9 +10,9 @@
   	<%=link_to "Edit Characters", project_characters_path(@project)%>
   </ul>
   <ul>
-  	<%=link_to "Other Things", "#"%>
+  	<%=link_to "Edit Odds n' Ends", edit_project_path(@project)%>
   </ul>
   <ul>
-  	<%=link_to "Play the Story!", "#"%>
+  	<%=link_to "Play the Story!", @project.play_path%>
   </ul>
 </div>

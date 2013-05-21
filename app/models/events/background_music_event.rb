@@ -1,8 +1,7 @@
-class BackgroundImageEvent < Event
-
+class BackgroundMusicEvent < Event
 
   EventOption = Struct.new(:url, :title)
-  def self.file_list(user=nil)
+  def self.file_list(user = nil)
    out = []
    Dir.new(File.join(Rails.root, "public", self.folder)).each do |file|
      next if file == "."
@@ -13,21 +12,18 @@ class BackgroundImageEvent < Event
    end
    out
   end
-
+  
   def self.folder
-   "BackgroundImage/Base"
+   "BackgroundMusic/Base"
   end
 
-  def self.default
-  	self.new(:filename=>"/#{folder}/black.jpg")
-  end
 
-  def image_description #e.g. "School Hallway"
+  def music_description #e.g. "School Hallway"
   	humanize(filename)
   end
 
   def to_sentence
-  	"[Scene: <i>".html_safe+image_description+"</i>]".html_safe
+  	"[Music: <i>".html_safe+music_description+"</i>]".html_safe
   end
 
 end

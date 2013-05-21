@@ -5,7 +5,8 @@ class Scene < ActiveRecord::Base
   has_many :events
   validates_presence_of :project
   before_validation :set_order_index, :on=>:create
-  #after_create :load_initial_events #doesnt work
+
+  scope :ordered,  lambda { {:order=>"order_index ASC, id ASC"} }
 
   def get_description
   	return custom_description if custom_description.present?
