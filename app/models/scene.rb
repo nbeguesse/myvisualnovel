@@ -36,24 +36,16 @@ class Scene < ActiveRecord::Base
    end
 
    def has_character? character, event_index
-     last_appearance = Event.for_scene(self).at_or_before(event_index).character_pose(character)
-     return false if last_appearance.empty?
-     last_vanishing =  Event.for_scene(self).at_or_before(event_index).character_vanishes(character)
-     return true if last_vanishing.empty?
-     last_appearance.first.order_index > last_vanishing.first.order_index
+     chars = Event.for_scene(self).at(event_index).first.try(:characters_present)
+     if chars
+      return true if chars[0] && chars[0][0]==character.id
+      return true if chars[1] && chars[1][0]==character.id
+     end
+     return false
    end
 
-   def character_poses event_index
-     out = []
-     project.characters.each do |char|
-       last_appearance = Event.for_scene(self).at_or_before(event_index).character_pose(char)
-       next if last_appearance.empty?
-       last_vanishing =  Event.for_scene(self).at_or_before(event_index).character_vanishes(char)
-       if last_vanishing.empty? || last_appearance.first.order_index > last_vanishing.first.order_index
-         out << last_appearance.first
-       end
-     end
-     out
+   def get_ordered_events
+    events.ordered.concat([SceneEndEvent.new])
    end
 
 end

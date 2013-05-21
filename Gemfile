@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem "bundler",                ">= 1.0.15"
 gem 'rails', '3.2.13'
 
 # Bundle edge Rails instead:
@@ -21,6 +22,8 @@ group :assets do
 end
 
 gem 'jquery-rails'
+gem "authlogic",			  "= 3.2.0"
+gem 'bartt-ssl_requirement', :require => 'ssl_requirement'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

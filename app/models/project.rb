@@ -5,6 +5,9 @@ class Project < ActiveRecord::Base
    has_many :scenes
    validates_presence_of :title
    before_save :set_basename
+   belongs_to :owner, :polymorphic => true
+
+   scope :for_owner, lambda { |owner| {:conditions => {:owner_id => owner.id.to_s }} }
 
    def default_title
    	"Dream Date"
@@ -12,6 +15,12 @@ class Project < ActiveRecord::Base
    def play_path
       "/play/#{id}/#{basename}"
    end
+   def owner?(user)
+     self.owner == user
+   end
+  def temp?
+    self.owner_type.to_s != "User"
+  end
 
 protected
    def set_basename

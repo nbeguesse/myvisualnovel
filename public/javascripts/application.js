@@ -38,8 +38,8 @@ function confirmCharacterRemoval(){
 }
 $(document).ready(function() {
 	//enable tooltips on links
-	$("a").tooltip(animation:false);
-	$(".tippable").tooltip(animation:false);
+	$("a").tooltip({animation:false});
+	$(".tippable").tooltip({animation:false});
 	$(".confirmable").click(function(){
 		return confirm("Are you sure?");
 	});

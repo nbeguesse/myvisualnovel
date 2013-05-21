@@ -1,0 +1,4 @@
+class SceneEndEvent < Event
+
+
+end

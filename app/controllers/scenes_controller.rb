@@ -42,6 +42,8 @@ class ScenesController < ApplicationController
     @project = @scene.project
     @backlink = project_scenes_path(@project)
     @event_index =  params[:event_index] ? params[:event_index].to_i : @scene.middle_index
+    @event_count = @scene.events.count
+    @event_index = [@event_index, @event_count].min
 
   end
 

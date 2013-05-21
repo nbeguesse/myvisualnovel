@@ -61,14 +61,19 @@ function nextEvent(){
     });
   } else if (action['event_type']=="CharacterPoseEvent"){
   	var oldpose = $(".characters[data-character-id="+action['character_id']+"]"); //remove old pose
-  	if(oldpose.length==0){ oldpose = $(".character1"); } //if no old pose
-    $(oldpose).fadeOut('slow', function(){
-    	$(".character1").attr("src",action['filename']).attr('data-character-id',action['character_id']);
-    	$(".character1").fadeIn('slow', function(){
-    		currentEvent += 1;
-	  		setTimeout('nextEvent()',timeToWait);
-    	});
-    });
+	var tag = '<img class="characters" src="'+action["filename"]+'" style="display: none;" data-character-id="'+action["character_id"]+'">';
+	if(action["characters_present"][0][0]==action["character_id"]){ 
+	  //tells you which position the char is in
+	}
+	if(oldpose.length > 0){
+		oldpose.fadeOut('slow', function(){oldpose.remove()});
+	}
+	$(tag).insertBefore(".glassbox").fadeIn('slow', function(){
+		currentEvent += 1;
+		setTimeout('nextEvent()',timeToWait);
+	});
+	
+    
   } else if(action['event_type']=="CharacterSpeaksEvent"){
   	$(".glassbox").removeClass("narration");
   	lefty="&ldquo;"; righty = "&rdquo;";
@@ -81,6 +86,14 @@ function nextEvent(){
   	$(".glassbox").addClass("narration");
   	lefty=""; righty="";
   	speak();
+  } else if(action['event_type']=="SceneEndEvent"){
+  	$(".glassbox").hide();
+  	$(".characters").fadeOut('slow', function(){
+  		$("img.bg-content").fadeOut('slow', function(){
+  		  currentEvent += 1;
+	  	  setTimeout('nextEvent()',timeToWait);
+  		});
+  	});
   }
 
   
@@ -90,6 +103,7 @@ $(document).ready(function() {
 		if(textIsTyping){
 			tickerCursor = tickerText.length+1
 		} else if (waitingForUser){
+			waitingForUser = false;
 			$(".glassbox .textarea").text("");
 			currentEvent += 1;
 			nextEvent();

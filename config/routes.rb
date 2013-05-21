@@ -1,5 +1,7 @@
 MyVisualNovel::Application.routes.draw do
 
+
+  resource :user_sessions
   match 'play/:id/:basename' => 'projects#play', :as=>:play
   resources :projects do
     resources :characters
@@ -14,6 +16,16 @@ MyVisualNovel::Application.routes.draw do
   match 'events/:id/delete' => 'events#delete', :as => :delete_event
   match 'events/:id/moveup' => 'events#moveup', :as => :moveup_event
   match 'events/:id/movedown' => 'events#movedown', :as => :movedown_event
+
+  resources :users do
+    member do
+      put :change_password
+    end
+  end
+
+  match 'signup' => 'users#new', :as => :signup
+  match 'logout' => 'user_sessions#destroy', :as => :logout
+  match 'login' => 'user_sessions#new', :as => :login
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

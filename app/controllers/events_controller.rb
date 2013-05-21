@@ -6,6 +6,7 @@ class EventsController < ApplicationController
     event.update_attribute(:order_index, event.order_index-1)
     prev_event.update_attribute(:order_index, prev_event.order_index+1)
     event.reorder_indexes
+    #prev_event.set_all_characters_present
     respond_to do |format|
       format.html { redirect_to edit_project_scene_path(scene.project, scene, :event_index=>event.order_index) }
       format.json { head :no_content }
@@ -19,6 +20,8 @@ class EventsController < ApplicationController
     event.update_attribute(:order_index, event.order_index+1)
     next_event.update_attribute(:order_index, next_event.order_index-1)
     event.reorder_indexes
+    #event.set_all_characters_present
+
     respond_to do |format|
       format.html { redirect_to edit_project_scene_path(scene.project, scene, :event_index=>event.order_index) }
       format.json { head :no_content }
@@ -32,9 +35,9 @@ class EventsController < ApplicationController
     @scene = @event.scene
     @project = @scene.project
     @event.destroy
-
+    event_index = [@event.order_index, @scene.events.count].min
     respond_to do |format|
-      format.html { redirect_to edit_project_scene_path(@project, @scene, :event_index=>@event.order_index) }
+      format.html { redirect_to edit_project_scene_path(@project, @scene, :event_index=>event_index) }
       format.json { head :no_content }
     end
   end
