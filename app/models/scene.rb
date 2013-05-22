@@ -2,15 +2,20 @@ class Scene < ActiveRecord::Base
   belongs_to :project
   attr_accessor :initial_event_pack
   attr_accessible :custom_description, :initial_event_pack
-  has_many :events
+  has_many :events, :dependent=>:delete_all
   validates_presence_of :project
   before_validation :set_order_index, :on=>:create
 
   scope :ordered,  lambda { {:order=>"order_index ASC, id ASC"} }
+  scope :for_project, lambda { |project| {:conditions => ["project_id=? ", project.id] } }
+
+
+  scope :at, lambda { |order_index| {:conditions => ["order_index = ?", order_index], :limit=>1} }
+
 
   def get_description
   	return custom_description if custom_description.present?
-    return sample_image.image_description
+    return image_at(middle_index).image_description
   end
 
   def load_initial_events
@@ -27,9 +32,6 @@ class Scene < ActiveRecord::Base
     (events.count.to_f/2).ceil
   end
 
-  def sample_image
-    image_at middle_index
-  end
 
    def image_at event_index
      Event.for_scene(self).at_or_before(event_index).background_images.first || BackgroundImageEvent.default

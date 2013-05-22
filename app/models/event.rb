@@ -3,12 +3,12 @@ class Event < ActiveRecord::Base
   belongs_to :character
   attr_accessible :filename, :order_index, :type, :character_id, :text
   validates_presence_of :type
-  #before_create :set_order_index
   before_validation :set_order_index, :on=>:create
   before_validation :set_character_type, :on=>:create
   after_create :check_duplicate_indexes
   after_destroy :reorder_indexes
   serialize :characters_present
+  after_save :set_defaults
 
   #scope :latest, lambda { {:order=>"order_index DESC", :limit=>1} }
   scope :ordered,  lambda { {:order=>"order_index ASC, id ASC"} }
@@ -19,18 +19,13 @@ class Event < ActiveRecord::Base
   scope :character_pose, lambda { |character| {:conditions=>["type=? and character_id=?","CharacterPoseEvent", character.id]}}
   scope :character_vanishes, lambda { |character| {:conditions=>["type=? and character_id=?","CharacterVanishEvent", character.id]}}
 
-  # EventOption = Struct.new(:filename, :image_url, :title)
-  # def self.file_list(category="")
-  #  out = []
-  #  Dir.new(File.join(Rails.root, "public", self.folder, category)).each do |file|
-  #    next if file == "."
-  #    next if file == ".."
-  #    next if file.include?("DS_Store")
-  #    url = "/"+File.join(folder,category,file)
-  #    out << EventOption.new(file, url, humanize(file))
-  #  end
-  #  out
-  # end
+  def set_defaults
+    if [CharacterSpeaksEvent, CharacterThinksEvent,NarrationEvent].include?(self.type.constantize)
+      if self.text.blank?
+        self.update_column(:text,"...")
+      end
+    end
+  end
 
   def get_file
     self.filename
@@ -47,7 +42,7 @@ class Event < ActiveRecord::Base
   def set_order_index
     if self.order_index.nil? || self.order_index == 0 #i.e. a blank empty scene
       self.order_index = Event.maximum('order_index', :conditions => { :scene_id => scene_id }).to_i + 1
-      self.characters_present = []
+      set_characters_present nil
     end
   end
 

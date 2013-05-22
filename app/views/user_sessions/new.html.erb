@@ -1,0 +1,24 @@
+  <% if @user_session.errors.any? %>
+    <div id="error_explanation">
+      <ul>
+      <% @user_session.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+      <div class="form-signin">
+        <%= form_for @user_session, :url => user_sessions_url(:secure => secure?) do |f| %>
+        <h2 class="form-signin-heading">Login</h2>
+
+        <input type="email" name="user_session[email]" class="input-block-level" placeholder="Email address">
+        <input type="password" name="user_session[password]" class="input-block-level" placeholder="Password">
+        <label class="checkbox">
+          <input type="checkbox" name="user_session[remember_me]"> Remember me
+        </label>
+        <button class="btn btn-large btn-primary" type="submit">Login</button>
+        <p><%=link_to "Sign up a New User", new_user_path%></p>
+        <%end%>
+      </div>
+

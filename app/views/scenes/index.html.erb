@@ -1,29 +1,31 @@
+<h1><%=coolify @project.title%></h1>
 
-<h2>Change a Complete Scene...</h2>
+<%if @scenes.present?%>
+<h2>Scene List</h2>
 
 <div class="scene-index">
  
  <ul class="thumbnails">
 <% @scenes.each do |scene| %>
-
 	  <li class="span2">
-	  	<a href="<%=edit_project_scene_url(@project, scene)%>" class="thumbnail">
-		  <%=image_tag scene.sample_image.get_file%>
+	  	<a href="<%=edit_project_scene_url(@project, scene)%>" class="thumbnail" style="position:relative;" title="Edit">
+	  	<%= render :partial=> "thumbnail", :locals=>{:scene=>scene}%>
 		<p><%=scene.get_description %></p></a>
 	  </li>
 	
 <% end %>
 </ul>
+<%end%>
 
 
 
-	<h2>Or, Add A New Scene</h2>
+	<h2>Add A New Scene</h2>
 	 <ul class="thumbnails">
 	  <% EventPacks.locations.each_index do |i| %><li class="span2">
 	  <%=form_for [@project, Scene.new] do |f|%>
 	    <%event_pack = EventPacks.locations[i]%>
 	    
-	    	<a href="#" class="submitable thumbnail">
+	    	<a href="#" class="submitable thumbnail" title="Add This Scene!">
 	    	  <input type="radio" checked="checked" value="<%=i%>" name="scene[initial_event_pack]" class="hide radio">
 	    	  <%=image_tag event_pack.bg_image%>
 	        

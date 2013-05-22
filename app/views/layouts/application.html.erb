@@ -2,28 +2,48 @@
 <html>
 <head>
   <title>Datingsim</title>
-  <%= stylesheet_link_tag "bootstrap.css","application", :media => "all" %>
-  <%= javascript_include_tag "jquery","bootstrap.js","jquery.effects.core", "jquery.effects.slide","slide","popups","application" %>
+  <%= stylesheet_link_tag "bootstrap.css","inlineplayer","flashblock","application" %>
+  
   <%= csrf_meta_tags %>
+  <link href='http://fonts.googleapis.com/css?family=Great+Vibes' rel='stylesheet' type='text/css'>
 </head>
-<body>
+<body class="<%=@body_class || ""%>">
 <div class="navbar">
           <div class="navbar-inner">
             <div class="container">
-              <ul class="nav">
-                <li class="active"><a href="#">MyVisualNovel</a></li>
-                <li><a href="#"></a></li>
-                <li><a href="#"></a></li>
-                <li><a href="#"></a></li>
-                <li><a href="#"></a></li>
-                <li><a href="#">Login</a></li>
-              </ul>
+              <div class="nav">
+
+                    <ul class="breadcrumb">
+                    <li><%=link_to "MyVisualNovel", root_url%> <span class="divider">/</span></li>
+                    <%unless session_obj.projects.empty?%>
+                      <li><%=link_to "Novels", projects_path%> <span class="divider">/</span></li>
+                    <%end%>
+                      <%if @project && !@project.new_record?%>
+                        <li><%=link_to coolify(@project.title), @project%> <span class="divider">/</span></li>
+                      
+                    <%end%>
+                    <li style="float:right">
+                    <%if logged_in?%>
+                      <%=link_to "Logout", logout_path%>
+                    <%else%>
+                      <%=link_to "Login", login_path%>
+                    <%end%>
+                   </li>
+                    </ul>
+                    
+                </li>
+              </div>
             </div>
           </div>
         </div>
 <div class="container-narrow">
   <div class="jumbotron">
-  <caption><%=content_for :caption%></caption>
+  <%if notice%>
+      <div class="alert alert-info">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <%= notice%>
+      </div>
+  <%end%>
   <%= yield %>
   </div>
 </div>
@@ -33,6 +53,6 @@
 <%if @nextlink%>
   <a class="carousel-control right" href="<%=@nextlink%>">&rsaquo;</a>
 <%end%>
-
+<%= javascript_include_tag "jquery","http://code.jquery.com/ui/1.10.3/jquery-ui.js","bootstrap.js","jquery.effects.core", "jquery.effects.slide","slide","soundmanager2/soundmanager2","inlineplayer","popups","application" %>
 </body>
 </html>

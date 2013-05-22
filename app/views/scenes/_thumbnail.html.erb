@@ -1,0 +1,20 @@
+		<%play ||= false%>
+		<%if scene%>  
+		  <%middle_index = scene.middle_index%>
+	      <%event = Event.for_scene(scene).at(middle_index).first%>
+		  <%=image_tag scene.image_at(middle_index).get_file%>
+		  <%if event%>
+		    <%event.characters_present.each do |char|%>
+		      <%=image_tag char[1], :class=>"characters"%>
+		    <%end%>
+		    <%if event.glassbox?%>
+		      <%=image_tag "glassbox.png", :class=>"glass"%>
+		    <%end%>
+
+		  <%end%>
+		<%else%>
+		  <%=image_tag BackgroundImageEvent.default.get_file%>
+		<%end%>
+		<%if play%>
+		    <%=image_tag "play_cover.png", :class=>"glass"%>
+		 <%end%>

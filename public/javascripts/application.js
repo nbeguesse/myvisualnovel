@@ -96,9 +96,9 @@ $(document).ready(function() {
 		 var name = $(this).attr("data-name");
 		 $(".glassbox .speaker").text(name);
 		 if(name == ""){
-		 	$(".glassbox").addClass("narration");
+		 	$(".glass").attr("src","/images/glassbox_n.png");
 		 } else {
-		 	$(".glassbox").removeClass("narration");
+		 	$(".glass").attr("src","/images/glassbox.png");
 		 }
 		 //transfer character id, event type, and dialogue to the glass box form
 		 var character_id = $(this).attr("data-character-id");
@@ -108,10 +108,10 @@ $(document).ready(function() {
 		 $(".glassbox input.event_type").val(event_type);
 		 $(".overlay").add(".overlay-topper").hide();
 		 //hide the glassbox dialogue and show the editor
-		 $(".glassbox").show();
+		 $(".glassbox").css("display","block");
 		 $(".glassbox .textarea").hide();
-		 $(".glassbox .controls").show();
-		 $(".glassbox .controls textarea").val(text).focus();
+		 $(".glassbox .controls").css("display","inline-block");
+		 $(".glassbox textarea").show().val(text).focus();
 	});
 	//row jumping
 	$(".jump-to").click(function(){
@@ -131,14 +131,26 @@ $(document).ready(function() {
 	 if(gup("more_text") != "null"){ //continue text entry
 	 	$(".action-items a[data-character-id="+gup("more_text")+"][data-type="+gup("more_text_type")+"]").click();
 	 }
-	 if(gup("event_index") != "null"){ //scroll current event into view
+	 if((gup("event_index") != "null")&&(gup("event_index") != "")){ //scroll current event into view
 	 	try{ //will fail if event was deleted
 	 	  $("tr[data-order-id="+gup("event_index")+"]").get(0).scrollIntoView();
 	    } catch(err){}
 	 }
+	 $(".change-scene-name").click(function(){
+	 	var name=prompt("Choose a name for this scene:",$("#scene_custom_description").val());
+        if (name!=null) { 
+        	$("#scene_custom_description").val(name);
+        	$(this).closest('form').submit(); 
+        }
+	 });
+	 $(".delete-scene").click(function(){
+	 	if(confirm('Are you sure? This will delete everything.')){
+	 	  $(this).closest('form').submit(); 
+	 	}
+	 });
 	//END SCENE EDITOR
 
 	//always put all content in the middle
-	popups.center($(".jumbotron"));
+	//popups.center($(".jumbotron"));
 
 });

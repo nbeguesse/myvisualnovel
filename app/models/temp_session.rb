@@ -12,8 +12,8 @@ class TempSession
   	@options[:id]
   end
 
-  def cars
-    Car.where(:owner_id=>self.id.to_s, :removed=>false)
+  def projects
+    Project.where(:owner_id=>self.id.to_s)
   end
 
   def cart
@@ -24,25 +24,21 @@ class TempSession
     Cart.find_by_owner_id(self.id)
   end
 
-  def window_label
-    WindowLabel.for_obj(self)
-  end
-  def qr_label
-    QrLabel.for_obj(self)
+  def type
+    "TempSession"
   end
 
+
   def copy_to(user)
-    cars.each do |car|
-      duplicate = Car.where(:owner_id=>user.id.to_s).first
-      car.owner = user unless duplicate
-      car.save!
-    end
-    if has_cart?
-      cart.line_items.each do |li|
-        li.cart_id = user.cart.id
-        li.save!
+    Rails.logger.info "IN TEMP SESSION COPY TO"
+    projects.each do |project|
+      duplicate = Project.where(:owner_id=>user.id.to_s, :basename=>project.basename).first
+      unless duplicate
+        project.owner_id = user.id.to_s
+        project.owner_type = "User"
       end
-      cart.destroy
+      Rails.logger.info "SAVING PROJECT"
+      project.save!
     end
   end
 

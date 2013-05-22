@@ -1,8 +1,10 @@
+<%current_event = Event.for_scene(@scene).at(@event_index).first%>
+<%bg_file =  @scene.image_at(@event_index).get_file%>
 <table class="scene-editor">
 	<tr>
 		<td>
-			<p><b>Story:</b> <%=link_to @project.title, @project%></p>
-			  <p><b>Scene:</b> <%=@scene.get_description%></p>
+			
+			  <p><b>Scene <%=@scene.order_index%>:</b> <%=@scene.get_description%></p>
 			<table class="table table-condensed">
 			  <tr><td>
 			  	 <h2>Script</h2>
@@ -24,7 +26,6 @@
 			  	 	  		  <span class='muted'><%=event.to_sentence%></span><br/>
 			  	 	  		<%end%>
 			  	 	  		<small class="detail"><%=event.detail%></small>
-			  	 	  		<br/><small><%=event.characters_present%></small>
 
 			  	 	  		<%if @event_index!=event.order_index%></div><%end%>
 			  	 	  		
@@ -79,21 +80,30 @@
 			  	   <%end%>
 			  	 <%end%>
 			  	 <table class="action-items">
-			  	 	<tr><td rowspan=3 class="icon"><div class="btn"><%=image_tag "spacer.gif", :style=>"background-color:lightgray; height:56px"%></div></td>
+			  	 	<tr><td rowspan=4 class="icon"><div class="btn">
+			  	 		<%=image_tag bg_file, :class=>"bg", :style=>"height:56px"%> </div></td>
 			  	 	<td class="btn btn-small"><a href="#" class="edit-bg-image">Background changes</a></td></tr>
 			  	 	<tr><td class="btn btn-small"><a href="#" class="edit-music">Music changes</a></td></tr>
-			  	 	<tr><td class="btn btn-small">More scene options </td></tr>
+			  	 	<tr><td class="btn btn-small"><%=link_to "Preview!", play_scene_path(@project, @project.basename, @scene)%></td></tr>
+			  	 	
 			  	 </table>
 			  </td></tr>
 			</table>
+			<%=form_for [@project, @scene] do |f|%>
+			  <%=f.hidden_field :custom_description, :value=>@scene.get_description%>
+			  <a class="btn btn-small change-scene-name">Change Scene Name</a>
+		    <%end%>
+		    <%= form_for([@project, @scene], :method => :delete) do |f|%>   
+			  <a class="btn btn-small delete-scene">Delete Scene</a>
+			<%end%>
 		</td>
 		<td>
 		  <div class="mini-editor">
 
 		  	<!-- Stage Viewer -->
 		    <div class="mini-viewer">
-		      <%current_event = Event.for_scene(@scene).at(@event_index).first%>
-			  <%=image_tag @scene.image_at(@event_index).get_file, :class=>"bg"%>
+		      
+			  <%=image_tag bg_file, :class=>"bg"%>
 			  <%if current_event%>
 			  <%current_event.characters_present.each do |char_present|%>
 			      <%=image_tag char_present[1], :class=>"characters"%>
@@ -101,23 +111,23 @@
 			  <%end%>
 			  
 			    <!-- edit text -->
-			    
-			    <div class="glassbox <%="narration" if current_event.is_a?(NarrationEvent)%>" style="<%="display:none" if !current_event.try(:glassbox?)%>">
+			    <div class="glassbox" style="<%="display:none" if !current_event.try(:glassbox?)%>">
+			    	<%=image_tag "glassbox#{'_n' if current_event && current_event.is_a?(NarrationEvent)}.png", :class=>"glass"%>
 			    	<div class="speaker"><%=current_event.try(:get_character_name)%></div>
 			    	<div class="textarea"><%=current_event.try(:get_text)%></div>
-			    	<div class="controls hide">
+
 			    	  <%=form_tag update_event_project_scene_path(@project, @scene)%>
-			    	  <textarea name="event[text]" value=""></textarea>
+			    	  <textarea name="event[text]" value="" class="hide"></textarea>
 			    	  <input type="hidden" name="event[order_index]" class="event_order" value="<%=@event_index%>">
 			    	  <input type="hidden" name="event[type]" class="event_type" value="">
 			    	  <input type="hidden" name="event_id" class="event_id" value="">
 			    	  <input type="hidden" name="event[character_id]" class="character_id" value="">
 			    	  <input type="hidden" name="more_text" class="more_text" value="">
 			    	  <input type="hidden" name="more_text_type" class="more_text_type" value="">
-			    	  <a class="btn btn-mini add-more-text" href="#"><i class="icon-arrow-down"></i> Add More Text</a>
-			    	  <a class="btn btn-mini submitable" href="#"><i class="icon-check"></i> Finished</a>
+			    	  <a class="btn btn-mini add-more-text controls hide" href="#"><i class="icon-arrow-down"></i> Add More Text</a>
+			    	  <a class="btn btn-mini submitable controls hide" href="#"><i class="icon-check"></i> Finished</a>
 			    	  </form>
-			    	</div>
+			    	
 			    </div>
 			  
 
@@ -125,7 +135,7 @@
 		    <div class="overlay-topper hide"><span></span><a class="btn btn-small" href="#"><i class="icon-remove"></i> Close</a></div>
 
 		    <!-- BG Images -->
-		    <div class="overlay bg-image">
+		    <div class="overlay bg-image" style="display:none">
 		    	<ul class="thumbnails">
 		      <%BackgroundImageEvent.file_list.each do |option|%>
 		        <li class="span2">
@@ -145,8 +155,17 @@
 		    </div>
 
 		    <!-- Music -->
-		    <div class="overlay music">
-		    <ul class="thumbnails">
+		    <div class="overlay music" style="display:none">
+		    <ul class="graphic">
+		    	<%=form_tag update_event_project_scene_path(@project, @scene)%>
+		          <input type="hidden" name="event[type]" value="BackgroundMusicEvent">
+		          <input type="hidden" name="event[filename]" value="">
+		          <input type="hidden" name="event_id" class="event_id" value="">
+		          <input type="hidden" name="event[order_index]" class="event_order" value="<%=@event_index%>">
+		          <li class="">
+		          	<a class="silence" href="#">(Silence)</a><button class="submitable btn btn-small" href="#">Choose</button>
+		          </li>
+		        </form>
 		      <%BackgroundMusicEvent.file_list.each do |option|%>
 		    
 		        <%=form_tag update_event_project_scene_path(@project, @scene)%>
@@ -154,8 +173,8 @@
 		          <input type="hidden" name="event[filename]" value="<%=option.url%>">
 		          <input type="hidden" name="event_id" class="event_id" value="">
 		          <input type="hidden" name="event[order_index]" class="event_order" value="<%=@event_index%>">
-		          <li class="thumbnail span2">
-		          	<a class="btn btn-small" href="#"><i class="icon-play"></i> Preview</a><br/><a class="submitable" href="#"><%=option.title%></a>
+		          <li class="">
+		          	<a class="" href="<%=option.url%>"><%=option.title%></a><button class="submitable btn btn-small" href="#">Choose</button>
 		          </li>
 		        </form>
 		        
@@ -166,7 +185,7 @@
 		    <!-- Poses -->
 		    <%@project.characters.each do |character|%>
 		    <%next if character.is_narrator?%>
-		      <div class="overlay poses-for-<%=character.id%>">
+		      <div class="overlay poses-for-<%=character.id%>" style="display:none">
 		      	<ul class="thumbnails">
 			    <%character.type.constantize.pose_list.each do |option|%>
 			      <%=form_tag update_event_project_scene_path(@project, @scene)%>
@@ -189,3 +208,8 @@
 		</td>
 	</tr>
 </table>
+ <div id="sm2-container">
+  <!-- SM2 flash goes here -->
+
+ </div>
+

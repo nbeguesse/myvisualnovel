@@ -32,10 +32,11 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
 
     if @user.save
-       # @user_session = UserSession.new(:email=>params[:user][:email], :password=>params[:user][:password])
-       # @user_session.save
+        @user_session = UserSession.new(:email=>params[:user][:email], :password=>params[:user][:password])
+        @user_session.save
         session_obj.copy_to(@user)
-        redirect_to new_project_path
+        flash[:notice] = "Thanks for signing up! You're ready to start making your own visual novels."
+        redirect_to root_url
     else
       flash[:error] = "-- " + @user.errors.full_messages.join('<br/> -- ')
       render :action => :new

@@ -1,21 +1,19 @@
-<h1>Listing projects</h1>
 
-<table>
-  <tr>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
+<h2>My Novels</h2>
 
-<% @projects.each do |project| %>
-  <tr>
-    <td><%= link_to 'Show', project %></td>
-    <td><%= link_to 'Edit', edit_project_path(project) %></td>
-    <td><%= link_to 'Destroy', project, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-  </tr>
-<% end %>
-</table>
+ <ul class="thumbnails">
+  <%session_obj.projects.each do |project|%>
+    <li class="span2 thumbnail">
+      
 
-<br />
-
-<%= link_to 'New Project', new_project_path %>
+      <%scene = Scene.for_project(project).at(project.middle_index).first%>
+      <a href="<%=project_path(project)%>">
+      <%=render :partial=>"scenes/thumbnail", :locals=>{:scene=>scene}%>
+      <p><%=project.title%></p> </a>
+      <p><a class="btn btn-small" href="<%=project_path(project)%>"><i class="icon-pencil"></i> Edit</a>
+        <%shareable = project.public? ? 'title="Cut & Paste the URL to Share"' : ""%>
+        <a class="btn btn-small btn-primary" href="<%=project.play_path%>" <%=raw(shareable)%>><i class="icon-play icon-white"></i> Play</a></p>
+      
+    </li>
+  <%end%>
+</ul>

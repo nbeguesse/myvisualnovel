@@ -2,7 +2,6 @@ class NarrationEvent < Event
   belongs_to :character
   belongs_to :scene
 
-
   def to_sentence
     ""
   end

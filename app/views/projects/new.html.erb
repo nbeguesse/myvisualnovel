@@ -1,3 +1,17 @@
-<h2>First, choose a title...</h2>
+<h2>Choose a title for your story</h2>
 
-<%= render 'form' %>
+<%= form_for(@project) do |f| %>
+  <% if @project.errors.any? %>
+    <div id="error_explanation">
+      <ul>
+      <% @project.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <input name="project[title]" type="text" class="" placeholder="Dream Date">
+  <div class="actions">
+    <button class="btn btn-primary submitable">GO</button>
+  </div>
+<% end %>

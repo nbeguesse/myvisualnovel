@@ -1,18 +1,40 @@
-<p id="notice"><%= notice %></p>
 
-<h1><%=@project.title%></h1>
+<h1><%= coolify @project.title%></h1>
 <h2>What do you want to do?</h2>
-<div class="lead">
-  <ul>
-  	<%=link_to "Edit Scenes", project_scenes_path(@project)%>
-  </ul>
-  <ul>
-  	<%=link_to "Edit Characters", project_characters_path(@project)%>
-  </ul>
-  <ul>
-  	<%=link_to "Edit Odds n' Ends", edit_project_path(@project)%>
-  </ul>
-  <ul>
-  	<%=link_to "Play the Story!", @project.play_path%>
-  </ul>
-</div>
+
+ <ul class="thumbnails">
+    <li class="span2">
+      <a href="<%=project_characters_path(@project)%>" class="thumbnail" style="" title="Change Their Names">
+      <img data-src="#" alt="" style="width:168px;height:126px; background-color:lightgray">
+      <p>Edit Characters</p></a>
+    </li>
+    <li class="span2">
+      <a href="<%=project_scenes_path(@project)%>" class="thumbnail" style="position:relative;" title="Add to the Script">
+        <%scene = Scene.for_project(@project).at(1).first || Scene.find(10)%>
+        <%=render :partial=>"scenes/thumbnail", :locals=>{:scene=>scene}%>
+        <%if @project.scenes.empty?%>
+          <p>Add a Scene</p>
+        <%else%>
+          <p>Edit Scenes</p>
+        <%end%>
+      </a>
+    </li>
+    <li class="span2">
+      <a href="<%=@project.play_path%>" class="thumbnail" style="position:relative;" title="Watch It!">
+
+         
+          <%middle_index = @project.middle_index%>
+          <%scene = Scene.for_project(@project).at(middle_index).first%>
+          <%=render :partial=>"scenes/thumbnail", :locals=>{:scene=>scene, :play=>true}%>
+          <p>Play the Story!</p> 
+      </a>
+    </li>
+    <li class="span2">
+      <a href="#" class="thumbnail" style="position:relative;" title="Title Screen & Scene Order">
+
+         
+          <%=image_tag "tools2.jpg"%>
+          <p>Edit Odds n' Ends</p> 
+      </a>
+    </li>    
+</ul>

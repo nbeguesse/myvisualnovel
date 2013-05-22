@@ -14,16 +14,16 @@ class ScenesController < ApplicationController
 
   # # GET /scenes/1
   # # GET /scenes/1.json
-  def show
-    @scene = Scene.find(params[:id])
-    @project = @scene.project
-    @backlink = project_path(@project)
+  # def show
+  #   @scene = Scene.find(params[:id])
+  #   @project = @scene.project
+  #   @backlink = project_path(@project)
 
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @scene }
-    end
-  end
+  #   respond_to do |format|
+  #     format.html # show.html.erb
+  #     format.json { render json: @scene }
+  #   end
+  # end
 
   # # GET /scenes/new
   # # GET /scenes/new.json
@@ -38,6 +38,7 @@ class ScenesController < ApplicationController
 
   # # GET /scenes/1/edit
   def edit
+    @body_class = "scene-editor"
     @scene = Scene.find(params[:id])
     @project = @scene.project
     @backlink = project_scenes_path(@project)
@@ -56,7 +57,7 @@ class ScenesController < ApplicationController
     @scene.load_initial_events
     respond_to do |format|
       if @scene.save!
-        format.html { redirect_to edit_project_scene_path(@project, @scene), notice: 'Scene was successfully created.' }
+        format.html { redirect_to edit_project_scene_path(@project, @scene) }
         format.json { render json: @scene, status: :created, location: @scene }
       else
         flash[:notice] = @scene.errors.full_messages
@@ -67,6 +68,7 @@ class ScenesController < ApplicationController
   end
 
   def update_event
+    @body_class = "scene-editor"
     @scene = Scene.find(params[:id])
     @project = @scene.project
     @backlink = project_scenes_path(@project)
@@ -89,29 +91,29 @@ class ScenesController < ApplicationController
 
   # # PUT /scenes/1
   # # PUT /scenes/1.json
-  # def update
-  #   @scene = Scene.find(params[:id])
+  def update
+    @scene = Scene.find(params[:id])
 
-  #   respond_to do |format|
-  #     if @scene.update_attributes(params[:scene])
-  #       format.html { redirect_to @scene, notice: 'Scene was successfully updated.' }
-  #       format.json { head :no_content }
-  #     else
-  #       format.html { render action: "edit" }
-  #       format.json { render json: @scene.errors, status: :unprocessable_entity }
-  #     end
-  #   end
-  # end
+    respond_to do |format|
+      if @scene.update_attributes(params[:scene])
+        format.html { redirect_to edit_project_scene_path(@scene.project, @scene) }
+        format.json { head :no_content }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @scene.errors, status: :unprocessable_entity }
+      end
+    end
+  end
 
   # # DELETE /scenes/1
   # # DELETE /scenes/1.json
-  # def destroy
-  #   @scene = Scene.find(params[:id])
-  #   @scene.destroy
+  def destroy
+    @scene = Scene.find(params[:id])
+    @scene.destroy
 
-  #   respond_to do |format|
-  #     format.html { redirect_to scenes_url }
-  #     format.json { head :no_content }
-  #   end
-  # end
+    respond_to do |format|
+      format.html { redirect_to action: "index" }
+      format.json { head :no_content }
+    end
+  end
 end

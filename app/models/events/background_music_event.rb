@@ -3,6 +3,7 @@ class BackgroundMusicEvent < Event
   EventOption = Struct.new(:url, :title)
   def self.file_list(user = nil)
    out = []
+   #out << EventOption.new("","Silence (no music)")
    Dir.new(File.join(Rails.root, "public", self.folder)).each do |file|
      next if file == "."
      next if file == ".."
@@ -23,7 +24,11 @@ class BackgroundMusicEvent < Event
   end
 
   def to_sentence
+    if !filename.blank?
   	"[Music: <i>".html_safe+music_description+"</i>]".html_safe
+    else
+      "[Music stops]"
+    end
   end
 
 end

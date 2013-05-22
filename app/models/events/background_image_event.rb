@@ -8,18 +8,18 @@ class BackgroundImageEvent < Event
      next if file == "."
      next if file == ".."
      next if file.include?("DS_Store")
-     url = "/"+File.join(folder,file)
+     url = File.join(folder,file)
      out << EventOption.new(url, humanize(file))
    end
    out
   end
 
   def self.folder
-   "BackgroundImage/Base"
+   "/BackgroundImage/Base"
   end
 
   def self.default
-  	self.new(:filename=>"/#{folder}/black.jpg")
+  	self.new(:filename=>"#{folder}/black.jpg")
   end
 
   def image_description #e.g. "School Hallway"

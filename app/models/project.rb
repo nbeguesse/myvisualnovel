@@ -1,8 +1,8 @@
 class Project < ActiveRecord::Base
    attr_accessible :title, :public, :character_ids
    before_create :setup_data
-   has_many :characters
-   has_many :scenes
+   has_many :characters, :dependent=>:destroy
+   has_many :scenes, :dependent=>:destroy
    validates_presence_of :title
    before_save :set_basename
    belongs_to :owner, :polymorphic => true
@@ -20,6 +20,9 @@ class Project < ActiveRecord::Base
    end
   def temp?
     self.owner_type.to_s != "User"
+  end
+  def middle_index
+    (scenes.count.to_f/2).ceil
   end
 
 protected

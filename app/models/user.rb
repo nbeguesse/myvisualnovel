@@ -1,33 +1,14 @@
 class User < ActiveRecord::Base
+  attr_accessor :agree_to_terms
+  before_create :require_agree_terms
+  attr_accessible :email, :password, :password_confirmation, :agree_to_terms
 
-  # PATH = '/logos/:id/:style.:extension'
-  # opts =
-  #         case Settings.storage.storage.to_sym
-  #           when :filesystem
-  #             {
-  #                     :path => ':rails_root/public' + PATH,
-  #                     :url => PATH,
-  #                     :default_url => '/images/missing-car/:style.jpg'
-  #             }
-  #           when :s3
-  #             {
-  #                     :path => PATH,
-  #                     :storage => :s3,
-  #                     :url => PATH,
-  #                     :bucket => Settings.storage.bucket,
-  #                     :s3_options => { :port => 80 },
-  #                     :s3_credentials => {
-  #                       :access_key_id => Settings.storage.s3_credentials.access_key_id,
-  #                       :secret_access_key => Settings.storage.s3_credentials.secret_access_key
-  #                     },
-  #                     :s3_protocol => 'http',
-  #                     :s3_permissions => :public_read
-  #             }
-  #         end.update({
-  #                 :styles => { :small => "x50", :medium => "x150" }
-  #         })
-  # has_attached_file :logo, opts
-  # attr_accessor :skip_state_validation
+  def require_agree_terms
+    unless self.agree_to_terms
+      self.errors.add :base, "You must agree to the Terms and Conditions to continue."
+      return false
+    end
+  end
 
   acts_as_authentic do |config|
     config.login_field :email
@@ -41,6 +22,14 @@ class User < ActiveRecord::Base
 
   def projects
     Project.where(:owner_id=>self.id.to_s)
+  end
+
+  def type
+    "User"
+  end
+
+  def may_login?
+    true
   end
 
 

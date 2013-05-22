@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   include ::SslRequirement
   
   helper_method :secure?
+  helper :all
 
   def session_obj
     #for logged in user
@@ -32,4 +33,9 @@ class ApplicationController < ActionController::Base
     return false unless secure?
     super
   end
+
+  # def coolify(text)
+  #   "<span class='romantic-font'>".html_safe+text.titleize+"</span>".html_safe
+  # end
+  # helper_method :coolify
 end

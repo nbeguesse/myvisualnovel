@@ -1,13 +1,14 @@
         <script>
-          var scenes = <%=json_escape(@project.scenes.ordered.map{|scene| scene.get_ordered_events}.flatten.to_json(:methods=>[:event_type, :get_character_name], :except=>[:created_at, :updated_at]).html_safe)%>;
+          var scenes = <%=json_escape(@scenes.map{|scene| scene.get_ordered_events}.flatten.to_json(:methods=>[:event_type, :get_character_name], :except=>[:created_at, :updated_at]).html_safe)%>;
         </script>
         <!-- Stage Viewer -->
-        <div class="mini-viewer viewer">
+        <div class="viewer">
         <%=image_tag BackgroundImageEvent.default.get_file, :class=>"bg bg-content hide img-rounded"%>
-        <%=image_tag BackgroundImageEvent.default.get_file, :class=>"bg bg-cover hide"%>
+        <%#=image_tag BackgroundImageEvent.default.get_file, :class=>"bg bg-cover hide"%>
         
         
           <div class="glassbox" style="display:none">
+            <%=image_tag "glassbox.png", :class=>"glass"%>
             <div class="speaker"></div>
             <div class="textarea">
 
@@ -15,3 +16,7 @@
           </div>
 
         </div>
+ <div id="sm2-container">
+  <!-- SM2 flash goes here -->
+
+ </div>

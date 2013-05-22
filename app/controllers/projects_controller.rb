@@ -1,18 +1,30 @@
 class ProjectsController < ApplicationController
   # GET /projects
   # GET /projects.json
-  # def index
-  #   @projects = Project.all
-
-  #   respond_to do |format|
-  #     format.html # index.html.erb
-  #     format.json { render json: @projects }
-  #   end
-  # end
+  def index
+    @backlink = root_url
+    @projects = session_obj.projects
+    if @projects.empty?
+      redirect_to new_project_path and return
+    end
+    respond_to do |format|
+      format.html # index.html.erb
+      format.json { render json: @projects }
+    end
+  end
   def play
     @project = Project.find_by_id_and_basename(params[:id],params[:basename])
     if @project && @project.public?
-      @scenes = @project.scenes.ordered
+      if params[:scene_id]
+        @scenes = [Scene.find(params[:scene_id])]
+      else
+        @scenes = @project.scenes.ordered
+      end
+      if @scenes.empty?
+        flash[:notice] = "Please add some scenes first."
+        redirect_to project_path
+        return
+      end
       render :layout=>'viewer'
     else
       flash[:error] = "Sorry, we couldn't find that visual novel."
@@ -24,7 +36,7 @@ class ProjectsController < ApplicationController
   # GET /projects/1.json
   def show
     @project = Project.find(params[:id])
-    @backlink = root_url
+    @backlink = projects_path
     @nextlink = project_scenes_url(@project)
     respond_to do |format|
       format.html # show.html.erb
@@ -36,8 +48,7 @@ class ProjectsController < ApplicationController
   # GET /projects/new.json
   def new
     @project = Project.new
-    @backlink = root_url
-    @nextlink = "#"
+    @backlink = projects_path
 
     respond_to do |format|
       format.html # new.html.erb
@@ -55,12 +66,19 @@ class ProjectsController < ApplicationController
   # POST /projects.json
   def create
     @project = Project.new(params[:project])
-
+    first_project = session_obj.projects.empty?
+    @project.owner_id = session_obj.id
+    @project.owner_type = session_obj.type
     respond_to do |format|
       if @project.save
-        format.html { redirect_to @project, notice: 'Project was successfully created.' }
+        if first_project
+          flash[:notice] = "Congrats on making your first visual novel! I gave you an example scene to get you up and running."
+          #TODO: Add Example Scene
+        end
+        format.html { redirect_to @project }
         format.json { render json: @project, status: :created, location: @project }
       else
+        @backlink = projects_path
         format.html { render action: "new" }
         format.json { render json: @project.errors, status: :unprocessable_entity }
       end

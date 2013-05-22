@@ -1,0 +1,25 @@
+  <% if @user.errors.any? %>
+    <div id="error_explanation">
+      <ul>
+      <% @user.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+
+        <h2 class="form-signin-heading">Sign Up</h2>
+        <div class="form-signin">
+          <%= form_for @user, :url => users_url(:secure => secure?) do |f| %>
+          <input name="user[email]" type="email" class="input-block-level" placeholder="Email address">
+          <input name="user[password]" type="password" class="input-block-level" placeholder="Password">
+          <input name="user[password_confirmation]" type="password" class="input-block-level" placeholder="Confirm Password">
+          <label class="checkbox">
+            <input type="checkbox" name="user[agree_to_terms]"> I agree to the <%=link_to "Terms of Service", terms_of_service_path%>
+          </label>
+          <button class="btn btn-large btn-primary submitable" type="submit">GO</button>
+          <%end%>
+          
+        </div>
+
