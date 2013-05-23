@@ -1,7 +1,7 @@
 class Event < ActiveRecord::Base
   belongs_to :scene
   belongs_to :character
-  attr_accessible :filename, :order_index, :type, :character_id, :text
+  attr_accessible :filename, :order_index, :type, :character_id, :text, :subfilename
   validates_presence_of :type
   before_validation :set_order_index, :on=>:create
   before_validation :set_character_type, :on=>:create
@@ -16,6 +16,7 @@ class Event < ActiveRecord::Base
   scope :at, lambda { |order_index| {:conditions => ["order_index = ?", order_index], :limit=>1} }
   scope :for_scene, lambda { |scene| {:conditions => ["scene_id=? ", scene.id] } }
   scope :background_images, lambda {{:conditions=>["type=?","BackgroundImageEvent"]}}
+  scope :love_poses, lambda {{:conditions=>["type=?","LovePoseEvent"]}}
   scope :character_pose, lambda { |character| {:conditions=>["type=? and character_id=?","CharacterPoseEvent", character.id]}}
   scope :character_vanishes, lambda { |character| {:conditions=>["type=? and character_id=?","CharacterVanishEvent", character.id]}}
 
@@ -55,12 +56,17 @@ class Event < ActiveRecord::Base
       elsif arr[1] && arr[1][0]==character_id #character in position 2
         arr[1][1] = filename
       else
+        #TODO: Throw error if too many characters present
         arr << [character_id, filename]
       end
     elsif self.type=="CharacterVanishEvent"
       #remove the char
       #TODO: replace with empty spot if 2nd character present
       arr.reject!{|e|e[0]==character_id}
+    elsif self.type == "LovePoseEvent"
+      arr[0] ||= []
+      arr[0][0] = character_id
+      arr[0][1] = filename
     end
     self.characters_present = arr
   end
@@ -113,13 +119,22 @@ class Event < ActiveRecord::Base
     character.try(:name)
   end
 
-  def event_type
+  def event_type #for json
     self.type
   end
 
-def serializable_hash(options)
-  super(options).select { |_, v| v }
-end
+  def serializable_hash(options) #remove nil values from json
+    super(options).select { |_, v| v }
+  end
+
+  def has_character? character
+     chars = characters_present
+     if chars
+      return true if chars[0] && chars[0][0]==character.id
+      return true if chars[1] && chars[1][0]==character.id
+     end
+     return false
+  end
 
 
 end

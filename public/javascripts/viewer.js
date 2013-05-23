@@ -3,7 +3,7 @@ var lefty = ""; var righty = "";
 //MODIFIED TICKERTYPE PLUGIN
 var tickerCursor, tickerText;
 function createTicker(){
-	tickerText = $(".textarea").html();
+	tickerText = $("#textarea").html();
 	tickerCursor = 0;
 	textIsTyping = true;
 	typetext();
@@ -15,8 +15,8 @@ function typetext() {
 	var thisChar = tickerText.substr(tickerCursor, 1);
 	if( thisChar == '<' ){ isInTag = true; }
 	if( thisChar == '>' ){ isInTag = false; }
-	var charTime = 28;
-	$('.textarea').html(lefty + tickerText.substr(0, tickerCursor++));
+	var charTime = 50;
+	$('#textarea').html(lefty + tickerText.substr(0, tickerCursor++));
 	if(tickerCursor < tickerText.length+1)
 		if( isInTag ){
 			typetext();
@@ -28,17 +28,17 @@ function typetext() {
 	else {
 		textIsTyping = false;
 		waitingForUser = true;
-		$(".textarea").html(lefty+tickerText+righty)
+		$("#textarea").html(lefty+tickerText+righty)
 		tickerText = "";
 	}	
 }
 //END TICKERTYPE PLUGIN
 
 function speak(){
-  	$(".glassbox .textarea").text("");
+  	$("#textarea").text("");
     $(".glassbox .speaker").text("");
   	$(".glassbox").fadeIn('slow',function(){
-  		$(".glassbox .textarea").text(action['text']);
+  		$("#textarea").text(action['text']);
   		$(".glassbox .speaker").text(action["get_character_name"]);
   		createTicker();
   	});
@@ -92,31 +92,31 @@ var waitingForUser = false;
 function nextEvent(){
   action = scenes[currentEvent];
   console.log('action',action);
-  if(currentEvent == scenes.length){
+  if(currentEvent >= scenes.length){
   	//we are finished!!
+    $(".viewer").css("cursor", "auto");
   } else if (action['event_type']=="BackgroundImageEvent"){
   	$(".glassbox").fadeOut();
-  	$("img.bg-content").fadeOut('slow', function(){ //fade out old background
-	  	$("img.bg-content").attr("src",action['filename']).fadeIn('slow', function(){
+  	$("#bg-content").fadeOut('slow', function(){ //fade out old background
+	  	$("#bg-content").attr("src",action['filename']).fadeIn('slow', function(){
 	  		 currentEvent += 1;
 	  		 setTimeout('nextEvent()',timeToWait);
 	  	});
     });
   } else if (action['event_type']=="CharacterPoseEvent"){
     $(".glassbox").hide();
+	  var tag = '<img class="characters" src="'+action["filename"]+'" style="display: none;">';
 
-  	var oldpose = $(".characters[data-character-id="+action['character_id']+"]"); //remove old pose
-	var tag = '<img class="characters" src="'+action["filename"]+'" style="display: none;" data-character-id="'+action["character_id"]+'">';
-	if(action["characters_present"][0][0]==action["character_id"]){ 
-	  //tells you which position the char is in
-	}
-	if(oldpose.length > 0){
-		oldpose.fadeOut('slow', function(){oldpose.remove()});
-	}
-	$(tag).insertBefore(".glassbox").fadeIn('slow', function(){
-		currentEvent += 1;
-		setTimeout('nextEvent()',timeToWait);
-	});
+    if(action["characters_present"][0][0] == action['character_id']){
+      $("#character1").attr("id","character-old").fadeOut('slow',function(){
+        $("#character-old").remove();
+       });
+    }
+    $(tag).attr("id","character1").insertBefore(".glassbox").fadeIn('slow', function(){
+      currentEvent += 1;
+      setTimeout('nextEvent()',timeToWait);
+    });
+    
 	
     
   } else if(action['event_type']=="CharacterSpeaksEvent"){
@@ -133,9 +133,10 @@ function nextEvent(){
   	speak();
   } else if(action['event_type']=="SceneEndEvent"){
   	$(".glassbox").hide();
-  	$(".characters").fadeOut('slow', function(){
+    $(".character2").fadeOut('slow'); //separate characters so it doesn't run twice
+  	$("#character1").fadeOut('slow', function(){
   		stopLastSound();
-  		$("img.bg-content").fadeOut('slow', function(){
+  		$("#bg-content").fadeOut('slow', function(){
   		  currentEvent += 1;
 	  	  setTimeout('nextEvent()',timeToWait);
   		});
@@ -192,10 +193,11 @@ $(document).ready(function() {
 			tickerCursor = tickerText.length+1
 		} else if (waitingForUser){
 			waitingForUser = false;
-			$(".glassbox .textarea").text("");
+			$("#textarea").text("");
 			currentEvent += 1;
 			nextEvent();
 		}
+    return false;
 	});
 	soundManager.url = '/swf/soundmanager2_flash9.swf';
     soundManager.onload = function() {

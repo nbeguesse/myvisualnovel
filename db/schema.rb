@@ -11,15 +11,16 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130521065105) do
+ActiveRecord::Schema.define(:version => 20130523050726) do
 
   create_table "characters", :force => true do |t|
     t.integer  "project_id"
     t.string   "name"
     t.string   "type"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-    t.text     "description"
+    t.datetime "created_at",                                 :null => false
+    t.datetime "updated_at",                                 :null => false
+    t.boolean  "is_female",               :default => false
+    t.string   "sex",        :limit => 1, :default => "M"
   end
 
   add_index "characters", ["project_id"], :name => "index_characters_on_project_id"
@@ -37,6 +38,7 @@ ActiveRecord::Schema.define(:version => 20130521065105) do
     t.string   "subfilename"
     t.string   "text"
     t.text     "characters_present"
+    t.string   "character_name"
   end
 
   add_index "events", ["scene_id"], :name => "index_events_on_scene_id"
@@ -57,6 +59,7 @@ ActiveRecord::Schema.define(:version => 20130521065105) do
     t.string   "custom_description"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
+    t.boolean  "love_scene"
   end
 
   add_index "scenes", ["project_id"], :name => "index_scenes_on_project_id"

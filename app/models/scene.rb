@@ -1,7 +1,7 @@
 class Scene < ActiveRecord::Base
   belongs_to :project
   attr_accessor :initial_event_pack
-  attr_accessible :custom_description, :initial_event_pack
+  attr_accessible :custom_description, :initial_event_pack, :love_scene
   has_many :events, :dependent=>:delete_all
   validates_presence_of :project
   before_validation :set_order_index, :on=>:create
@@ -15,7 +15,9 @@ class Scene < ActiveRecord::Base
 
   def get_description
   	return custom_description if custom_description.present?
-    return image_at(middle_index).image_description
+    out =  "#{image_at(middle_index).image_description}"
+    out += " (love scene)" if love_scene?
+    out
   end
 
   def load_initial_events
@@ -34,7 +36,11 @@ class Scene < ActiveRecord::Base
 
 
    def image_at event_index
-     Event.for_scene(self).at_or_before(event_index).background_images.first || BackgroundImageEvent.default
+     if love_scene?
+      Event.for_scene(self).at_or_before(event_index).love_poses.first || BackgroundImageEvent.default
+     else
+       Event.for_scene(self).at_or_before(event_index).background_images.first || BackgroundImageEvent.default
+     end
    end
 
    def has_character? character, event_index

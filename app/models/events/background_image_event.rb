@@ -30,4 +30,8 @@ class BackgroundImageEvent < Event
   	"[Scene: <i>".html_safe+image_description+"</i>]".html_safe
   end
 
+  def self.bg_attribute
+    "filename"
+  end
+
 end

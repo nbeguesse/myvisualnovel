@@ -9,6 +9,8 @@
 		    <%end%>
 		    <%if event.glassbox?%>
 		      <%=image_tag "glassbox.png", :class=>"glass"%>
+		      <div class="speaker"><%=event.try(:get_character_name)%></div>
+			  <div class="textarea"><%=event.try(:get_text)%></div>
 		    <%end%>
 
 		  <%end%>

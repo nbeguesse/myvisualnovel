@@ -11,9 +11,7 @@ class Character < ActiveRecord::Base
   def default_name
   	self.class.to_s
   end
-  def default_description
-    ""
-  end
+
   def self.all_available
   	[Narrator, Hitomi]
   end
@@ -23,15 +21,11 @@ class Character < ActiveRecord::Base
   end
 
   PoseOption = Struct.new(:url, :title, :thumbnail)
-  def self.pose_list
+  def pose_list
    out = []
-   path = File.join("Character",self.to_s,"Pose")
+   path = File.join("Character",self.type,"Pose")
    Dir.new(File.join(Rails.root, "public", path)).each do |file|
-     next if file == "."
-     next if file == ".."
-     next if file.include?("DS_Store")
-     next if file == "thumbnail"
-     next if file == "reverse"
+     next if invalid_image?(file)
      url = "/"+File.join(path,file)
      thumbnail = "/"+File.join(path,"thumbnail",file)
      out << PoseOption.new(url, humanize(file), thumbnail)
@@ -39,13 +33,47 @@ class Character < ActiveRecord::Base
    out
   end
 
+  def love_pose_list sexes = nil
+   return [] if is_narrator?
+   out = []
+   #find all of the applicable M/F directories
+   combos = [["M"],["F"],["M","M"],["F","F"]]
+   combos.select!{|c| sexes.combination(c.length).include?(c)}
+   combos << ["M","F"] if sexes.join.include?("FM") || sexes.join.include?("MF")
+   #now get the file list of each directory
+   combos.each do |folder|
+     path = File.join("Character",self.type,folder.join,"Intimate")
+     complete_path = File.join(Rails.root, "public", path)
+     next unless File.exist? complete_path
+     Dir.new(complete_path).each do |file|
+       next if invalid_image?(file)
+       url = "/"+File.join(path,file)
+       thumbnail = url
+       out << PoseOption.new(url, humanize(file), url)
+     end
+   end
+   out
+  end
+
+  def humanize name
+    self.class.humanize name
+  end
+
   def self.humanize name
     File.basename(name, File.extname(name)).humanize.titleize
   end
 
+
+  def invalid_image? file
+    return true if file == "."
+    return true if file == ".."
+    return true if file.include?("DS_Store")
+    return true if file == "thumbnail"
+    return false
+  end
 protected
   def set_defaults
   	self.name = self.default_name
-    self.description = self.default_description
+    self.is_female = self.default_sex
   end
 end

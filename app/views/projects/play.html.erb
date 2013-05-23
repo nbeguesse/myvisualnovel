@@ -3,14 +3,14 @@
         </script>
         <!-- Stage Viewer -->
         <div class="viewer">
-        <%=image_tag BackgroundImageEvent.default.get_file, :class=>"bg bg-content hide img-rounded"%>
+        <%=image_tag BackgroundImageEvent.default.get_file, :class=>"bg bg-content hide img-rounded", :id=>"bg-content"%>
         <%#=image_tag BackgroundImageEvent.default.get_file, :class=>"bg bg-cover hide"%>
         
         
           <div class="glassbox" style="display:none">
             <%=image_tag "glassbox.png", :class=>"glass"%>
             <div class="speaker"></div>
-            <div class="textarea">
+            <div class="textarea" id="textarea">
 
             </div>
           </div>

@@ -18,9 +18,11 @@
                     <%unless session_obj.projects.empty?%>
                       <li><%=link_to "Novels", projects_path%> <span class="divider">/</span></li>
                     <%end%>
-                      <%if @project && !@project.new_record?%>
-                        <li><%=link_to coolify(@project.title), @project%> <span class="divider">/</span></li>
-                      
+                    <%if @project && !@project.new_record?%>
+                      <li><%=link_to coolify(@project.title), @project%> <span class="divider">/</span></li>
+                    <%end%>
+                    <%if @scene%>
+                      <li><%=link_to @scene.get_description, edit_project_scene_path(@project, @scene)%> <span class="divider">/</span></li>
                     <%end%>
                     <li style="float:right">
                     <%if logged_in?%>

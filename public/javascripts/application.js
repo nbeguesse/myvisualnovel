@@ -46,20 +46,16 @@ $(document).ready(function() {
 
 
    // $(".overlay a").addClass("submitable");
-	$(".submitable").click(function(){ $(this).closest("form").submit(); });
+	$(".submitable").click(function(){ $(this).closest("form").submit(); return false; });
 	$(".hide").hide();
 
-	//CHARACTERS
-	$(".edit-name").click(function(){
-		$(this).closest('form').find('span').hide();
-		$(this).closest('form').find('.controls').show();
-	});
 
 	//SCENE EDITOR
 	$(".overlay").hide();
 	$(".scene-editor .overlay-topper a").click(function(){
 		$(".overlay").slideUp();
 		$(".overlay-topper").fadeOut();
+		return false;
 	});
 	//drop down options when pencil is clicked
 	$(".scene-editor #dropdown").click(function(){
@@ -70,17 +66,20 @@ $(document).ready(function() {
 		} else {
 		  icon.removeClass('icon-minus-sign').addClass('icon-pencil');
 		}
+		return false;
 	});
 	//edit bg images
 	$(".scene-editor .edit-bg-image").click(function(){ //dropdown
 		setCurrentEvent(this);
 		showOverlay(".bg-image");
 		$(".overlay-topper span").text("Choose a Background Image...");
+		return false;
 	});
 	$(".scene-editor .edit-music").click(function(){ //dropdown
 		setCurrentEvent(this);
 		showOverlay(".music");
 		$(".overlay-topper span").text("Choose Background Music...");
+		return false;
 	});
 	//edit poses
 	$(".scene-editor .edit-pose").click(function(){
@@ -88,6 +87,15 @@ $(document).ready(function() {
 		 var id = $(this).attr("data-character-id");
 		 showOverlay(".poses-for-"+id);
 		 $(".overlay-topper span").text("Choose a Pose...");
+		 return false;
+	});
+	//edit love poses
+	$(".scene-editor .edit-love-pose").click(function(){
+		 setCurrentEvent(this);
+		 var id = $(this).attr("data-character-id");
+		 showOverlay("div.love-poses");
+		 $(".overlay-topper span").text("Choose a Pose...");
+		 return false;
 	});
 	$(".scene-editor .edit-speak").click(function(){
 		 //select current row
@@ -112,10 +120,12 @@ $(document).ready(function() {
 		 $(".glassbox .textarea").hide();
 		 $(".glassbox .controls").css("display","inline-block");
 		 $(".glassbox textarea").show().val(text).focus();
+		 return false;
 	});
 	//row jumping
 	$(".jump-to").click(function(){
-		top.location.href = $(this).attr("data-url")
+		top.location.href = $(this).attr("data-url");
+		return false;
 	});
 	 $(".glassbox textarea").keyup(function(e, obj) {
 	 	while(this.scrollHeight > this.clientHeight){
@@ -127,6 +137,7 @@ $(document).ready(function() {
 	 	$("input.more_text").val($(".glassbox input.character_id").val());
 	 	$("input.more_text_type").val($(".glassbox input.event_type").val());
 	 	$(this).closest("form").submit();
+	 	return false;
 	 });
 	 if(gup("more_text") != "null"){ //continue text entry
 	 	$(".action-items a[data-character-id="+gup("more_text")+"][data-type="+gup("more_text_type")+"]").click();
@@ -136,17 +147,21 @@ $(document).ready(function() {
 	 	  $("tr[data-order-id="+gup("event_index")+"]").get(0).scrollIntoView();
 	    } catch(err){}
 	 }
-	 $(".change-scene-name").click(function(){
-	 	var name=prompt("Choose a name for this scene:",$("#scene_custom_description").val());
+	 $(".change-name").click(function(){
+	 	form = $(this).closest('form');
+	 	var nameable = form.find('.nameable');
+	 	var name=prompt("What will you change it to?",nameable.val());
         if (name!=null) { 
-        	$("#scene_custom_description").val(name);
-        	$(this).closest('form').submit(); 
+        	nameable.val(name);
+        	form.submit(); 
         }
+        return false;
 	 });
 	 $(".delete-scene").click(function(){
 	 	if(confirm('Are you sure? This will delete everything.')){
 	 	  $(this).closest('form').submit(); 
 	 	}
+	 	return false;
 	 });
 	//END SCENE EDITOR
 

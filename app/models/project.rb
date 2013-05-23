@@ -30,7 +30,7 @@ protected
       self.basename ||= self.title.gsub(/[^0-9A-Za-z\s]/, '').gsub(" ","-")
    end
    def setup_data
-   	  self.characters << Hitomi.new
+   	  self.characters << Ami.new
    	  self.characters << Narrator.new
    end
 end
