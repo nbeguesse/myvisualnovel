@@ -4,7 +4,7 @@ class CharacterSpeaksEvent < Event
 
 
   def to_sentence
-    "".html_safe+character.name.upcase+":".html_safe
+    "".html_safe+character_name.upcase+":".html_safe
   end
 
   def get_text

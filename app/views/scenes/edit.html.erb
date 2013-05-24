@@ -1,6 +1,6 @@
 <%
   current_event = Event.for_scene(@scene).at(@event_index).first
-  bg_file =  @scene.image_at(@event_index).get_file
+  bg_file =  current_event.try(:characters_present).try(:first).try(:second) || BackgroundImageEvent.default.get_file
 %>
 <table class="scene-editor">
 	<tr>
@@ -9,7 +9,7 @@
 			  <p><b>Scene <%=@scene.order_index%>:</b> <%=@scene.get_description%></p>
 			<table class="table table-condensed">
 			  <tr><td>
-			  	 <h2>Script</h2>
+			  	 <h2 class="no-monospace">Script</h2>
 			  	 <div class="script-holder">
 			  	 <table class="script table-bordered table-hover table-condensed">
 			  	 	<tbody>
@@ -28,7 +28,7 @@
 			  	 	  		  <span class='muted'><%=event.to_sentence%></span><br/>
 			  	 	  		<%end%>
 			  	 	  		<small class="detail"><%=event.detail%></small>
-
+			  	 	  		<!--<br/><small><%=event.characters_present%></small>-->
 			  	 	  		<%if @event_index!=event.order_index%></div><%end%>
 			  	 	  		
 			  	 	  		<div class="more hide"><hr>
@@ -69,11 +69,11 @@
 	  	          <%else%>
 				  	 <%@project.characters.each do |character|%>
 				  	   <%if @scene.has_character?(character, @event_index)%>
-				  	      <table class="action-items table-bordered">
-					  	 	<tr><td rowspan=3><%=image_tag "spacer.gif", :style=>"background-color:lightgray"%></td>
-					  	 	<td><a href="#" class="edit-speak" data-type="CharacterSpeaksEvent" data-character-id="<%=character.id%>" data-name="<%=character.name%>"><%=character.name%> speaks</a></td></tr>
-					  	 	<tr><td><a href="#" class="edit-pose" data-character-id="<%=character.id%>"><%=character.name%> changes pose</a></td></tr>
-					  	 	<tr><td>
+				  	      <table class="action-items">
+					  	 	<tr><td rowspan=3 class="icon"><div class="btn"><%=image_tag "spacer.gif", :style=>"background-color:lightgray"%></div></td>
+					  	 	<td class="btn btn-small"><a href="#" class="edit-speak" data-type="CharacterSpeaksEvent" data-character-id="<%=character.id%>" data-name="<%=character.name%>"><%=character.name%> speaks</a></td></tr>
+					  	 	<tr><td class="btn btn-small"><a href="#" class="edit-pose" data-character-id="<%=character.id%>"><%=character.name%> changes pose</a></td></tr>
+					  	 	<tr><td class="btn btn-small">
 					  	 		<%=form_tag update_event_project_scene_path(@project, @scene)%>
 					  	 		  <input type="hidden" name="event[type]" value="CharacterVanishEvent">
 					  	 		  <input type="hidden" name="event[character_id]" value="<%=character.id%>">
@@ -121,11 +121,12 @@
 		  	<!-- Stage Viewer -->
 		    <div class="mini-viewer">
 		      
-			  <%=image_tag bg_file, :class=>"bg"%>
+			  
 			  <%if current_event%>
-			  <%current_event.characters_present.each do |char_present|%>
-			      <%=image_tag char_present[1], :class=>"characters"%>
-			  <%end%>
+			    <%current_event.characters_present.each do |char|%>
+			      <%next if char.nil?%>
+			      <%=image_tag char[1], :class=>(char[0]=="BG" ? "bg" : "characters")%>
+			    <%end%>
 			  <%end%>
 			  
 			    <!-- edit text -->
@@ -143,7 +144,7 @@
 			    	  <input type="hidden" name="more_text" class="more_text" value="">
 			    	  <input type="hidden" name="more_text_type" class="more_text_type" value="">
 			    	  <a class="btn btn-mini add-more-text controls hide" href="#"><i class="icon-arrow-down"></i> Add More Text</a>
-			    	  <a class="btn btn-mini submitable controls hide" href="#"><i class="icon-check"></i> Finished</a>
+			    	  <a class="btn btn-mini submitable controls hide" href="#"><i class="icon-check"></i> Finished Typing</a>
 			    	  </form>
 			    	
 			    </div>

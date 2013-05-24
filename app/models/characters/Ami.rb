@@ -1,0 +1,3 @@
+class Ami < Female
+
+end

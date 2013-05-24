@@ -9,6 +9,7 @@ class Event < ActiveRecord::Base
   after_destroy :reorder_indexes
   serialize :characters_present
   after_save :set_defaults
+  before_save :partial_set_characters_present
 
   #scope :latest, lambda { {:order=>"order_index DESC", :limit=>1} }
   scope :ordered,  lambda { {:order=>"order_index ASC, id ASC"} }
@@ -47,26 +48,59 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def partial_set_characters_present
+    if !new_record? && (filename_changed? || subfilename_changed?)
+      previous_event = Event.for_scene(scene).at(order_index-1).first
+      set_characters_present previous_event
+      all = scene.events.ordered.to_a
+      all.shift order_index
+      prev = self
+      all.each_index do |i|
+          event = all[i]
+          event.set_characters_present prev
+          if event.changed?
+            event.save
+          else
+            break
+          end
+          prev = event
+      end
+    end
+  end
+
   def set_characters_present prev
     arr = prev.try(:characters_present) || []
+    arr[0] ||= ["BG", BackgroundImageEvent.default.get_file]
     if self.type=="CharacterPoseEvent"
       #TODO: Move this inside those models
-      if arr[0] && arr[0][0]==character_id #character in position 1
-        arr[0][1] = filename
-      elsif arr[1] && arr[1][0]==character_id #character in position 2
+      if arr[1] && arr[1][0]==character_id #character in position 1
         arr[1][1] = filename
+      elsif arr[2] && arr[2][0]==character_id #character in position 2
+        arr[2][1] = filename
+      elsif arr[1].nil?
+        arr[1] = [character_id, filename]
+      elsif arr[2].nil?
+        arr[2] = [character_id, filename]
       else
-        #TODO: Throw error if too many characters present
-        arr << [character_id, filename]
+        #TODO: Throw error if already 2 chars present
+        #arr << [character_id, filename]
       end
     elsif self.type=="CharacterVanishEvent"
       #remove the char
-      #TODO: replace with empty spot if 2nd character present
-      arr.reject!{|e|e[0]==character_id}
+      if arr[1][0] == character_id
+        arr[1] = nil
+      elsif arr[2][0] == character_id
+        arr[2] = nil
+      else
+        arr.reject!{|e|e[0]==character_id}
+      end
     elsif self.type == "LovePoseEvent"
-      arr[0] ||= []
-      arr[0][0] = character_id
-      arr[0][1] = filename
+      if subfilename
+        arr[0] = ["BG", subfilename]
+      end
+      arr[1] = [character_id, filename]
+    elsif self.type == "BackgroundImageEvent"
+      arr[0] = ["BG", filename]
     end
     self.characters_present = arr
   end
@@ -74,6 +108,7 @@ class Event < ActiveRecord::Base
   def set_character_type
     if character_id
       self.character_type = character.type
+      self.character_name = character.name
     end
   end
 
@@ -116,7 +151,7 @@ class Event < ActiveRecord::Base
   end
 
   def get_character_name
-    character.try(:name)
+    character_name
   end
 
   def event_type #for json
@@ -130,8 +165,8 @@ class Event < ActiveRecord::Base
   def has_character? character
      chars = characters_present
      if chars
-      return true if chars[0] && chars[0][0]==character.id
       return true if chars[1] && chars[1][0]==character.id
+      return true if chars[2] && chars[2][0]==character.id
      end
      return false
   end

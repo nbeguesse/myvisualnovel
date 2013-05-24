@@ -1,5 +1,5 @@
 
-<h2>My Novels</h2>
+<h2>View My Novels</h2>
 
  <ul class="thumbnails">
   <%session_obj.projects.each do |project|%>
@@ -10,10 +10,21 @@
       <a href="<%=project_path(project)%>">
       <%=render :partial=>"scenes/thumbnail", :locals=>{:scene=>scene}%>
       <p><%=project.title%></p> </a>
-      <p><a class="btn btn-small" href="<%=project_path(project)%>"><i class="icon-pencil"></i> Edit</a>
-        <%shareable = project.public? ? 'title="Cut & Paste the URL to Share"' : ""%>
-        <a class="btn btn-small btn-primary" href="<%=project.play_path%>" <%=raw(shareable)%>><i class="icon-play icon-white"></i> Play</a></p>
+      <p><a class="btn btn-small" href="<%=project_path(project)%>" title="Change it!"><i class="icon-pencil"></i> Edit</a>
+        <a class="btn btn-small btn-primary" href="<%=project.play_path%>" title="Watch it!"><i class="icon-play icon-white"></i> Play</a>
+        <%if project.public?%>
+        <a class="btn btn-small share-link" href="#" title="To make private, go to Edit > Customize"><i class="icon-share"></i> Share</a>
+        <%end%>
+      </p><p class="share">
+      <small>
+        Cut-and-paste this URL to share: <input type="text" class="share-link" value="<%=play_url(project.id, project.basename)%>" style="width:90%;">
+      </small>
+      </p>
       
     </li>
   <%end%>
 </ul>
+<p>&nbsp;</p>
+<h2>View Novels Made By Others</h2>
+
+<p class="muted">(Coming Soon)</p>

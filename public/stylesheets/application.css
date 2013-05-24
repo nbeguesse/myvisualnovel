@@ -13,6 +13,12 @@ body {
     margin: 0;
     width: 100%;
 }
+h1, h2, h3 {
+  font-family: monospace;
+}
+.no-monospace {
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
 /*.navbar .nav li {
     display: table-cell;
     float: none;
@@ -339,4 +345,25 @@ body #sm2-container embed {
 
  left:-9999em;
  top:-9999em;
+}
+p.share {
+  display:none;
+}
+form.edit_project td.attr {
+  text-align:right;
+  vertical-align:middle;
+  padding-right:0;
+}
+#project_basename {
+  margin-bottom:0;
+}
+form.edit_project .table td {
+  border:0;
+}
+form.edit_project input[type="radio"] {
+  float:left;
+  margin: 5px 10px 0;
+  }
+.script .jump-to {
+  cursor:pointer;
 }

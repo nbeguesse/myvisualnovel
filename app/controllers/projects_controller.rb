@@ -37,7 +37,6 @@ class ProjectsController < ApplicationController
   def show
     @project = Project.find(params[:id])
     @backlink = projects_path
-    @nextlink = project_scenes_url(@project)
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @project }
@@ -59,7 +58,7 @@ class ProjectsController < ApplicationController
   # GET /projects/1/edit
   def edit
     @project = Project.find(params[:id])
-    @nextlink = project_url(@project)
+    @backlink = project_url(@project)
   end
 
   # POST /projects
@@ -92,7 +91,7 @@ class ProjectsController < ApplicationController
 
     respond_to do |format|
       if @project.update_attributes(params[:project])
-        format.html { redirect_to @project, notice: 'Project was successfully updated.' }
+        format.html { redirect_to @project }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }

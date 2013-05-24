@@ -4,7 +4,7 @@ class CharacterVanishEvent < Event
   after_save :check_existence
 
   def to_sentence
-     "<i>".html_safe+character.name+"</i> vanishes".html_safe
+     "<i>".html_safe+character_name+"</i> vanishes".html_safe
   end
 
   def check_existence

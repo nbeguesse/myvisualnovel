@@ -12,6 +12,16 @@ class Scene < ActiveRecord::Base
 
   scope :at, lambda { |order_index| {:conditions => ["order_index = ?", order_index], :limit=>1} }
 
+  def move_to(order_index)
+    scenes = project.scenes.to_a
+    scenes.reject!{|scene|scene==self}
+    scenes.insert(order_index, self)
+    scenes.each_index do |i|
+      scene = scenes[i]
+      scene.order_index = i+1
+      scene.save if scene.changed?
+    end
+  end
 
   def get_description
   	return custom_description if custom_description.present?
@@ -21,8 +31,9 @@ class Scene < ActiveRecord::Base
   end
 
   def load_initial_events
-    if i = self.initial_event_pack
-      self.events = EventPacks.locations[i.to_i].events
+    if i = self.initial_event_pack.to_i
+      self.events = EventPacks.locations[i].events
+      self.custom_description = EventPacks.locations[i].name
     end
   end
 

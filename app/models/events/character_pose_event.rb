@@ -12,9 +12,9 @@ class CharacterPoseEvent < Event
 
   def to_sentence
     if scene.has_character?(character, order_index-1)
-  	  "<i>".html_safe+character.name+"</i> changes pose".html_safe
+  	  "<i>".html_safe+character_name+"</i> changes pose".html_safe
     else
-       "<i>".html_safe+character.name+"</i> appears".html_safe
+       "<i>".html_safe+character_name+"</i> appears".html_safe
     end
   end
 

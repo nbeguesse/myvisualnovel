@@ -1,28 +1,16 @@
 
 <h1><%= coolify @project.title%></h1>
-<h2>What do you want to do?</h2>
-
+<p class="lead">&nbsp;</p>
+<h2>What will you do?</h2>
  <ul class="thumbnails">
     <li class="span2">
       <a href="<%=project_characters_path(@project)%>" class="thumbnail" style="" title="Change Their Names">
       <img data-src="#" alt="" style="width:168px;height:126px; background-color:lightgray">
       <p>Edit Characters</p></a>
     </li>
-    <li class="span2">
-      <a href="<%=project_scenes_path(@project)%>" class="thumbnail" style="position:relative;" title="Add to the Script">
-        <%scene = Scene.for_project(@project).at(1).first || Scene.find(10)%>
-        <%=render :partial=>"scenes/thumbnail", :locals=>{:scene=>scene}%>
-        <%if @project.scenes.empty?%>
-          <p>Add a Scene</p>
-        <%else%>
-          <p>Edit Scenes</p>
-        <%end%>
-      </a>
-    </li>
+
     <li class="span2">
       <a href="<%=@project.play_path%>" class="thumbnail" style="position:relative;" title="Watch It!">
-
-         
           <%middle_index = @project.middle_index%>
           <%scene = Scene.for_project(@project).at(middle_index).first%>
           <%=render :partial=>"scenes/thumbnail", :locals=>{:scene=>scene, :play=>true}%>
@@ -30,11 +18,48 @@
       </a>
     </li>
     <li class="span2">
-      <a href="#" class="thumbnail" style="position:relative;" title="Title Screen & Scene Order">
-
-         
+      <a href="<%=edit_project_path(@project)%>" class="thumbnail" title="">
           <%=image_tag "tools2.jpg"%>
-          <p>Edit Odds n' Ends</p> 
+          <p>Customize</p> 
       </a>
     </li>    
 </ul>
+
+<%if @project.scenes.present?%>
+  <h2>Add to the Script</h2>
+
+    <%sortable = @project.scenes.count > 1%>
+    <ul class="thumbnails" id="<%="sortable" if sortable%>">
+      <% @project.scenes.ordered.each do |scene| %>
+      <li class="span2" data-id="<%=scene.id%>" data-url="<%=reorder_project_scene_path(@project, scene)%>">
+        <a href="<%=edit_project_scene_url(@project, scene)%>" class="thumbnail" style="position:relative;" title="<%=sortable ? "Drag to Rearrange" : "Edit it"%>">
+          <%= render :partial=> "scenes/thumbnail", :locals=>{:scene=>scene}%>
+        <p><%=scene.get_description %> <%=scene.order_index%></p>
+      </a>
+      </li>
+  
+      <% end %>
+    </ul>
+<%end%>
+
+  <h2>Add A New Scene</h2>
+  <ul class="thumbnails">
+    <% EventPacks.locations.each_index do |i| %>
+      <li class="span2">
+        <%=form_for [@project, Scene.new] do |f|%>
+          <%event_pack = EventPacks.locations[i]%>
+        <a href="#" class="submitable thumbnail" title="Add This Scene!">
+          <input type="hidden" value="<%=event_pack.love_scene%>" name="scene[love_scene]">
+          <input type="hidden" value="<%=i%>" name="scene[initial_event_pack]">
+          <%=image_tag event_pack.bg_image%>
+          <%if event_pack.love_scene%>
+            <%=image_tag event_pack.get_love_scene_pose, :class=>"glass"%>
+          <%end%>
+            <p><%=event_pack.name%></p>
+          </a>
+    
+        <%end%>
+      </li>
+    <%end%>
+    </ul>
+

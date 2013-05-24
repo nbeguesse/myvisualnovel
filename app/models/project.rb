@@ -1,5 +1,5 @@
 class Project < ActiveRecord::Base
-   attr_accessible :title, :public, :character_ids
+   attr_accessible :title, :public, :character_ids, :basename
    before_create :setup_data
    has_many :characters, :dependent=>:destroy
    has_many :scenes, :dependent=>:destroy
@@ -25,9 +25,11 @@ class Project < ActiveRecord::Base
     (scenes.count.to_f/2).ceil
   end
 
+
 protected
    def set_basename
-      self.basename ||= self.title.gsub(/[^0-9A-Za-z\s]/, '').gsub(" ","-")
+      self.basename = self.basename.gsub("-"," ").gsub(/[^0-9A-Za-z\s]/, '').gsub(" ","-") if basename_changed?
+      self.basename = self.title.gsub(/[^0-9A-Za-z\s]/, '').gsub(" ","-") if basename.nil?
    end
    def setup_data
    	  self.characters << Ami.new

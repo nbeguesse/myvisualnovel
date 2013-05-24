@@ -165,6 +165,27 @@ $(document).ready(function() {
 	 });
 	//END SCENE EDITOR
 
+	$("a.share-link").click(function(){
+		$(this).closest("li").find("p.share").slideToggle('slow');
+	});
+	$("p.share .share-link").live('focus', function () {
+            $(this).select();
+     });
+	$(function() {
+		$( "#sortable" ).sortable({
+			update: function( event, ui ) {
+			  li = ui.item;
+			  for(var i=0; i<$("#sortable li").length; i++){
+			  	if($($("#sortable li")[i]).attr("data-id")==li.attr("data-id")){
+			  	  $.post(li.attr("data-url"), {order_index:i}, function(data) {
+					});
+			  	}
+			  }
+			}
+		});
+		$( "#sortable" ).disableSelection();
+	});
+
 	//always put all content in the middle
 	//popups.center($(".jumbotron"));
 

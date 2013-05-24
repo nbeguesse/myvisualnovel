@@ -1,0 +1,16 @@
+
+<h1><%= coolify @project.title%></h1>
+<p class="lead">&nbsp;</p>
+<%=form_for @project do |f|%>
+  <table class="table">
+    <tr><td class="attr"><%=f.label :title%></td><td><%=f.text_field :title%></td></tr>
+    <tr><td class="attr"><b>URL: </b>http://myvisualnovel.com/play/<%=@project.id%>/</td><td><%=f.text_field :basename%></td></tr><tr>
+      <td class="attr">This story is:</td><td>
+      <%=f.radio_button :public, :true%><b>Public</b> - Others will be allowed to view it and make comments.<br/>
+      <%=f.radio_button :public, :false%><b>Private</b> - Only you can view it while logged in.
+    </td>
+    </tr>
+  </table>
+  <button type="submit submitable" class="btn">Change</button>
+
+<%end%>

@@ -8,6 +8,7 @@ MyVisualNovel::Application.routes.draw do
     resources :scenes do
       member do
         post :update_event
+        post :reorder
       end
       resources :events
     end

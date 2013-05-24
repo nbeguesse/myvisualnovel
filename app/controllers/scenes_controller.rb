@@ -3,13 +3,23 @@ class ScenesController < ApplicationController
   # GET /scenes.json
   def index
     @project = Project.find(params[:project_id])
-    @scenes = @project.scenes
-    @backlink = project_path(@project)
+    redirect_to project_path(@project) and return
+    # @scenes = @project.scenes
+    # @backlink = project_path(@project)
 
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @scenes }
-    end
+    # respond_to do |format|
+    #   format.html # index.html.erb
+    #   format.json { render json: @scenes }
+    # end
+  end
+
+  def reorder
+    @scene = Scene.find(params[:id])
+    @scene.move_to(params[:order_index].to_i)
+
+
+     render json: @project 
+
   end
 
   # # GET /scenes/1

@@ -1,4 +1,5 @@
 var lefty = ""; var righty = "";
+var cover = "<div class='black glass' style='display:none; width:800px; height:600px'></div>;";
 
 //MODIFIED TICKERTYPE PLUGIN
 var tickerCursor, tickerText;
@@ -105,19 +106,50 @@ function nextEvent(){
     });
   } else if (action['event_type']=="CharacterPoseEvent"){
     $(".glassbox").hide();
-	  var tag = '<img class="characters" src="'+action["filename"]+'" style="display: none;">';
-
-    if(action["characters_present"][0][0] == action['character_id']){
-      $("#character1").attr("id","character-old").fadeOut('slow',function(){
-        $("#character-old").remove();
-       });
+	   var tag = '<img class="characters" src="'+action["filename"]+'" style="display: none;">';
+    for(var i=1; i<3; i++){
+      if(action['characters_present'][i] != null){ //skip blanks and nils
+        if(action["characters_present"][i][0] == action['character_id']){ //if character file src changed
+          $("#character"+i).attr("id","character-old").fadeOut('slow',function(){ //remove old character if exists
+            $("#character-old").remove();
+          });
+          $(tag).attr("id","character"+i).insertBefore(".glassbox").fadeIn('slow', function(){  //add new char
+            currentEvent += 1;
+            setTimeout('nextEvent()',timeToWait);
+          });
+        }
+      }
     }
-    $(tag).attr("id","character1").insertBefore(".glassbox").fadeIn('slow', function(){
-      currentEvent += 1;
-      setTimeout('nextEvent()',timeToWait);
-    });
+
+  } else if (action['event_type']=="LovePoseEvent"){
+    var black = $(cover);
+    var tag = '<img class="characters" src="'+action["filename"]+'">';
+    black.insertAfter(".glassbox").fadeIn('slow', function(){
+      $(".characters").remove();
+      if(action['characters_present'][0] != null){ //place bg
+        $("#bg-content").show().attr("src",action['characters_present'][0][1]);
+      }
+      if(action['characters_present'][1] != null){ //place love pose
+        $(tag).attr("id","character"+1).insertBefore(".glassbox");
+      }
+      black.fadeOut('slow', function(){
+        currentEvent += 1;
+        setTimeout('nextEvent()',timeToWait);
+        black.remove();
+      });
+    });  
     
-	
+
+	} else if(action['event_type']=="CharacterVanishEvent"){
+    for(var i=1; i<3; i++){
+      if(action['characters_present'][i] == null){
+        //note: will run twice if 2 vanishings at once
+        $("#character"+i).fadeOut('slow',function(){
+          currentEvent += 1;
+          setTimeout('nextEvent()',timeToWait);
+        });
+      }
+    }
     
   } else if(action['event_type']=="CharacterSpeaksEvent"){
   	$(".glassbox .glass").attr("src","/images/glassbox.png");
@@ -133,14 +165,15 @@ function nextEvent(){
   	speak();
   } else if(action['event_type']=="SceneEndEvent"){
   	$(".glassbox").hide();
-    $(".character2").fadeOut('slow'); //separate characters so it doesn't run twice
-  	$("#character1").fadeOut('slow', function(){
-  		stopLastSound();
-  		$("#bg-content").fadeOut('slow', function(){
-  		  currentEvent += 1;
-	  	  setTimeout('nextEvent()',timeToWait);
-  		});
-  	});
+    stopLastSound();
+    var black = $(cover);
+    black.insertAfter(".glassbox").fadeIn('slow', function(){
+      $(".characters").remove();
+      $("#bg-content").hide();
+      black.remove();
+      currentEvent += 1;
+      setTimeout('nextEvent()',timeToWait);
+    });
   } else if(action['event_type']=="BackgroundMusicEvent"){
     //$(".glassbox").hide();
     if(action['filename'] == ""){

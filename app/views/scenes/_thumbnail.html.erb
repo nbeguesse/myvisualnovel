@@ -2,18 +2,19 @@
 		<%if scene%>  
 		  <%middle_index = scene.middle_index%>
 	      <%event = Event.for_scene(scene).at(middle_index).first%>
-		  <%=image_tag scene.image_at(middle_index).get_file%>
-		  <%if event%>
+	    <%end%>
+	    <%if scene && event%>
+
 		    <%event.characters_present.each do |char|%>
-		      <%=image_tag char[1], :class=>"characters"%>
+		      <%=image_tag char[1], :class=>(char[0]=="BG" ? "bg" : "characters")%>
 		    <%end%>
 		    <%if event.glassbox?%>
 		      <%=image_tag "glassbox.png", :class=>"glass"%>
-		      <div class="speaker"><%=event.try(:get_character_name)%></div>
-			  <div class="textarea"><%=event.try(:get_text)%></div>
+		      <div class="speaker"><%=event.character_name%></div>
+			  <div class="textarea"><%=event.get_text%></div>
 		    <%end%>
 
-		  <%end%>
+		  
 		<%else%>
 		  <%=image_tag BackgroundImageEvent.default.get_file%>
 		<%end%>

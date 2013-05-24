@@ -4,16 +4,22 @@ class Character < ActiveRecord::Base
   belongs_to :project
   before_validation :set_defaults, :on=>:create
   has_many :events, :dependent=>:destroy
+  before_save :set_name
+  has_many :events
 
   scope :by_name_and_project, lambda { |name, project| {:conditions => ["type=? and project_id=?", name.to_s, project.id]} }
 
-
+  def set_name
+    if name_changed? && !self.new_record?
+      Event.where(:character_id=>self.id).update_all(:character_name=>self.name)
+    end
+  end
   def default_name
   	self.class.to_s
   end
 
   def self.all_available
-  	[Narrator, Hitomi]
+  	[Narrator, Ami]
   end
 
   def is_narrator?
@@ -74,6 +80,6 @@ class Character < ActiveRecord::Base
 protected
   def set_defaults
   	self.name = self.default_name
-    self.is_female = self.default_sex
+    self.sex = self.default_sex
   end
 end
