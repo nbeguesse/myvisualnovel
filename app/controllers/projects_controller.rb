@@ -1,8 +1,9 @@
 class ProjectsController < ApplicationController
+  before_filter :get_project, :only=>[:show, :edit, :update, :destroy]
   # GET /projects
   # GET /projects.json
   def index
-    @backlink = root_url
+    @backlink = root_path
     @projects = session_obj.projects
     @include_cool_font = @projects.map{|p|p.title.titleize}.join
     if @projects.empty?
@@ -14,13 +15,19 @@ class ProjectsController < ApplicationController
     end
   end
   def play
-    @body_class = "player"
+    @html_class = "player"
     @project = Project.find_by_id_and_basename(params[:id],params[:basename])
-    if @project && (@project.public? || @project.owner?(current_user))
+    if @project && (@project.public? || @project.owner?(session_obj))
       if params[:scene_id]
+        @only_scene = true
         @scenes = [Scene.find(params[:scene_id])]
       else
+        @only_scene = false
+        @project.increment!(:views)
         @scenes = @project.scenes.ordered
+      end
+      if @project.temp?
+        flash.now[:notice] = "Make sure to login to save your work."
       end
       if @scenes.empty?
         flash[:notice] = "Please add some scenes first."
@@ -29,15 +36,15 @@ class ProjectsController < ApplicationController
       end
       #render :layout=>'viewer'
     else
-      raise ActionController::RoutingError.new('Not Found')
+      not_found
     end
   end
 
   # GET /projects/1
   # GET /projects/1.json
   def show
-    @project = Project.find(params[:id])
     @backlink = projects_path
+    #@page_title = @project.title
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @project }
@@ -48,7 +55,7 @@ class ProjectsController < ApplicationController
   # GET /projects/new.json
   def new
     @project = Project.new
-    @backlink = projects_path
+    @backlink = root_path
 
     respond_to do |format|
       format.html # new.html.erb
@@ -58,8 +65,7 @@ class ProjectsController < ApplicationController
 
   # GET /projects/1/edit
   def edit
-    @project = Project.find(params[:id])
-    @backlink = project_url(@project)
+    @backlink = project_path(@project)
   end
 
   # POST /projects
@@ -88,11 +94,9 @@ class ProjectsController < ApplicationController
   # PUT /projects/1
   # PUT /projects/1.json
   def update
-    @project = Project.find(params[:id])
-
     respond_to do |format|
       if @project.update_attributes(params[:project])
-        format.html { redirect_to @project }
+        format.html { redirect_to project_path(@project) }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
@@ -100,16 +104,25 @@ class ProjectsController < ApplicationController
       end
     end
   end
-
+  def get_project
+    @project = Project.find_by_id(params[:id])
+    if @project.nil?
+      not_found
+      return false
+    elsif !@project.owner?(session_obj)
+      not_authorized
+      return false
+    end
+  end
   # # DELETE /projects/1
   # # DELETE /projects/1.json
-  # def destroy
-  #   @project = Project.find(params[:id])
-  #   @project.destroy
+  def destroy
 
-  #   respond_to do |format|
-  #     format.html { redirect_to projects_url }
-  #     format.json { head :no_content }
-  #   end
-  # end
+    @project.destroy
+
+    respond_to do |format|
+      format.html { redirect_to projects_url }
+      format.json { head :no_content }
+    end
+  end
 end

@@ -50,8 +50,9 @@ function createThread(t)
 	var line = $("#threadListTemplate").clone(false);
 	line.removeAttr('id');
 	line.find(".title").text(t.title);
-	line.find(".comments").text(t.posts);
-	line.find(".created-date").text(t.createdAt);
+	line.find(".comments").find('i').text(t.posts);
+	d = new Date(t.createdAt); 
+	line.find(".created-date").text(d.toLocaleString());
 	line.find(".title").attr('href', t.link);
 	line.click(openThreadClick);
         line.data('thread', t);

@@ -1,3 +1,6 @@
+<%content_for :javascript do%>
+ <%=javascript_include_tag("soundmanager2/soundmanager2","inlineplayer")%>
+<%end%>
 <%
   current_event = Event.for_scene(@scene).at(@event_index).first
   bg_file =  current_event.try(:characters_present).try(:first).try(:second) || BackgroundImageEvent.default.get_file

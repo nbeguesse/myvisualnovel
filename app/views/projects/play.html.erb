@@ -1,4 +1,6 @@
-<%content_for :javascript do javascript_include_tag("viewer") end%>
+<%content_for :javascript do%>
+ <%=javascript_include_tag("soundmanager2/soundmanager2","viewer")%>
+<%end%>
         <script>
           var scenes = <%=json_escape(@scenes.map{|scene| scene.get_ordered_events}.flatten.to_json(:methods=>[:event_type, :get_character_name], :except=>[:created_at, :updated_at]).html_safe)%>;
         </script>
@@ -23,13 +25,13 @@
  </div>
  <p>&nbsp;</p>
  <p>
-  <%if current_user && @project.owner?(current_user)%>
-  This visual novel is <a href="<%=edit_project_path(@project)%>"><b><%=@project.public? ? "Public" : "Private"%></b></a>
+  <%if @project.owner?(session_obj)%>
+  This visual novel is set to <a href="<%=edit_project_path(@project)%>"><b><%=@project.public? ? "Public" : "Private"%></b></a>
   <%else%>
   &nbsp;
   <%end%>
  </p>
-<%if @project.public?%>
+<%if @project.public? && !@only_scene%>
 <div id="disqus-comments">
 <h2>Leave a Comment</h2>
 <div id="disqus_thread"></div>
@@ -41,7 +43,7 @@
 
         /* * * DON'T EDIT BELOW THIS LINE * * */
         (function() {
-            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.defer = true; dsq.async = true;
             dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
             (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
         })();

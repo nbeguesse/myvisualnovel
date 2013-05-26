@@ -2,6 +2,9 @@ class CharactersController < ApplicationController
 
   def index
     @project = Project.find(params[:project_id])
+    if !@project.owner?(session_obj)
+      not_authorized and return
+    end
     @characters = @project.characters
     @backlink = project_path(@project)
     respond_to do |format|
@@ -52,6 +55,9 @@ class CharactersController < ApplicationController
 
   def toggle
     @project = Project.find(params[:project_id])
+    if !@project.owner?(session_obj)
+      not_authorized and return
+    end
     named_character = params[:character_type].constantize
     if existing = named_character.first(:conditions=>["project_id=?",@project.id])
       @project.characters.delete(existing)
@@ -74,6 +80,9 @@ class CharactersController < ApplicationController
   def update
     @character = Character.find(params[:id])
     @project = @character.project
+    if !@project.owner?(session_obj)
+      not_authorized and return
+    end
     respond_to do |format|
       if @character.update_attributes(params[:character])
         format.html { redirect_to project_characters_path(@project), notice: 'Character changed!' }

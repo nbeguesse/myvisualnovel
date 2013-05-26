@@ -1,4 +1,4 @@
-html { 
+html.normal { 
   background: url(/images/homepagebg.jpg) no-repeat center center fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -32,14 +32,14 @@ a.btn {
 body {
   background:transparent;
 }
-body.player {
+html.player body {
   background-color:black;
   padding:0;
   margin:0;
   height:100%;
   color:white;
 }
-body.player .container-narrow {
+html.player body .container-narrow {
   background-color:black;
   padding:0px;
   border:0;
@@ -419,3 +419,20 @@ form.edit_project input[type="radio"] {
 #disqus-comments h2 {
   color:gray;
 }
+.carousel-control {
+  text-decoration:none;
+}
+.backlink {
+  display:block;
+
+  position:absolute;
+  right:0;
+  top:50px;
+  width:80px;
+  color:black;
+  font-size: 14px;
+  text-decoration:none;
+  left:-20px;
+  font-weight:normal;
+  text-decoration:none;
+  }

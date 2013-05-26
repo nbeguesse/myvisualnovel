@@ -11,6 +11,10 @@
     </td>
     </tr>
   </table>
-  <button type="submit submitable" class="btn">Change</button>
+  <button type="submit" class="btn btn-primary">Change</button>
+
 
 <%end%>
+  <%= form_for([@project], :method => :delete) do |f|%>   
+        <a class="btn btn-small delete-scene">Delete Project</a>
+  <%end%>

@@ -20,6 +20,7 @@
         Cut-and-paste this URL to share: <input type="text" class="share-link" value="<%=play_url(project.id, project.basename)%>" style="width:90%;">
       </small>
       </p>
+      <small><%=pluralize(project.views, 'view') if project.views > 0%></small>
       
     </li>
   <%end%>

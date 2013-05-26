@@ -1,0 +1,45 @@
+.box {
+
+    overflow: hidden;
+
+    position: relative;
+}
+.post {
+    text-align:left;
+}
+.post .details, .post .details a {
+    color: #797979;
+}
+style.css 
+.post .details {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.12);
+    font-size: 11px;
+    margin: 0 -20px;
+    overflow: hidden;
+    padding: 0 20px;
+    position: relative;
+}
+.post .details span {
+    margin: 6px 0 0;
+}
+
+style.css 
+.icon-audio, .icon-chat, .icon-image, .icon-link, .icon-quote, .icon-standard, .icon-video {
+    display: block;
+    float: left;
+}
+.post .details .comments {
+
+    cursor: pointer;
+    float: right;
+    margin-right: 10px;
+    padding: 0 0 6px 14px;
+    position: relative;
+}
+style.css (line 744)
+.post .details span {
+    margin: 6px 0 0;
+}
+.post .details i {
+    padding-right:5px;
+}

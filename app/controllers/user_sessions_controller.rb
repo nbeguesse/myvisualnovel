@@ -23,6 +23,7 @@ class UserSessionsController < ApplicationController
 
   def create
     @user_session = UserSession.new(params[:user_session])
+    
     #logger.info "USER LOGIN. User try to login with params with login #{params[:user_session][:email]} and remember me #{params[:user_session]["remember_me"]}"
 
     session[:return_to] = nil

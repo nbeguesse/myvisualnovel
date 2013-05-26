@@ -30,6 +30,7 @@ MyVisualNovel::Application.routes.draw do
   match 'login' => 'user_sessions#new', :as => :login
   match 'main/terms' => 'main#terms_of_service', :as=>:terms_of_service
   match 'forum' => "main#forum", :as=>:forum
+  match 'not_found' => 'main#not_found', :as => :not_found
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

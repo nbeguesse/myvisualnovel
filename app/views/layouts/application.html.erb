@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html class="<%=@html_class || "normal"%>">
 <head>
-  <title>Datingsim</title>
-  <%= stylesheet_link_tag "bootstrap.css","inlineplayer","flashblock","application" %>
+  <%@page_title = @page_title || humanize_title(@current_uri)%>
+  <title><%=wrap_title @page_title.titleize%></title>
+  <%= stylesheet_link_tag "bootstrap.css","inlineplayer","flashblock","application", :cache=>"mvn" %>
   
   <%= csrf_meta_tags %>
-  <%if @project || @include_cool_font%>
+  <%if @project.try(:title) || @include_cool_font%>
     <link href='http://fonts.googleapis.com/css?family=Great+Vibes&text=<%=@include_cool_font || @project.title.titleize%>' rel='stylesheet' type='text/css'>
   <%end%>
 </head>
@@ -21,7 +22,7 @@
                     <li><%=link_to "MyVisualNovel", root_url%> <span class="divider">/</span></li>
                     <li><%=link_to "Forum", forum_path%> <span class="divider">/</span></li>
                     <%unless session_obj.projects.empty?%>
-                      <li><%=link_to "Novels", projects_path%> <span class="divider">/</span></li>
+                      <li><%=link_to "My Novels", projects_path%> <span class="divider">/</span></li>
                     <%end%>
                     <%if @project && !@project.new_record?%>
                       <li><%=link_to coolify(@project.title), @project%> <span class="divider">/</span></li>
@@ -56,12 +57,13 @@
 </div>
 </div>
 <%if @backlink%>
-  <a class="carousel-control left" href="<%=@backlink%>" >&lsaquo;</a>
+  <a id="backlink" class="carousel-control left" href="<%=@backlink%>?backlink=<%=@current_uri%>" >&lsaquo;<br/><span class="backlink"><%=humanize_title(@backlink)%></span></a>
 <%end%>
-<%if @nextlink%>
-  <a class="carousel-control right" href="<%=@nextlink%>">&rsaquo;</a>
+<%if @nextlink = @default_nextlink || @nextlink%>
+  <a id="nextlink" class="carousel-control right" href="<%=@nextlink%>">&rsaquo;<br/><span class="backlink"><%=humanize_title(@nextlink)%></span></a>
+ 
 <%end%>
-<%= javascript_include_tag "jquery","jquery-ui-1.10.3.custom.min.js","bootstrap.js","slide","soundmanager2/soundmanager2","inlineplayer","popups","application" %>
+<%= javascript_include_tag "jquery","jquery-ui-1.10.3.custom.min.js","bootstrap.js","slide","popups","application", :cache=>"mvn" %>
 <%= yield(:javascript) || "" %>
 </body>
 </html>

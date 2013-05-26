@@ -200,7 +200,7 @@ $(document).ready(function() {
         return false;
 	 });
 	 $(".delete-scene").click(function(){
-	 	if(confirm('Are you sure? This will delete everything.')){
+	 	if(confirm('Are you sure? This will delete everything. This cannot be undone.')){
 	 	  $(this).closest('form').submit(); 
 	 	}
 	 	return false;
@@ -231,8 +231,7 @@ $(document).ready(function() {
 		$( "#sortable" ).disableSelection();
 	});
 
-	//always put all content in the middle
-	//popups.center($(".container-narrow"));
+	//$("#backlink").attr("href",$("#backlink").attr("href")+"?backlink="+top.location.pathname);
 
 });
 

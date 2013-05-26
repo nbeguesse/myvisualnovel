@@ -16,7 +16,8 @@ class Project < ActiveRecord::Base
       "/play/#{id}/#{basename}"
    end
    def owner?(user)
-     self.owner == user
+     self.owner_id == user.id.to_s
+     self.owner_type == user.class.to_s
    end
   def temp?
     self.owner_type.to_s != "User"

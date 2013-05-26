@@ -1,4 +1,5 @@
 class ScenesController < ApplicationController
+  before_filter :get_scene, :only=>[:destroy, :edit, :update_event, :update, :reorder]
   # GET /scenes
   # GET /scenes.json
   def index
@@ -14,7 +15,7 @@ class ScenesController < ApplicationController
   end
 
   def reorder
-    @scene = Scene.find(params[:id])
+
     @scene.move_to(params[:order_index].to_i)
 
 
@@ -49,19 +50,19 @@ class ScenesController < ApplicationController
   # # GET /scenes/1/edit
   def edit
     @body_class = "scene-editor"
-    @scene = Scene.find(params[:id])
-    @project = @scene.project
-   # @backlink = project_scenes_path(@project)
     @event_index =  params[:event_index] ? params[:event_index].to_i : @scene.middle_index
     @event_count = @scene.events.count
     @event_index = [@event_index, @event_count].min
-
+    @backlink = project_path(@project)
   end
 
   # # POST /scenes
   # # POST /scenes.json
   def create
     @project = Project.find(params[:project_id])
+    if !@project.owner?(session_obj)
+      not_authorized and return
+    end
     @scene = @project.scenes.new(params[:scene])
     #load up initial background and music
     @scene.load_initial_events
@@ -79,8 +80,7 @@ class ScenesController < ApplicationController
 
   def update_event
     @body_class = "scene-editor"
-    @scene = Scene.find(params[:id])
-    @project = @scene.project
+
  #   @backlink = project_scenes_path(@project)
     @event = params[:event_id].present? ? Event.find(params[:event_id]) : @scene.events.new
     unless params[:event_id]
@@ -102,7 +102,6 @@ class ScenesController < ApplicationController
   # # PUT /scenes/1
   # # PUT /scenes/1.json
   def update
-    @scene = Scene.find(params[:id])
 
     respond_to do |format|
       if @scene.update_attributes(params[:scene])
@@ -118,12 +117,25 @@ class ScenesController < ApplicationController
   # # DELETE /scenes/1
   # # DELETE /scenes/1.json
   def destroy
-    @scene = Scene.find(params[:id])
+
     @scene.destroy
 
     respond_to do |format|
       format.html { redirect_to action: "index" }
       format.json { head :no_content }
     end
+  end
+
+  def get_scene
+    @scene = Scene.find_by_id(params[:id])
+    if @scene.nil?
+      not_found
+      return false
+    elsif !@scene.project.owner?(session_obj)
+      not_authorized
+      return false
+    end
+    @project = @scene.project
+    true
   end
 end
