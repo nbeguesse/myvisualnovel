@@ -8,7 +8,7 @@
 		<img data-src="holder.js/300x200" alt="" style="width:300px;height:200px; background-color:lightgray">
 		<%if character = named_character.first(:conditions=>["project_id=?",@project.id])%>
 		  <%=form_for character, :as=>:character, :url=>project_character_path(@project, character) do |f|%>
-		    <h3>
+		    <h3 class="no-monospace">
 		    	<span><%=character.name%> <a class="btn btn-mini change-name" href="#" title="Click to Change Name">Change</a></span>
 		    	<%=f.hidden_field :name, :class=>"nameable"%>
 

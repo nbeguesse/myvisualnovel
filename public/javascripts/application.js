@@ -1,20 +1,55 @@
 
+
+
 function gup(name) { //get URL parameters
     return decodeURI(
         (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
     );
 }
 
+var currentEvent;
+function loadScene(order){
+  if(currentEvent==order){ return; }
+  var action = events[order-1];
+  $("img.bg").attr("src",action["characters_present"][0][1]);
+  $(".characters").remove();
+  var tag = '<img class="characters">';
+    for(var i=1; i<3; i++){
+      if(action['characters_present'][i] != null){ //skip blanks and nils
+          $(tag).attr("src",action['characters_present'][i][1]).insertBefore(".glassbox");
+      }
+    }
+    if(["CharacterSpeaksEvent","NarrationEvent","CharacterThinksEvent"].indexOf(action["event_type"])>=0){
+    	$(".glassbox").show();
+    	$(".glassbox .controls").hide();
+    	 $(".glassbox .speaker").text(action['get_character_name']);
+		 if(action['event_type'] == "NarrationEvent"){
+		 	$(".glass").attr("src","/images/glassbox_n.png");
+		 } else {
+		 	$(".glass").attr("src","/images/glassbox.png");
+		 }
+		 $(".textarea").text(action['text']);
+		 $(".glassbox textarea").val(action['text']);
+    } else {
+    	$(".glassbox").hide();
+    }
+    currentEvent = order;
+}
 
-function setCurrentEvent(obj){
-  var row = $(obj).closest('tr');
-  var num = row.attr("data-id");
-  console.log('num',num)
+function setCurrentEvent(row){
+  // var row = $(obj).closest('tr');
+  if(row.hasClass('selected')){return;}
+   var num = row.attr("data-id");
+  $(".script .more").slideUp();
+  $(".script .dropdown i").removeClass('icon-minus-sign').addClass('icon-pencil');
+  row.find('.more').slideDown();
   $("input.event_id").val(num);
   if(typeof num === "undefined"){
   	//i.e. clicked "Add to Script!" instead of a row change
+  	$("textarea").val("");
   } else {
    	var order = row.attr("data-order-id");
+   	loadScene(order);
     $("input.event_order").val(order);
      $("tr").removeClass('selected');
     $("tr#row"+num).addClass('selected');
@@ -52,16 +87,27 @@ $(document).ready(function() {
 
 	//SCENE EDITOR
 	$(".overlay").hide();
-	$(".scene-editor .overlay-topper a").click(function(){
+	if($("#scene-editor").length > 0){
+	}
+	$("#scene-editor .overlay-topper a").click(function(){
 		$(".overlay").slideUp();
 		$(".overlay-topper").fadeOut();
 		return false;
 	});
 	//drop down options when pencil is clicked
-	$(".scene-editor #dropdown").click(function(){
-		$(this).closest('tr').find('.more').slideToggle();
+	$("table.script tr").click(function(){
+		if(!$(this).hasClass('selected')){
+			setCurrentEvent($(this));
+			$(".overlay").hide();
+		    $(".overlay-topper").hide();
+		}
+		//dont return false or buttons wont work;
+	});
+	$("#scene-editor .dropdown").click(function(){
+		row = $(this).closest('tr');
 		var icon = $(this).find("i");
 		if(icon.hasClass('icon-pencil')){
+		  setCurrentEvent(row);
 		  icon.removeClass('icon-pencil').addClass('icon-minus-sign');
 		} else {
 		  icon.removeClass('icon-minus-sign').addClass('icon-pencil');
@@ -69,38 +115,38 @@ $(document).ready(function() {
 		return false;
 	});
 	//edit bg images
-	$(".scene-editor .edit-bg-image").click(function(){ //dropdown
-		setCurrentEvent(this);
+	$("#scene-editor .edit-bg-image").click(function(){ //dropdown
+	 	setCurrentEvent($(this).closest('tr'));
 		showOverlay(".bg-image");
 		$(".overlay-topper span").text("Choose a Background Image...");
 		return false;
 	});
-	$(".scene-editor .edit-music").click(function(){ //dropdown
-		setCurrentEvent(this);
+	$("#scene-editor .edit-music").click(function(){ //dropdown
+		setCurrentEvent($(this).closest('tr'));
 		showOverlay(".music");
 		$(".overlay-topper span").text("Choose Background Music...");
 		return false;
 	});
 	//edit poses
-	$(".scene-editor .edit-pose").click(function(){
-		 setCurrentEvent(this);
+	$("#scene-editor .edit-pose").click(function(){
+		 setCurrentEvent($(this).closest('tr'));
 		 var id = $(this).attr("data-character-id");
 		 showOverlay(".poses-for-"+id);
 		 $(".overlay-topper span").text("Choose a Pose...");
 		 return false;
 	});
-	//edit love poses
-	$(".scene-editor .edit-love-pose").click(function(){
-		 setCurrentEvent(this);
+	// //edit love poses
+	$("#scene-editor .edit-love-pose").click(function(){
+		 setCurrentEvent($(this).closest('tr'));
 		 var id = $(this).attr("data-character-id");
 		 showOverlay("div.love-poses");
 		 $(".overlay-topper span").text("Choose a Pose...");
 		 return false;
 	});
-	$(".scene-editor .edit-speak").click(function(){
-		 //select current row
-		 setCurrentEvent(this);
-		 //get the speaker's name
+	 $("#scene-editor .edit-speak").click(function(){
+	// 	 //select current row
+	 	 setCurrentEvent($(this).closest('tr'));
+	// 	 //get the speaker's name
 		 var name = $(this).attr("data-name");
 		 $(".glassbox .speaker").text(name);
 		 if(name == ""){
@@ -108,25 +154,21 @@ $(document).ready(function() {
 		 } else {
 		 	$(".glass").attr("src","/images/glassbox.png");
 		 }
-		 //transfer character id, event type, and dialogue to the glass box form
-		 var character_id = $(this).attr("data-character-id");
-		 var event_type = $(this).attr("data-type");
-		 var text = $(this).closest("tr").find(".event_text").val();
-		 $(".glassbox input.character_id").val(character_id);
-		 $(".glassbox input.event_type").val(event_type);
-		 $(".overlay").add(".overlay-topper").hide();
-		 //hide the glassbox dialogue and show the editor
-		 $(".glassbox").css("display","block");
-		 $(".glassbox .textarea").hide();
-		 $(".glassbox .controls").css("display","inline-block");
-		 $(".glassbox textarea").show().val(text).focus();
-		 return false;
-	});
-	//row jumping
-	$(".jump-to").click(function(){
-		top.location.href = $(this).attr("data-url");
-		return false;
-	});
+	// 	 //transfer character id, event type, and dialogue to the glass box form
+	 	 var character_id = $(this).attr("data-character-id");
+	 	 var event_type = $(this).attr("data-type");
+	 	 var text = $(this).closest("tr").find(".event_text").val();
+	 	 $(".glassbox input.character_id").val(character_id);
+	 	 $(".glassbox input.event_type").val(event_type);
+	 	 $(".overlay").add(".overlay-topper").hide();
+	// 	 //hide the glassbox dialogue and show the editor
+	 	 $(".glassbox").css("display","block");
+	 	 $(".glassbox .textarea").hide();
+	 	 $(".glassbox .controls").css("display","inline-block");
+	 	 $(".glassbox textarea").show().focus();
+	 	 return false;
+	 });
+
 	 $(".glassbox textarea").keyup(function(e, obj) {
 	 	while(this.scrollHeight > this.clientHeight){
 	 		var str = $(this).val();
@@ -165,12 +207,15 @@ $(document).ready(function() {
 	 });
 	//END SCENE EDITOR
 
+
+    //sharing
 	$("a.share-link").click(function(){
 		$(this).closest("li").find("p.share").slideToggle('slow');
 	});
 	$("p.share .share-link").live('focus', function () {
             $(this).select();
      });
+	//drag sorting
 	$(function() {
 		$( "#sortable" ).sortable({
 			update: function( event, ui ) {
@@ -187,6 +232,33 @@ $(document).ready(function() {
 	});
 
 	//always put all content in the middle
-	//popups.center($(".jumbotron"));
+	//popups.center($(".container-narrow"));
+
+});
+
+$(window).load(function() {    
+
+	var theWindow        = $(window),
+	    $bg              = $(".textarea"),
+	    aspectRatio      = $bg.width() / $bg.height();
+	    			    		
+	function resizeBg() {
+		
+		if ( (theWindow.width() / theWindow.height()) < aspectRatio ) {
+			//taller
+		    $bg
+		    	.css("height","20%").css("top","74%").css("left","8%");
+		    	$bg.css("width",$bg.css("top"));
+		} else {
+			//wider
+		    $bg.css("height","20%").css("top","74%");
+		    	var height = $(".textarea").position().top;
+		    	$bg.css("width",(height*1.5)+"px").css("left",(height/6.5)+"px").css("font-size",(height/20)+"px");
+		}
+					
+	}
+	if($("body.homepage").length > 0){                  			
+	  theWindow.resize(resizeBg).trigger("resize");
+    }
 
 });

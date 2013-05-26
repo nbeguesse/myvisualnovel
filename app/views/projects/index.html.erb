@@ -9,7 +9,7 @@
       <%scene = Scene.for_project(project).at(project.middle_index).first%>
       <a href="<%=project_path(project)%>">
       <%=render :partial=>"scenes/thumbnail", :locals=>{:scene=>scene}%>
-      <p><%=project.title%></p> </a>
+      <p><%=coolify project.title%></p> </a>
       <p><a class="btn btn-small" href="<%=project_path(project)%>" title="Change it!"><i class="icon-pencil"></i> Edit</a>
         <a class="btn btn-small btn-primary" href="<%=project.play_path%>" title="Watch it!"><i class="icon-play icon-white"></i> Play</a>
         <%if project.public?%>

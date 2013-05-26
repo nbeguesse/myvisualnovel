@@ -1,0 +1,46 @@
+<%content_for :javascript do %>
+	<%=javascript_include_tag("forum","http://mvnforum.disqus.com/embed.js") %>
+	<%=stylesheet_link_tag("forum")%>
+	<%end%>
+<div class="wrapper">
+
+<div class="box">
+	
+	<div class="one-third">
+		<h2>Start a new topic</h2>
+		<form id="newThread">
+
+		<input id="newThreadName" placeholder="Title of new thread" />
+		<input type="submit" value="Start new thread" />
+		</form>
+	</div>
+
+	<div class="two-third last" id="topic">
+			<h1 class="no-monospace"></h1>
+			<div id="disqus_thread"></div>
+	</div>
+
+	<div class="clear"></div>
+</div>
+
+<!-- Begin Blog Grid -->
+<div class="blog-wrap">
+	<!-- Begin Blog -->
+	<div id="threadList">Loading Topics...</div>
+	<!-- End Blog -->
+</div>
+<!-- End Blog Grid -->
+
+</div>
+<!-- End Wrapper -->
+<div id="template" style="display:none;"> 
+	<div class="post format-standard box table-bordered" id="threadListTemplate">
+		<h2 class="no-monospace"><a class="title" href="#"></a></h2>
+		<div class="view"></div>
+		<div class="details">
+			<span class="icon-standard created-date"></span>
+			<span class="comments"><a href="#">0</a></span>
+		</div>
+
+	</div>
+</div>

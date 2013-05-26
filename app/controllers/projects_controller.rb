@@ -4,6 +4,7 @@ class ProjectsController < ApplicationController
   def index
     @backlink = root_url
     @projects = session_obj.projects
+    @include_cool_font = @projects.map{|p|p.title.titleize}.join
     if @projects.empty?
       redirect_to new_project_path and return
     end
@@ -13,8 +14,9 @@ class ProjectsController < ApplicationController
     end
   end
   def play
+    @body_class = "player"
     @project = Project.find_by_id_and_basename(params[:id],params[:basename])
-    if @project && @project.public?
+    if @project && (@project.public? || @project.owner?(current_user))
       if params[:scene_id]
         @scenes = [Scene.find(params[:scene_id])]
       else
@@ -25,10 +27,9 @@ class ProjectsController < ApplicationController
         redirect_to project_path
         return
       end
-      render :layout=>'viewer'
+      #render :layout=>'viewer'
     else
-      flash[:error] = "Sorry, we couldn't find that visual novel."
-      redirect_to root_url
+      raise ActionController::RoutingError.new('Not Found')
     end
   end
 

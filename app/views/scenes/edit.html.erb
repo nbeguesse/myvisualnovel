@@ -2,7 +2,7 @@
   current_event = Event.for_scene(@scene).at(@event_index).first
   bg_file =  current_event.try(:characters_present).try(:first).try(:second) || BackgroundImageEvent.default.get_file
 %>
-<table class="scene-editor">
+<table id="scene-editor">
 	<tr>
 		<td>
 			
@@ -17,11 +17,11 @@
 			  	 	  <tr><td>Nothing in the script yet.</td></tr>
 			  	 	<%end%>
 			  	 	<%Event.for_scene(@scene).ordered.each do |event|%>
-			  	 	  <tr data-order-id="<%=event.order_index%>" data-id="<%=event.id%>" id="row<%=event.id%>" class="<%="selected" if @event_index==event.order_index%>">
+			  	 	  <tr data-order-id="<%=event.order_index%>" data-id="<%=event.id%>" id="row<%=event.id%>">
 			  	 	  	<td><%=event.order_index%></td>
 			  	 	  	<td>
 			  	 	  		<%if @event_index!=event.order_index%>
-			  	 	  		  <div class="jump-to tippable" title="Jump Here" data-url="<%=edit_project_scene_url(@project, @scene, :event_index=>event.order_index)%>">
+			  	 	  		  <div data-url="<%=edit_project_scene_url(@project, @scene, :event_index=>event.order_index)%>">
 			  	 	  		<%end%>
 
 			  	 	  		<%unless event.is_a?(NarrationEvent)%>
@@ -45,7 +45,7 @@
 			  	 	  		</div>
 			  	 	  	</td>
 			  	 	  	<td width="28">
-			  	 	  		<a class="btn btn-mini" href="#" id='dropdown' title="Edit or Delete"><i class="icon-pencil"></i></a>
+			  	 	  		<a class="btn btn-mini dropdown" href="#" title="Edit or Delete"><i class="icon-pencil"></i></a>
 			  	 	  	</td>
 			  	 	  </tr>
 			  	 	<%end%>
@@ -130,10 +130,10 @@
 			  <%end%>
 			  
 			    <!-- edit text -->
-			    <div class="glassbox" style="<%="display:none" if !current_event.try(:glassbox?)%>">
-			    	<%=image_tag "glassbox#{'_n' if current_event && current_event.is_a?(NarrationEvent)}.png", :class=>"glass"%>
-			    	<div class="speaker"><%=current_event.try(:get_character_name)%></div>
-			    	<div class="textarea"><%=current_event.try(:get_text)%></div>
+			    <div class="glassbox" style="display:none">
+			    	<%=image_tag "glassbox.png", :class=>"glass"%>
+			    	<div class="speaker"></div>
+			    	<div class="textarea"></div>
 
 			    	  <%=form_tag update_event_project_scene_path(@project, @scene)%>
 			    	  <textarea name="event[text]" value="" class="hide"></textarea>
@@ -260,4 +260,9 @@
   <!-- SM2 flash goes here -->
 
  </div>
-
+<script>
+  var events = <%=json_escape([@scene].map{|scene| scene.get_ordered_events}.flatten.to_json(:methods=>[:event_type, :get_character_name], :except=>[:created_at, :updated_at, :character_type]).html_safe)%>
+  window.onload = function(){
+  	setCurrentEvent($("#row<%=current_event.id%>"));
+  }
+</script>

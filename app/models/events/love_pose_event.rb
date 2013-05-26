@@ -4,7 +4,7 @@ class LovePoseEvent < BackgroundImageEvent
   before_save :set_bg
  
   def self.folder
-   "/LoveImage/Base"
+   "/LovePose/Base"
   end
 
   def detail

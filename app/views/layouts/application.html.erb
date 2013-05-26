@@ -5,9 +5,13 @@
   <%= stylesheet_link_tag "bootstrap.css","inlineplayer","flashblock","application" %>
   
   <%= csrf_meta_tags %>
-  <link href='http://fonts.googleapis.com/css?family=Great+Vibes' rel='stylesheet' type='text/css'>
+  <%if @project || @include_cool_font%>
+    <link href='http://fonts.googleapis.com/css?family=Great+Vibes&text=<%=@include_cool_font || @project.title.titleize%>' rel='stylesheet' type='text/css'>
+  <%end%>
 </head>
 <body class="<%=@body_class || ""%>">
+<%= yield(:head) || "" %>
+<div style="position:relative">
 <div class="navbar">
           <div class="navbar-inner">
             <div class="container">
@@ -15,6 +19,7 @@
 
                     <ul class="breadcrumb">
                     <li><%=link_to "MyVisualNovel", root_url%> <span class="divider">/</span></li>
+                    <li><%=link_to "Forum", forum_path%> <span class="divider">/</span></li>
                     <%unless session_obj.projects.empty?%>
                       <li><%=link_to "Novels", projects_path%> <span class="divider">/</span></li>
                     <%end%>
@@ -49,12 +54,14 @@
   <%= yield %>
   </div>
 </div>
+</div>
 <%if @backlink%>
   <a class="carousel-control left" href="<%=@backlink%>" >&lsaquo;</a>
 <%end%>
 <%if @nextlink%>
   <a class="carousel-control right" href="<%=@nextlink%>">&rsaquo;</a>
 <%end%>
-<%= javascript_include_tag "jquery","http://code.jquery.com/ui/1.10.3/jquery-ui.js","bootstrap.js","slide","soundmanager2/soundmanager2","inlineplayer","popups","application" %>
+<%= javascript_include_tag "jquery","jquery-ui-1.10.3.custom.min.js","bootstrap.js","slide","soundmanager2/soundmanager2","inlineplayer","popups","application" %>
+<%= yield(:javascript) || "" %>
 </body>
 </html>

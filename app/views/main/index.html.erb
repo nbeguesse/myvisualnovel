@@ -1,9 +1,18 @@
-
-<div class="lead">
-  <ul>
-  	<%=link_to "Make a New Story", new_project_path, {"title"=>"Make your fantasy!", "data-placement"=>"right"}%>
-  </ul>
-  <ul>
-  	<%=link_to "Play a Story", projects_path, {"title"=>"See what others have created!", "data-placement"=>"right"}%>
-  </ul>
+<%content_for :head do%>
+  <div id="wrapper">
+  <%=image_tag "glassbox.png"%>
+  <div class="textarea" style="position:absolute;border:1px solid black">Ami</div>
+  </div>
+<%end%>
+<h3>What will you do?</h3>
+<div>
+  <p>
+  	<%=link_to "Make My Own Visual Novel", new_project_path, {"title"=>"Make your fantasy!", "data-placement"=>"right"}%>
+  </p><hr/>
+  <p>
+  	<%=link_to "View Finished Novels", projects_path, {"title"=>"See what others have created!", "data-placement"=>"right"}%>
+  </p> <p><hr/>
+  	<%=link_to "Go to Forums", "#", {"title"=>"", "data-placement"=>"right"}%>
+  </p>
+  <p>&nbsp;</p>
 </div>

@@ -51,7 +51,7 @@ class ScenesController < ApplicationController
     @body_class = "scene-editor"
     @scene = Scene.find(params[:id])
     @project = @scene.project
-    @backlink = project_scenes_path(@project)
+   # @backlink = project_scenes_path(@project)
     @event_index =  params[:event_index] ? params[:event_index].to_i : @scene.middle_index
     @event_count = @scene.events.count
     @event_index = [@event_index, @event_count].min
@@ -81,7 +81,7 @@ class ScenesController < ApplicationController
     @body_class = "scene-editor"
     @scene = Scene.find(params[:id])
     @project = @scene.project
-    @backlink = project_scenes_path(@project)
+ #   @backlink = project_scenes_path(@project)
     @event = params[:event_id].present? ? Event.find(params[:event_id]) : @scene.events.new
     unless params[:event_id]
       flash[:notice] = "Good job! Add some more!"
