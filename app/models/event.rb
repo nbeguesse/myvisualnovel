@@ -75,12 +75,14 @@ class Event < ActiveRecord::Base
       #TODO: Move this inside those models
       if arr[1] && arr[1][0]==character_id #character in position 1
         arr[1][1] = filename
+        arr[1][2] = subfilename
       elsif arr[2] && arr[2][0]==character_id #character in position 2
         arr[2][1] = filename
+        arr[2][2] = subfilename
       elsif arr[1].nil?
-        arr[1] = [character_id, filename]
+        arr[1] = [character_id, filename, subfilename]
       elsif arr[2].nil?
-        arr[2] = [character_id, filename]
+        arr[2] = [character_id, filename, subfilename]
       else
         #TODO: Throw error if already 2 chars present
         #arr << [character_id, filename]

@@ -205,12 +205,12 @@
 		      </ul>
 		    </div>
 
-		    <!-- Poses -->
+		    <!-- Love Poses -->
 		      <%if @scene.love_scene?
 		      	sexes = @project.characters.pluck(:sex)
 		        pose_list = @project.characters.map{|c|c.love_pose_list(sexes)}
-		        pose_list << Male.new.love_pose_list(sexes)
-		        pose_list << Female.new.love_pose_list(sexes)
+		        #pose_list << Male.new.love_pose_list(sexes)
+		        #pose_list << Female.new.love_pose_list(sexes)
 		       %>
 		       <div class="overlay love-poses" style="display:none">
 			      	<ul class="thumbnails">
@@ -221,6 +221,7 @@
 			            <input type="hidden" name="event[filename]" value="<%=option.url%>">
 			            <input type="hidden" name="event[character_id]" value="<%=character.id%>">
 			            <input type="hidden" name="event[order_index]" class="event_order" value="<%=@event_index%>">
+			            
 			            <input type="hidden" name="event_id" class="event_id" value="">
 				  	     <a class="submitable thumbnail">
 				  	    <%=image_tag(option.thumbnail)%><p><%=option.title%></p>
@@ -231,6 +232,7 @@
 		            </ul>
 		        </div>
 		      <%else%>
+		        <!-- Normal Poses -->
 			    <%@project.characters.each do |character|%>
 			    <%next if character.is_narrator?%>
 			      <div class="overlay poses-for-<%=character.id%>" style="display:none">
@@ -242,6 +244,23 @@
 			            <input type="hidden" name="event[filename]" value="<%=option.url%>">
 			            <input type="hidden" name="event[character_id]" value="<%=character.id%>">
 			            <input type="hidden" name="event[order_index]" class="event_order" value="<%=@event_index%>">
+			            <input type="hidden" name="event[subfilename]" value="<%=option.face%>">
+			            <input type="hidden" name="event_id" class="event_id" value="">
+				  	     <a class="submitable thumbnail">
+				  	    <%=image_tag(option.thumbnail)%><p><%=option.title%></p>
+				  	    </a>
+				  	  </li>
+				  	  </form>
+				  	<%end%>
+				    </ul>
+			      </div>
+			      <div class="overlay faces-for-<%=character.id%>" style="display:none">
+			      	<ul class="thumbnails">
+				    <%character.face_list.each do |option|%>
+				      <%=form_tag update_event_project_scene_path(@project, @scene)%>
+				        <li class="span2">
+				        <input type="hidden" name="event[type]" value="CharacterPoseEvent">
+			            <input type="hidden" name="event[subfilename]" value="<%=option.url%>">
 			            <input type="hidden" name="event_id" class="event_id" value="">
 				  	     <a class="submitable thumbnail">
 				  	    <%=image_tag(option.thumbnail)%><p><%=option.title%></p>

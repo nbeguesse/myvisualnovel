@@ -107,13 +107,15 @@ function nextEvent(){
   } else if (action['event_type']=="CharacterPoseEvent"){
     $(".glassbox").hide();
 	   var tag = '<img class="characters" src="'+action["filename"]+'" style="display: none;">';
+     var facetag = '<img class="characters" src="'+action["subfilename"]+'" style="display: none;">';
     for(var i=1; i<3; i++){
       if(action['characters_present'][i] != null){ //skip blanks and nils
         if(action["characters_present"][i][0] == action['character_id']){ //if character file src changed
-          $("#character"+i).attr("id","character-old").fadeOut('slow',function(){ //remove old character if exists
-            $("#character-old").remove();
+          $(".character"+i).addClass("character-old").fadeOut('slow',function(){ //remove old character if exists
+            $(".character-old").remove();
           });
-          $(tag).attr("id","character"+i).insertBefore(".glassbox").fadeIn('slow', function(){  //add new char
+          $(tag).addClass("character"+i).insertBefore(".glassbox").fadeIn('slow');
+          $(facetag).addClass("character"+i).insertBefore(".glassbox").fadeIn('slow', function(){ 
             currentEvent += 1;
             setTimeout('nextEvent()',timeToWait);
           });
@@ -143,11 +145,14 @@ function nextEvent(){
 	} else if(action['event_type']=="CharacterVanishEvent"){
     for(var i=1; i<3; i++){
       if(action['characters_present'][i] == null){
-        //note: will run twice if 2 vanishings at once
-        $("#character"+i).fadeOut('slow',function(){
+        var character = $(".character"+i);
+        if(character.length > 0){
+          character.fadeOut('slow',function(){
+          });
           currentEvent += 1;
-          setTimeout('nextEvent()',timeToWait);
-        });
+          setTimeout('nextEvent()',timeToWait+600);
+        }
+        
       }
     }
     

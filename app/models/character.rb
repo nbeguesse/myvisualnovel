@@ -26,7 +26,7 @@ class Character < ActiveRecord::Base
     false
   end
 
-  PoseOption = Struct.new(:url, :title, :thumbnail)
+  PoseOption = Struct.new(:url, :title, :thumbnail, :face)
   def pose_list
    out = []
    path = File.join("Character",self.type,"Pose")
@@ -34,6 +34,20 @@ class Character < ActiveRecord::Base
      next if invalid_image?(file)
      url = "/"+File.join(path,file)
      thumbnail = "/"+File.join(path,"thumbnail",file)
+     face = "/"+File.join("Character",self.type,"Face","normal.png")
+     out << PoseOption.new(url, humanize(file), thumbnail, face)
+   end
+   out
+  end
+
+  def face_list
+   out = []
+   path = File.join("Character",self.type,"Face")
+   Dir.new(File.join(Rails.root, "public", path)).each do |file|
+     next if invalid_image?(file)
+     url = "/"+File.join(path,file)
+     thumbnail = "/"+File.join(path,"thumbnail",file)
+     #face = "/"+File.join("Character",self.type,"Face","normal.png")
      out << PoseOption.new(url, humanize(file), thumbnail)
    end
    out

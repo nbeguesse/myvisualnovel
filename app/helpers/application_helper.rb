@@ -21,7 +21,7 @@ module ApplicationHelper
     elsif ( path =~ /\/projects\/\d+\/scenes\// )
       return "#{@project.title} : #{@scene.get_description}" rescue return "Edit Script"    
     elsif ( path =~ /\/projects\/\d+/ )
-      return "Edit "+@project.title rescue return "Edit Novel"
+      return "Edit My Novel"
     elsif ( path =~ /\/projects\/new/ )
       return "START"
     elsif ( path =~ /\/projects/ )

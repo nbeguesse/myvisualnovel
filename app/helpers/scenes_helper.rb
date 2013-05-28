@@ -36,6 +36,8 @@ module ScenesHelper
 	def subcommand event
 		if event.is_a?(LovePoseEvent)
 		  '<a data-type="LovePoseEvent" href="#" class="btn btn-small edit-bg-image"><i class="icon-pencil"></i> Change BG</a>'.html_safe
+		elsif event.is_a?(CharacterPoseEvent)
+		  raw('<a data-character-id="'+event.character_id.to_s+'" href="#" class="btn btn-small edit-face"><i class="icon-pencil"></i> Change Face</a>')
 		else
 			""
 		end

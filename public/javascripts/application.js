@@ -17,6 +17,7 @@ function loadScene(order){
     for(var i=1; i<3; i++){
       if(action['characters_present'][i] != null){ //skip blanks and nils
           $(tag).attr("src",action['characters_present'][i][1]).insertBefore(".glassbox");
+          $(tag).attr("src",action['characters_present'][i][2]).insertBefore(".glassbox");
       }
     }
     if(["CharacterSpeaksEvent","NarrationEvent","CharacterThinksEvent"].indexOf(action["event_type"])>=0){
@@ -40,9 +41,9 @@ function setCurrentEvent(row){
   // var row = $(obj).closest('tr');
   if(row.hasClass('selected')){return;}
    var num = row.attr("data-id");
-  $(".script .more").slideUp();
+  $(".script .more").hide();
   $(".script .dropdown i").removeClass('icon-minus-sign').addClass('icon-pencil');
-  row.find('.more').slideDown();
+  row.find('.more').show();
   $("input.event_id").val(num);
   if(typeof num === "undefined"){
   	//i.e. clicked "Add to Script!" instead of a row change
@@ -57,10 +58,13 @@ function setCurrentEvent(row){
 }
 function showOverlay(name){
   $(".glassbox").hide();
-  $(".overlay").slideUp("slow", function(){
+  $(".overlay .thumbnails").css("visibility","hidden");
+;  $(".overlay").slideUp("slow", function(){
   	setTimeout(
   		function(){
-  			$(name).slideDown();
+  			$(name).slideDown('slow', function(){
+  				$(".overlay .thumbnails").css("visibility","visible");
+  			});
   			$(".overlay-topper").show();
   		},500
   	)
@@ -133,6 +137,15 @@ $(document).ready(function() {
 		 var id = $(this).attr("data-character-id");
 		 showOverlay(".poses-for-"+id);
 		 $(".overlay-topper span").text("Choose a Pose...");
+		 return false;
+	});
+	//edit faces
+	$("#scene-editor .edit-face").click(function(){
+		 setCurrentEvent($(this).closest('tr'));
+		 var id = $(this).attr("data-character-id");
+		 console.log(id);
+		 showOverlay(".faces-for-"+id);
+		 $(".overlay-topper span").text("Choose a Face...");
 		 return false;
 	});
 	// //edit love poses
@@ -232,6 +245,10 @@ $(document).ready(function() {
 	});
 
 	//$("#backlink").attr("href",$("#backlink").attr("href")+"?backlink="+top.location.pathname);
+	//$("#backlink").click(function(){
+	//	$(".container-narrow").css("height",$(".container-narrow").height()).html("").toggle("drop", {direction: "left"});
+	//	return false;
+	//});
 
 });
 
