@@ -75,6 +75,7 @@ class ProjectsController < ApplicationController
     first_project = session_obj.projects.empty?
     @project.owner_id = session_obj.id
     @project.owner_type = session_obj.type
+    set_adult_cookie
     respond_to do |format|
       if @project.save
         if first_project

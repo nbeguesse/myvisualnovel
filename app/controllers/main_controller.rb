@@ -1,4 +1,9 @@
 class MainController < ApplicationController
+
+  def cookie
+    set_adult_cookie
+    redirect_to params[:redirect_to] || root_url
+  end
   
   def not_found
   	

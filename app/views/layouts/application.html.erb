@@ -3,7 +3,7 @@
 <head>
   <%@page_title = @page_title || humanize_title(@current_uri)%>
   <title><%=wrap_title @page_title.titleize%></title>
-  <%= stylesheet_link_tag "bootstrap.css","inlineplayer","flashblock","application", :cache=>"mvn" %>
+  <%= stylesheet_link_tag "bootstrap.css","inlineplayer","flashblock","simple-slider","simple-slider-volume","application", :cache=>"mvn" %>
   
   <%= csrf_meta_tags %>
   <%if @project.try(:title) || @include_cool_font%>

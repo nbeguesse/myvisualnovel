@@ -1,5 +1,5 @@
 html.normal { 
-  background: url(/images/homepagebg.jpg) no-repeat center center fixed; 
+  background: url(/images/festival.jpg) no-repeat center center fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -185,7 +185,7 @@ font-weight:normal;
     width:375px;
 }
 .script-holder {
-    max-height:300px;
+    height:300px;
     overflow-y:auto;
 }
 #scene-editor .script hr {
@@ -278,12 +278,11 @@ li.span2 .textarea {
     position:absolute;
 
     text-align:left;
-    top:87px;
-    width:137px;
-    max-width:137px;
-    left:14px;
-    height:20px;
-    max-height:20px;
+    top:60%;
+    width:80%;
+    left:8%;
+    height:18%;
+    line-height:80%;
 }
 .mini-viewer textarea, .mini-viewer .textarea, .viewer .textarea {
     font-family:monospace;
@@ -327,7 +326,7 @@ li.span2 .textarea {
   white-space:pre-wrap;
   word-wrap:break-word;
 }
-.mini-viewer .speaker, .viewer .speaker {
+.speaker {
     position:absolute;
     text-shadow: 1px 1px 1px #000;
     /* for 640 x 480 screen */
@@ -335,10 +334,13 @@ li.span2 .textarea {
 }
 li.span2 .speaker {
   position: absolute;
-  top:78px;
-  left: 14px;
+  top:50%;
+  left: 8%;
   font-size:26%;
   color:white;
+  width:80%;
+  height:10%;
+  text-align:left;
 }
 .mini-viewer .speaker {
     top:309px;
@@ -435,4 +437,31 @@ form.edit_project input[type="radio"] {
   left:-20px;
   font-weight:normal;
   text-decoration:none;
+}
+  #title {
+    width: 800px;
+    height: 600px;
+    position: relative;
   }
+  #title-wrapper > #title {
+    display: table;
+    position: static;
+  }
+  #title div {
+    position: absolute;
+    top: 50%;
+  }
+  #title div div {
+    position: relative;
+    top: -50%;
+  }
+  #title > div {
+    display: table-cell;
+    vertical-align: middle;
+    position: static;
+  }
+#volume-control-slider {
+  display:inline-block;
+  margin-left:0;
+  top:3px;
+}

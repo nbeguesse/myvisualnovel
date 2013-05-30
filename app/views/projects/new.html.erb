@@ -12,6 +12,12 @@
   <% end %>
   <input name="project[title]" type="text" class="" placeholder="Dream Date">
   <div class="actions">
-    <button class="btn btn-primary submitable">GO</button>
+    <%if has_adult_cookie?%>
+      <button class="btn btn-primary submitable">GO</button>
+    <%else%>
+      <br/><p>By the way, you must be at least 18 years old to use this website.</p>
+      <p><button class="btn btn-primary submitable">I'm 18 or older</button></p>
+      <a href="/" class="btn btn-small">I'm not</a>
+    <%end%>
   </div>
 <% end %>

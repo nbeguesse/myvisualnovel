@@ -1,3 +1,4 @@
+		
 		<%play ||= false%>
 		<%if scene%>  
 		  <%middle_index = scene.middle_index%>
@@ -7,11 +8,12 @@
 
 		    <%event.characters_present.each do |char|%>
 		      <%=image_tag char[1], :class=>(char[0]=="BG" ? "bg" : "characters")%>
+		      <%=image_tag char[2], :class=>("characters")%>
 		    <%end%>
 		    <%if event.glassbox?%>
 		      <%=image_tag "glassbox.png", :class=>"glass"%>
 		      <div class="speaker"><%=event.character_name%></div>
-			  <div class="textarea"><%=event.get_text%></div>
+			  <div class="textarea"><%=simple_format event.get_text%></div>
 		    <%end%>
 
 		  

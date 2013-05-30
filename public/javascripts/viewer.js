@@ -241,5 +241,13 @@ $(document).ready(function() {
     soundManager.onload = function() {
       nextEvent(); //starts viewer
     }
+$("#volume-control").bind("slider:changed", function (event, data) {
+  // The currently selected value of the slider
+  console.log('value',data.value);
+
+  // The value as a ratio of the slider (between 0 and 1)
+  console.log('ratio',data.ratio);
+});
+
 
 });

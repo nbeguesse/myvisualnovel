@@ -32,6 +32,10 @@ class ApplicationController < ActionController::Base
   end
   helper_method :session_obj
 
+  def set_adult_cookie
+    cookies.permanent.signed[:adult] = true
+  end
+
   
   def secure?
     !(request.local? || Rails.env.development? || Rails.env.test?)

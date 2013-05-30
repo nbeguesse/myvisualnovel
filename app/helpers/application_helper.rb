@@ -1,4 +1,7 @@
 module ApplicationHelper
+  def has_adult_cookie?
+    !cookies[:adult].blank?
+  end
   def json_escape(s)
     result = s.to_s.gsub('/', '\/')
     s.html_safe? ? result.html_safe : result
