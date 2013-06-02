@@ -3,7 +3,6 @@ function resizeTextArea(container, div) {
 	aspectRatio = 800/600;
 	if ( (container.width() / container.height()) < aspectRatio ) {
 		//taller
-		console.log('taller');
 	    div.css("width","85%").css("left","7%");
 	    div.css("height","20%").css("top","74%");
 	    div.css("font-size","20px");
@@ -16,17 +15,30 @@ function resizeTextArea(container, div) {
 				
 }
 function resizeThumbnail(container, div) {
+		//resize thumbnails on demand so they always look good
+		var div = $("li .textarea");
+		if(div.length != 0){ 
+		    var width = div.position().left
+		    div.css("height",(width*2)+"px").css("top",(width*7)+"px");
+		    div.css("font-size",(width/3.8)+"px");
+		    div = $("li .speaker");
+		    div.css("top",(width*5.9)+"px");
+		    div.css("font-size",(width/3.8)+"px");
+	    }
+	    $("li .characters").css("width",$("img.bg").width()+"px"); //manual adjust to make them look right
+	    var character2 = $("li .character2");
+	    if(character2.length != 0){
+	    	var width = character2.width()/2;
+	    	var height = character2.height();
+	    	console.log(width)
+	    	console.log(height)
+	    	character2.css("margin-left",width+"px");
+	    	character2.css("clip","rect(0 "+width+"px "+height+"px 0px)");
+	    }
 
-		div = $("li .textarea");
-	    var width = div.position().left
-	    div.css("height",(width*2)+"px").css("top",(width*7)+"px");
-	    div.css("font-size",(width/3.8)+"px");
-	    div = $("li .speaker");
-	    div.css("top",(width*5.9)+"px");
-	    div.css("font-size",(width/3.8)+"px");
 
 				
-}
+} 
 function resizeSpeaker(container, div) {
 	aspectRatio = 800/600;
 	if ( (container.width() / container.height()) < aspectRatio ) {
@@ -54,28 +66,44 @@ function gup(name) { //get URL parameters
 }
 
 var currentEvent;
+var lefty = ""; var righty = "";
+
+function setupGlassBox(action){
+	 if(action['event_type'] == "NarrationEvent"){
+	 	$("img.glass").attr("src","/images/glassbox_n.png");
+	 } else {
+	 	$("img.glass").attr("src","/images/glassbox.png");
+	 }
+	 if(action['event_type']=="CharacterSpeaksEvent"){
+	   lefty="&ldquo;"; righty = "&rdquo;";
+	 } else if(action['event_type']=="CharacterThinksEvent"){
+	 	lefty="<i class='thought'>("; righty=")</i>";
+	 } else {
+	 	lefty=""; righty="";
+	 }
+}
+
 function loadScene(order){
   if(currentEvent==order){ return; }
   var action = events[order-1];
   $("img.bg").attr("src",action["characters_present"][0][1]);
-  $(".characters").remove();
+  $("img.characters").remove();
   var tag = '<img class="characters">';
     for(var i=1; i<3; i++){
-      if(action['characters_present'][i] != null){ //skip blanks and nils
-          $(tag).attr("src",action['characters_present'][i][1]).insertBefore(".glassbox");
-          $(tag).attr("src",action['characters_present'][i][2]).insertBefore(".glassbox");
+      var charfile = action['characters_present'][i];
+      if(charfile != null){ //skip blanks and nils
+          $(tag).attr("src",charfile[1]).addClass("character"+i).insertBefore(".glassbox"); //put their body
+          $(tag).attr("src",charfile[2]).addClass("character"+i).insertBefore(".glassbox"); //put their face
+          $("div.poses-for-"+charfile[0]).find("input.subfilename").val(charfile[2]); //put their face as default
       }
     }
     if(["CharacterSpeaksEvent","NarrationEvent","CharacterThinksEvent"].indexOf(action["event_type"])>=0){
     	$(".glassbox").show();
     	$(".glassbox .controls").hide();
     	 $(".glassbox .speaker").text(action['get_character_name']);
-		 if(action['event_type'] == "NarrationEvent"){
-		 	$(".glass").attr("src","/images/glassbox_n.png");
-		 } else {
-		 	$(".glass").attr("src","/images/glassbox.png");
-		 }
-		 $(".textarea").text(action['text']);
+    	 setupGlassBox(action);
+		 $(".textarea").html(lefty+action['text']+righty);
+
 		 $(".glassbox textarea").val(action['text']);
     } else {
     	$(".glassbox").hide();
@@ -119,7 +147,9 @@ function showOverlay(name){
   
 }
 function confirmCharacterRemoval(){
-  	  return confirm("This will DELETE the character from all scenes where they appear. Are you sure?");
+  	  if(confirm("This will DELETE the character from all scenes where they appear. Are you sure?")){
+  	  	$(this).closest("form").submit(); return false;
+  	  }
 }
 $(document).ready(function() {
 	//enable tooltips on links
@@ -156,12 +186,7 @@ $(document).ready(function() {
 	$("#scene-editor .dropdown").click(function(){
 		row = $(this).closest('tr');
 		var icon = $(this).find("i");
-		//if(icon.hasClass('icon-pencil')){
 		  setCurrentEvent(row);
-		 // icon.removeClass('icon-pencil').addClass('icon-minus-sign');
-		//} else {
-		 // icon.removeClass('icon-minus-sign').addClass('icon-pencil');
-		//}
 		return false;
 	});
 	//edit bg images
@@ -194,14 +219,14 @@ $(document).ready(function() {
 		 $(".overlay-topper span").text("Choose a Face...");
 		 return false;
 	});
-	// //edit love poses
-	$("#scene-editor .edit-love-pose").click(function(){
-		 setCurrentEvent($(this).closest('tr'));
-		 var id = $(this).attr("data-character-id");
-		 showOverlay("div.love-poses");
-		 $(".overlay-topper span").text("Choose a Pose...");
-		 return false;
-	});
+	// // //edit love poses
+	// $("#scene-editor .edit-love-pose").click(function(){
+	// 	 setCurrentEvent($(this).closest('tr'));
+	// 	 var id = $(this).attr("data-character-id");
+	// 	 showOverlay(".poses-for-"+id);
+	// 	 $(".overlay-topper span").text("Choose a Pose...");
+	// 	 return false;
+	// });
 	 $("#scene-editor .edit-speak").click(function(){
 	// 	 //select current row
 	 	 setCurrentEvent($(this).closest('tr'));

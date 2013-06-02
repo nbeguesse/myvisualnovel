@@ -2,7 +2,7 @@
  <%=javascript_include_tag("soundmanager2/soundmanager2","viewer","simple-slider.min")%>
 <%end%>
         <script>
-          var scenes = <%=json_escape(@scenes.map{|scene| scene.get_ordered_events}.flatten.to_json(:methods=>[:event_type, :get_character_name], :except=>[:created_at, :updated_at]).html_safe)%>;
+          var scenes = <%=json_escape(@scenes.map{|scene| scene.get_ordered_events}.concat(@after_events).flatten.to_json(:methods=>[:event_type, :get_character_name], :except=>[:created_at, :updated_at]).html_safe)%>;
         </script>
         <%if has_adult_cookie?%>
           <!-- Stage Viewer -->
@@ -17,10 +17,10 @@
             </div>
 
           </div>
-          <div style="text-align:left">
-          <a class="btn btn-mini" href="#"><i class="icon-pause"></i></a>
+          <div style="text-align:left" id="sound-controls">
+          <a id="pause-button" class="btn btn-mini" href="#"><i class="icon-pause"></i></a>
           <a class="btn btn-mini" href="#" title="Mute"><i class="icon-volume-up"></i></a>
-          <input id="volume-control" type="text" data-slider="true" data-slider-theme="volume">
+          <input id="volume-control" type="text" data-slider="true" data-slider-theme="volume" data-slider-highlight="true" data-slider-range="0,100">
           </div>
         <%else%>
         <div id="title-wrapper">

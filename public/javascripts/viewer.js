@@ -1,5 +1,8 @@
-var lefty = ""; var righty = "";
+
 var cover = "<div class='black glass' style='display:none; width:800px; height:600px'></div>;";
+var anim = "<img src='/images/7-1.gif'>";
+var titlecard = '<div id="title-wrapper"><div id="title"><div><div><span></span></div></div></div></div>';
+var afterCreditsText = "<h3><a href='javascript:location.reload()'>Play Again</a><br/></h3><p><small>Powered by <br/><a href='/'>MyVisualNovel.com</a></small></p>";
 
 //MODIFIED TICKERTYPE PLUGIN
 var tickerCursor, tickerText;
@@ -19,31 +22,25 @@ function typetext() {
 	var charTime = 50;
 	$('#textarea').html(lefty + tickerText.substr(0, tickerCursor++));
 	if(tickerCursor < tickerText.length+1)
-		if( isInTag ){
+		if( isInTag ){ //skip HTML tags
 			typetext();
 		}else{
 			var curr = tickerText.substr(tickerCursor-2,1);
+      voiceSound.play();
 			if ((curr==".")||(curr=="?"||curr=="!")){ charTime = 200;}
-			setTimeout("typetext()", charTime);
+      if(!paused){
+			  setTimeout("typetext()", charTime);
+
+      }
 		}
 	else {
 		textIsTyping = false;
 		waitingForUser = true;
-		$("#textarea").html(lefty+tickerText+righty)
+		$("#textarea").html(lefty+tickerText+righty+anim)
 		tickerText = "";
 	}	
 }
 //END TICKERTYPE PLUGIN
-
-function speak(){
-  	$("#textarea").text("");
-    $(".glassbox .speaker").text("");
-  	$(".glassbox").fadeIn('slow',function(){
-  		$("#textarea").text(action['text']);
-  		$(".glassbox .speaker").text(action["get_character_name"]);
-  		createTicker();
-  	});
-}
 
 //START SOUNDS
   this.sounds = [];
@@ -70,7 +67,7 @@ function speak(){
 	var vol = s.volume;
 	if (vol == 0) { 
 		s.stop();
-		s.setVolume(100); //reset volume
+		s.setVolume(defaultVolume); //reset volume for the replay
 		return false;
 	}
 	s.setVolume(Math.max(0,vol+amount));
@@ -81,6 +78,15 @@ function speak(){
     fadeOutSound(self.lastSound.id, -5);
    }
  }
+ function setVolume(g){
+  soundManager.defaultOptions.volume = g;
+  defaultVoume = g;
+  for(var i in soundManager.sounds) {
+    soundManager.getSoundById(i).setVolume(g);
+  } 
+
+ }
+
 //END SOUNDS
 
 var currentEvent = 0;
@@ -88,14 +94,43 @@ var timeToWait = 1000;
 var action;
 var textIsTyping = false;
 var waitingForUser = false;
-  var sm = soundManager;
+var sm = soundManager;
+var paused = false;
+var pausedWhileTyping = false;
+var defaultVolume = 100;
+var femaleBlip, maleBlip, voiceSound;
+
+function speak(){
+    $("#textarea").text("");
+    $(".glassbox .speaker").text("");
+    $(".glassbox").fadeIn('slow',function(){
+      $("#textarea").text(action['text']);
+      $(".glassbox .speaker").text(action["get_character_name"]);
+      createTicker();
+    });
+    if(action["character_type"] == "Ami"){
+      voiceSound = femaleBlip;
+    } else {
+      voiceSound = maleBlip;
+    }
+}
 
 function nextEvent(){
   action = scenes[currentEvent];
   console.log('action',action);
+  if(paused){ return; } 
   if(currentEvent >= scenes.length){
   	//we are finished!!
-    $(".viewer").css("cursor", "auto");
+
+
+    $(".viewer").hide();
+    $("#sound-controls").css("visibility","hidden");
+    var title = $(titlecard);
+    title.find("span").html(afterCreditsText);
+    title.insertAfter(".viewer");
+
+
+    //$(".viewer").css("cursor", "auto");
   } else if (action['event_type']=="BackgroundImageEvent"){
   	$(".glassbox").fadeOut();
   	$("#bg-content").fadeOut('slow', function(){ //fade out old background
@@ -157,17 +192,20 @@ function nextEvent(){
     }
     
   } else if(action['event_type']=="CharacterSpeaksEvent"){
-  	$(".glassbox .glass").attr("src","/images/glassbox.png");
-  	lefty="&ldquo;"; righty = "&rdquo;";
+  	setupGlassBox(action);
   	speak();
   } else if(action['event_type']=="CharacterThinksEvent"){
-  	$(".glassbox .glass").attr("src","/images/glassbox.png");
-  	lefty="<i class='thought'>("; righty=")</i>";
+  	setupGlassBox(action);
   	speak();
   } else if(action['event_type']=="NarrationEvent"){
-  	$(".glassbox .glass").attr("src","/images/glassbox_n.png");
-  	lefty=""; righty="";
+  	setupGlassBox(action);
   	speak();
+  } else if(action['event_type']=="TitleCardEvent"){
+    $(".viewer").hide();
+    var title = $(titlecard);
+    title.find("span").text("ahooy!");
+    title.insertAfter(".viewer");
+    
   } else if(action['event_type']=="SceneEndEvent"){
   	$(".glassbox").hide();
     stopLastSound();
@@ -195,7 +233,6 @@ function nextEvent(){
       if (thisSound == self.lastSound) {
         //already playing. do nothing!
       } else {
-        console.log('in console1')
       	stopLastSound();
         //play already loaded sound
         thisSound.play({loops:9999});
@@ -215,7 +252,7 @@ function nextEvent(){
       });
       self.soundsByURL[soundURL] = thisSound;
       self.sounds.push(thisSound);
-      thisSound.play({loops:999});
+      thisSound.play({loops:9999});
       self.lastSound = thisSound;
     }
 
@@ -224,9 +261,41 @@ function nextEvent(){
   
 }
 
+function pause(){
+  pausedWhileTyping = textIsTyping;
+  paused = true;
+  sm.pauseAll();
+  console.log(pausedWhileTyping)
+}
+function unpause(){
+  paused = false;
+  console.log(pausedWhileTyping)
+  if(pausedWhileTyping){
+    typetext();
+  } else if(waitingForUser){
+    waitingForUser = false;
+    $("#textarea").text("");
+    currentEvent += 1;
+    nextEvent();
+  } else {
+    nextEvent();
+  }
+  sm.resumeAll();
+}
 
 $(document).ready(function() {
+  $("#pause-button").click(function(){
+    if(paused){
+      unpause();
+      $(this).find("i").removeClass().addClass("icon-pause");
+    } else {
+      pause();
+      $(this).find("i").removeClass().addClass("icon-play");
+    }
+    return false;
+  });
 	$(".viewer").click(function(){
+    if(paused){ return; }
 		if(textIsTyping){
 			tickerCursor = tickerText.length+1
 		} else if (waitingForUser){
@@ -240,14 +309,22 @@ $(document).ready(function() {
 	soundManager.url = '/swf/soundmanager2_flash9.swf';
     soundManager.onload = function() {
       nextEvent(); //starts viewer
+      femaleBlip = sm.createSound({
+        id:'Blip1',
+        url:"/sounds/blipfemale2.mp3"
+      });
+      maleBlip = sm.createSound({
+        id:'Blip2',
+        url:"/sounds/blipmale2.mp3"
+      });
     }
-$("#volume-control").bind("slider:changed", function (event, data) {
-  // The currently selected value of the slider
-  console.log('value',data.value);
-
-  // The value as a ratio of the slider (between 0 and 1)
-  console.log('ratio',data.ratio);
-});
+  $("#volume-control").bind("slider:changed", function (event, data) {
+    // The currently selected value of the slider
+    //console.log('value',data.value);
+    setVolume(data.value);
+    // The value as a ratio of the slider (between 0 and 1)
+    //console.log('ratio',data.ratio);
+  });
 
 
 });

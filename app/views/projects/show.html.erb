@@ -13,7 +13,7 @@
     </li>
     <li class="span2">
       <a href="<%=project_characters_path(@project)%>" class="thumbnail" style="" title="Change Their Names">
-      <img data-src="#" alt="" style="width:168px;height:126px; background-color:lightgray">
+      <%=image_tag @project.characters.shuffle.first.icon%>
       <p>Edit Characters</p></a>
     </li>
     <li class="span2">
@@ -43,16 +43,17 @@
 
   <h2>Add A New Scene</h2>
   <ul class="thumbnails">
-    <% EventPacks.locations.each_index do |i| %>
+    <%scenes = EventPacks.locations(@project)%>
+    <% scenes.each_index do |i| %>
       <li class="span2">
         <%=form_for [@project, Scene.new] do |f|%>
-          <%event_pack = EventPacks.locations[i]%>
+          <%event_pack = scenes[i]%>
         <a href="#" class="submitable thumbnail" title="Add This Scene!">
           <input type="hidden" value="<%=event_pack.love_scene%>" name="scene[love_scene]">
           <input type="hidden" value="<%=i%>" name="scene[initial_event_pack]">
           <%=image_tag event_pack.bg_image%>
-          <%if event_pack.love_scene%>
-            <%=image_tag event_pack.get_love_scene_pose, :class=>"glass"%>
+          <%if event_pack.events[1]%>
+            <%=image_tag event_pack.events[1].filename, :class=>"characters"%>
           <%end%>
             <p><%=event_pack.name%></p>
           </a>

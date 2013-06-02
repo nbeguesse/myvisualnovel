@@ -68,43 +68,14 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def effect_on_characters_present arr
+    arr
+  end
+
   def set_characters_present prev
     arr = prev.try(:characters_present) || []
     arr[0] ||= ["BG", BackgroundImageEvent.default.get_file]
-    if self.type=="CharacterPoseEvent"
-      #TODO: Move this inside those models
-      if arr[1] && arr[1][0]==character_id #character in position 1
-        arr[1][1] = filename
-        arr[1][2] = subfilename
-      elsif arr[2] && arr[2][0]==character_id #character in position 2
-        arr[2][1] = filename
-        arr[2][2] = subfilename
-      elsif arr[1].nil?
-        arr[1] = [character_id, filename, subfilename]
-      elsif arr[2].nil?
-        arr[2] = [character_id, filename, subfilename]
-      else
-        #TODO: Throw error if already 2 chars present
-        #arr << [character_id, filename]
-      end
-    elsif self.type=="CharacterVanishEvent"
-      #remove the char
-      if arr[1][0] == character_id
-        arr[1] = nil
-      elsif arr[2][0] == character_id
-        arr[2] = nil
-      else
-        arr.reject!{|e|e[0]==character_id}
-      end
-    elsif self.type == "LovePoseEvent"
-      if subfilename
-        arr[0] = ["BG", subfilename]
-      end
-      arr[1] = [character_id, filename]
-    elsif self.type == "BackgroundImageEvent"
-      arr[0] = ["BG", filename]
-    end
-    self.characters_present = arr
+    self.characters_present = effect_on_characters_present(arr)
   end
 
   def set_character_type
@@ -171,6 +142,12 @@ class Event < ActiveRecord::Base
       return true if chars[2] && chars[2][0]==character.id
      end
      return false
+  end
+  def self.invalid_file? file
+    return true if file == "."
+    return true if file == ".."
+    return true if file.include?("DS_Store")
+    return false
   end
 
 

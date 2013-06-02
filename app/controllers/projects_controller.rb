@@ -17,6 +17,8 @@ class ProjectsController < ApplicationController
   def play
     @html_class = "player"
     @project = Project.find_by_id_and_basename(params[:id],params[:basename])
+    @after_events = []
+    @before_events = []
     if @project && (@project.public? || @project.owner?(session_obj))
       if params[:scene_id]
         @only_scene = true
@@ -34,6 +36,8 @@ class ProjectsController < ApplicationController
         redirect_to project_path
         return
       end
+      @after_events << TitleCardEvent.default_credits
+     # @scenes << Scene.after_credits_scene
       #render :layout=>'viewer'
     else
       not_found

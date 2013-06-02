@@ -1,21 +1,24 @@
 
-<h2>View My Novels</h2>
+<h2>Edit My Visual Novels</h2>
 
  <ul class="thumbnails">
   <%session_obj.projects.each do |project|%>
-    <li class="span2 thumbnail">
+    <li class="span3">
       
 
       <%scene = Scene.for_project(project).at(project.middle_index).first%>
-      <a href="<%=project_path(project)%>">
-      <%=render :partial=>"scenes/thumbnail", :locals=>{:scene=>scene}%>
-      <p><%=coolify project.title%></p> </a>
-      <p><a class="btn btn-small" href="<%=project_path(project)%>" title="Change it!"><i class="icon-pencil"></i> Edit</a>
-        <a class="btn btn-small btn-primary" href="<%=project.play_path%>" title="Watch it!"><i class="icon-play icon-white"></i> Play</a>
+      <a href="<%=project_path(project)%>" class="thumbnail tiny-viewer" style="position:relative;">
+        <%=render :partial=>"scenes/thumbnail", :locals=>{:scene=>scene}%>
+        <p><%=coolify project.title%></p> 
+      </a>
+      <p>
+        <a class="btn btn-small" href="<%=project_path(project)%>" title="Change it!"><i class="icon-pencil"></i> Edit</a>
+        <a class="btn btn-small btn-primary" href="http://www.google.com" title="Watch it!"><i class="icon-play icon-white"></i> Play</a>
         <%if project.public?%>
         <a class="btn btn-small share-link" href="#" title="To make private, go to Edit > Customize"><i class="icon-share"></i> Share</a>
         <%end%>
-      </p><p class="share">
+      </p>
+      <p class="share">
       <small>
         Cut-and-paste this URL to share: <input type="text" class="share-link" value="<%=play_url(project.id, project.basename)%>" style="width:90%;">
       </small>
@@ -26,6 +29,6 @@
   <%end%>
 </ul>
 <p>&nbsp;</p>
-<h2>View Novels Made By Others</h2>
+<h2>View Visual Novels Made By Others</h2>
 
 <p class="muted">(Coming Soon)</p>

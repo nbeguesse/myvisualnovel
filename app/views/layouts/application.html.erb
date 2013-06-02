@@ -7,7 +7,8 @@
   
   <%= csrf_meta_tags %>
   <%if @project.try(:title) || @include_cool_font%>
-    <link href='http://fonts.googleapis.com/css?family=Great+Vibes&text=<%=@include_cool_font || @project.title.titleize%>' rel='stylesheet' type='text/css'>
+    <%text = @include_cool_font || @project.title.titleize%>
+    <link href='http://fonts.googleapis.com/css?family=Great+Vibes&text=<%=text.gsub(/[^0-9A-Za-z\s]/, '')%>' rel='stylesheet' type='text/css'>
   <%end%>
 </head>
 <body class="<%=@body_class || ""%>">
@@ -19,10 +20,10 @@
               <div class="nav">
 
                     <ul class="breadcrumb">
-                    <li><%=link_to "MyVisualNovel", root_url%> <span class="divider">/</span></li>
+                    <li><%=link_to "Home", root_url%> <span class="divider">/</span></li>
                     <li><%=link_to "Forum", forum_path%> <span class="divider">/</span></li>
                     <%unless session_obj.projects.empty?%>
-                      <li><%=link_to "My Novels", projects_path%> <span class="divider">/</span></li>
+                      <li><%=link_to "My Visual Novels", projects_path%> <span class="divider">/</span></li>
                     <%end%>
                     <%if @project && !@project.new_record?%>
                       <li><%=link_to coolify(@project.title), @project%> <span class="divider">/</span></li>
@@ -57,10 +58,10 @@
 </div>
 </div>
 <%if @backlink%>
-  <a id="backlink" class="carousel-control left" href="<%=@backlink%>?backlink=<%=@current_uri%>" >&lsaquo;<br/><span class="backlink"><%=humanize_title(@backlink)%></span></a>
+  <a id="backlink" class="carousel-control left" href="<%=@backlink%>?backlink=<%=@current_uri%>" >&lsaquo;<!--<br/><span class="backlink"><%=humanize_title(@backlink)%></span></a>-->
 <%end%>
 <%if @nextlink = @default_nextlink || @nextlink%>
-  <a id="nextlink" class="carousel-control right" href="<%=@nextlink%>">&rsaquo;<br/><span class="backlink"><%=humanize_title(@nextlink)%></span></a>
+  <a id="nextlink" class="carousel-control right" href="<%=@nextlink%>">&rsaquo;<!--<br/><span class="backlink"><%=humanize_title(@nextlink)%></span></a>-->
  
 <%end%>
 <%= javascript_include_tag "jquery","jquery-ui-1.10.3.custom.min.js","bootstrap.js","slide","popups","application", :cache=>"mvn" %>

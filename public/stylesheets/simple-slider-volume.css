@@ -41,8 +41,8 @@
 }
 
 .slider-volume > .highlight-track {
-  background-color: #c5c5c5;
-  background: -moz-linear-gradient(top, #c5c5c5, #a2a2a2);
-  background: -webkit-linear-gradient(top, #c5c5c5, #a2a2a2);
-  background: linear-gradient(top, #c5c5c5, #a2a2a2);
+  background-color: red;
+  background: -moz-linear-gradient(top, red, darkred);
+  background: -webkit-linear-gradient(top, red, darkred);
+  background: linear-gradient(top, red, darkred);
 }

@@ -7,17 +7,19 @@ class EventPacks
     def love_scene
       self.events.first.is_a?(LovePoseEvent)
     end
-    def get_love_scene_pose
-      self.events.first.filename
-    end
   end
 
-  def self.locations
+  def self.locations project
     out = []
     out << EventPack.new("School Roof",[BackgroundImageEvent.new(:filename => "#{BackgroundImageEvent.folder}/school_roof.jpg")])
     out << EventPack.new("School Hallway",[BackgroundImageEvent.new(:filename => "#{BackgroundImageEvent.folder}/school_hallway.jpg")])
     out << EventPack.new("Classroom",[BackgroundImageEvent.new(:filename => "#{BackgroundImageEvent.folder}/school_classroom.jpg")])
-    out << EventPack.new("The Next Morning (love scene)",[LovePoseEvent.new(:filename=>"/Character/Female/F/Intimate/y-mia-zoom(a).gif", :subfilename => "#{BackgroundImageEvent.folder}/her_bedroom.jpg")])
+    if ami = Character.by_name_and_project(Ami, project).first
+      out << EventPack.new("Suspense (love scene)",[
+        LovePoseEvent.new(:filename => "/LovePose/Base/her_room_front.jpg"),
+        CharacterPoseEvent.new(:filename=>"/Character/Ami/LovePose/Base/undies_front.png", :character_id=>ami.id)
+      ])
+    end
     out
   end
 

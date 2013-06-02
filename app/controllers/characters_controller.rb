@@ -58,16 +58,19 @@ class CharactersController < ApplicationController
     if !@project.owner?(session_obj)
       not_authorized and return
     end
+    notice = nil
     named_character = params[:character_type].constantize
     if existing = named_character.first(:conditions=>["project_id=?",@project.id])
       @project.characters.delete(existing)
       existing.destroy
+      notice = "#{existing.name} was removed."
     else
       @project.characters << named_character.new
+      notice = "You added them to the project. Now you can change their name!"
     end
     respond_to do |format|
       if true
-        format.html { redirect_to project_characters_path(@project), notice: 'Character was successfully updated.' }
+        format.html { redirect_to project_characters_path(@project), notice: notice }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }

@@ -12,6 +12,12 @@ class Scene < ActiveRecord::Base
 
   scope :at, lambda { |order_index| {:conditions => ["order_index = ?", order_index], :limit=>1} }
 
+  # def self.after_credits_scene
+  #   s = Scene.new
+  #   s.events <<  TitleCardEvent.restart
+  #   s
+  # end
+
   def move_to(order_index)
     scenes = project.scenes.to_a
     scenes.reject!{|scene|scene==self}
@@ -32,8 +38,9 @@ class Scene < ActiveRecord::Base
 
   def load_initial_events
     if i = self.initial_event_pack.to_i
-      self.events = EventPacks.locations[i].events
-      self.custom_description = EventPacks.locations[i].name
+      scenes = EventPacks.locations(project)
+      self.events = scenes[i].events
+      self.custom_description = scenes[i].name
     end
   end
 
@@ -55,12 +62,10 @@ class Scene < ActiveRecord::Base
    end
 
    def has_character? character, event_index
-     chars = Event.for_scene(self).at(event_index).first.try(:characters_present)
-     if chars
-      return true if chars[0] && chars[0][0]==character.id
-      return true if chars[1] && chars[1][0]==character.id
+     if e = Event.for_scene(self).at(event_index).first
+       return e.has_character? character
      end
-     return false
+     false
    end
 
    def get_ordered_events

@@ -6,9 +6,10 @@
 	    <%end%>
 	    <%if scene && event%>
 
-		    <%event.characters_present.each do |char|%>
-		      <%=image_tag char[1], :class=>(char[0]=="BG" ? "bg" : "characters")%>
-		      <%=image_tag char[2], :class=>("characters")%>
+		    <%event.characters_present.each_index do |i|%>
+		      <%char = event.characters_present[i]%>
+		      <%=image_tag char[1], :class=>(char[0]=="BG" ? "bg" : "characters character#{i}")%>
+		      <%=image_tag char[2], :class=>("characters character#{i}")%>
 		    <%end%>
 		    <%if event.glassbox?%>
 		      <%=image_tag "glassbox.png", :class=>"glass"%>

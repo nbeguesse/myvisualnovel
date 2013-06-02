@@ -50,7 +50,10 @@ class ScenesController < ApplicationController
   # # GET /scenes/1/edit
   def edit
     @body_class = "scene-editor"
-    @event_index =  params[:event_index] ? params[:event_index].to_i : @scene.middle_index
+    @event_index =  params[:event_index] ? params[:event_index].to_i : @scene.events.count
+    if params[:event_index].blank?
+      redirect_to :action=>:edit, :event_index=>@event_index #always scroll to current event
+    end
     @event_count = @scene.events.count
     @event_index = [@event_index, @event_count].min
     @backlink = project_path(@project)
