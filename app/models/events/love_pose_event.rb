@@ -20,7 +20,9 @@ class LovePoseEvent < BackgroundImageEvent
   #     characters_present[0] = ["BG", self.subfilename]
   #   end
   # end
-
+  # def effect_on_characters_present arr
+  #   arr = [["BG", filename]] #erase all the characters in the scene!
+  # end
 
 
 

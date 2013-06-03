@@ -9,7 +9,8 @@ class Event < ActiveRecord::Base
   after_destroy :reorder_indexes
   serialize :characters_present
   after_save :set_defaults
-  before_save :partial_set_characters_present
+  after_save :partial_set_characters_present
+  before_create :before_creates
 
   #scope :latest, lambda { {:order=>"order_index DESC", :limit=>1} }
   scope :ordered,  lambda { {:order=>"order_index ASC, id ASC"} }
@@ -20,6 +21,16 @@ class Event < ActiveRecord::Base
   scope :love_poses, lambda {{:conditions=>["type=?","LovePoseEvent"]}}
   scope :character_pose, lambda { |character| {:conditions=>["type=? and character_id=?","CharacterPoseEvent", character.id]}}
   scope :character_vanishes, lambda { |character| {:conditions=>["type=? and character_id=?","CharacterVanishEvent", character.id]}}
+
+  def before_creates
+    if self.type=="CharacterPoseEvent" && filename.blank?
+      before = Event.for_scene(scene).character_pose(character).at_or_before(order_index).first
+      Rails.logger.info "FILENAME IS #{before.filename}"
+      
+      self.filename = before.filename
+      
+    end
+  end
 
   def set_defaults
     if [CharacterSpeaksEvent, CharacterThinksEvent,NarrationEvent].include?(self.type.constantize)
@@ -50,32 +61,65 @@ class Event < ActiveRecord::Base
 
   def partial_set_characters_present
     if !new_record? && (filename_changed? || subfilename_changed?)
-      previous_event = Event.for_scene(scene).at(order_index-1).first
-      set_characters_present previous_event
-      all = scene.events.ordered.to_a
-      all.shift order_index
-      prev = self
-      all.each_index do |i|
-          event = all[i]
-          event.set_characters_present prev
-          if event.changed?
-            event.save
-          else
-            break
-          end
-          prev = event
-      end
+      self.reorder_indexes
+      #note: the following causes bugs :(
+      # previous_event = Event.for_scene(scene).at(order_index-1).first
+      # set_characters_present previous_event
+      # all = scene.events.ordered.to_a
+      # all.shift order_index
+      # prev = self
+      # all.each_index do |i|
+      #     event = all[i]
+      #     event.set_characters_present prev
+      #     if event.changed?
+      #       event.save
+      #     else
+      #       break
+      #     end
+      #     prev = event
+      # end
     end
   end
 
-  def effect_on_characters_present arr
-    arr
-  end
+  # def effect_on_characters_present arr
+  #   arr
+  # end
 
   def set_characters_present prev
     arr = prev.try(:characters_present) || []
     arr[0] ||= ["BG", BackgroundImageEvent.default.get_file]
-    self.characters_present = effect_on_characters_present(arr)
+    if self.type=="CharacterPoseEvent" && scene.love_scene?
+        arr[1] = [character_id, filename]
+    elsif self.type=="CharacterPoseEvent"
+      if arr[1] && arr[1][0]==character_id #character in position 1
+        arr[1][1] = filename
+        arr[1][2] = subfilename
+      elsif arr[2] && arr[2][0]==character_id #character in position 2
+        arr[2][1] = filename
+        arr[2][2] = subfilename
+      elsif arr[1].nil?
+        arr[1] = [character_id, filename, subfilename]
+      elsif arr[2].nil?
+        arr[2] = [character_id, filename, subfilename]
+      else
+        #TODO: Throw error if already 2 chars present
+        #arr << [character_id, filename]
+      end
+    elsif self.type=="CharacterVanishEvent"
+      #remove the char
+      if arr[1][0] == character_id
+        arr[1] = nil
+      elsif arr[2][0] == character_id
+        arr[2] = nil
+      else
+        arr.reject!{|e|e[0]==character_id}
+      end
+    elsif self.type == "LovePoseEvent"
+      arr[0] = ["BG", filename]
+    elsif self.type == "BackgroundImageEvent"
+      arr[0] = ["BG", filename]
+    end
+    self.characters_present = arr
   end
 
   def set_character_type
@@ -94,6 +138,7 @@ class Event < ActiveRecord::Base
   end
 
   def reorder_indexes
+    Rails.logger.info "IN REORDER INDEXES"
     all = scene.events.ordered.to_a
     prev = nil
     all.each_index do |i|

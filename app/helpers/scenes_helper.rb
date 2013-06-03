@@ -14,11 +14,11 @@ module ScenesHelper
     end
 
 	def event_to_js event
-		if event.is_a?(LovePoseEvent)
-		 "edit-love-pose"
-		elsif event.is_a?(CharacterPoseEvent)
+		if event.is_a?(CharacterPoseEvent) && @scene.love_scene?
 		 "edit-pose"
-		elsif event.is_a?(BackgroundImageEvent)
+		elsif event.is_a?(CharacterPoseEvent)
+		 "edit-clothes"
+		elsif event.is_a?(BackgroundImageEvent) ||  event.is_a?(LovePoseEvent)
 		 "edit-bg-image"
 		elsif event.is_a?(BackgroundMusicEvent)
 		 "edit-music"
@@ -28,10 +28,12 @@ module ScenesHelper
 		end
 	end
 	def event_to_command event
-		if event.is_a?(CharacterPoseEvent) || event.is_a?(LovePoseEvent)
+		if event.is_a?(CharacterPoseEvent) && @scene.love_scene?
 		 " Change Pose"
-		elsif event.is_a?(BackgroundImageEvent)
-		" Change Image"
+		elsif event.is_a?(CharacterPoseEvent)
+		 " Change Clothes"
+		elsif event.is_a?(BackgroundImageEvent) || event.is_a?(LovePoseEvent)
+		" Change Background"
 		elsif event.is_a?(BackgroundMusicEvent)
 		 " Change Music"
 		else
@@ -48,9 +50,8 @@ module ScenesHelper
 	# 	return "hide"
 	# end
 	def subcommand event
-		if event.is_a?(LovePoseEvent)
-		  '<a data-type="LovePoseEvent" href="#" class="btn btn-small edit-bg-image"><i class="icon-pencil"></i> Change BG</a>'.html_safe
-		elsif event.is_a?(CharacterPoseEvent)
+		return "" if @scene.love_scene?
+		if event.is_a?(CharacterPoseEvent)
 		  raw('<a data-character-id="'+event.character_id.to_s+'" href="#" class="btn btn-small edit-face"><i class="icon-pencil"></i> Change Face</a>')
 		else
 			""

@@ -4,13 +4,17 @@ function resizeTextArea(container, div) {
 	if ( (container.width() / container.height()) < aspectRatio ) {
 		//taller
 	    div.css("width","85%").css("left","7%");
-	    div.css("height","20%").css("top","74%");
-	    div.css("font-size","20px");
+	    var width = $(".textarea").width();
+	    div.css("height","21%").css("top","74%");
+	    div.css("font-size",(width/30)+"px").css("line-height",(width/20)+"px");
+	    $(".container-narrow").css("font-size",(width/50)+"px").css("line-height",(width/30)+"px");
 	} else {
 		//wider
-	    div.css("height","20%").css("top","74%");
+	    div.css("height","21%").css("top","74%");
 	    var height = $(".textarea").position().top;
-	    div.css("width",(height*1.5)+"px").css("left",(height/7)+"px").css("font-size",(height/20)+"px");
+	    div.css("width",(height*1.5)+"px").css("left",(height/7)+"px");
+	    div.css("font-size",(height/20)+"px").css("line-height",(height/10)+"px");
+	    $(".container-narrow").css("font-size",(height/30)+"px").css("line-height",(height/20)+"px");
 	}
 				
 }
@@ -44,19 +48,40 @@ function resizeSpeaker(container, div) {
 	if ( (container.width() / container.height()) < aspectRatio ) {
 		//taller
 	    div.css("width","50%").css("left","7%");
-	    div.css("height","5%").css("top","67.5%");
+	    div.css("height","5%").css("top","68.5%");
 	    div.css("font-size","20px");
 	} else {
 		//wider
-	    div.css("height","5%").css("top","67.5%");
+	    div.css("height","5%").css("top","68.5%");
 	    var height = $(".textarea").position().top;
 	    div.css("width",(height*1.5)+"px").css("left",(height/7)+"px").css("font-size",(height/20)+"px");
 	}
 				
 }
+
 function resizeHome() {
 	resizeTextArea($(window), $(".textarea"));
-	resizeSpeaker($(window), $(".speaker"));			
+	resizeSpeaker($(window), $(".speaker"));	
+	var container = $(window);
+    var div = $(".container-narrow");
+    var aspectRatio = 800/600;
+	if ( (container.width() / container.height()) < aspectRatio ) {
+		//taller
+	    // div.css("width","85%").css("left","7%");
+	    // var width = $(".textarea").width();
+	    // div.css("height","21%").css("top","74%");
+	    // div.css("font-size",(width/25)+"px").css("line-height",(width/20)+"px");
+	} else {
+		//wider
+	    //div.css("height","30%").css("top","5%");
+	    var spec = container.height()/container.width();
+	    //div.css("height",(spec)*400+"px")
+	    //div.css("top",spec*15+"px");
+ 		var spec = container.width()/container.height();
+	    //var height = div.height();
+	    //.css("width",(spec)*150+"px")//
+	    //div.css("font-size",(spec*15)+"px")//.css("line-height",(height/10)+"px");
+	}	
 }
 
 function gup(name) { //get URL parameters
@@ -64,6 +89,51 @@ function gup(name) { //get URL parameters
         (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
     );
 }
+
+//MODIFIED TICKERTYPE PLUGIN
+var tickerCursor, tickerText;
+var textIsTyping = false;
+var waitingForUser = false;
+var paused = false;
+var voiceSound;
+var anim = "<img src='/images/7-1.gif', style='height:16px'>";
+function createTicker(){
+	tickerText = $("#textarea").html();
+	tickerCursor = 0;
+	textIsTyping = true;
+	typetext();
+}
+
+
+var isInTag = false;
+function typetext() {	
+	var thisChar = tickerText.substr(tickerCursor, 1);
+	if( thisChar == '<' ){ isInTag = true; }
+	if( thisChar == '>' ){ isInTag = false; }
+	var charTime = 50;
+	$('#textarea').html(lefty + tickerText.substr(0, tickerCursor++));
+	if(tickerCursor < tickerText.length+1)
+		if( isInTag ){ //skip HTML tags
+			typetext();
+		}else{
+			var curr = tickerText.substr(tickerCursor-2,1);
+			if(voiceSound != null){
+      		  voiceSound.play();
+      	    }
+			if ((curr==".")||(curr=="?"||curr=="!")){ charTime = 200;}
+      if(!paused){
+			  setTimeout("typetext()", charTime);
+
+      }
+		}
+	else {
+		textIsTyping = false;
+		waitingForUser = true;
+		$("#textarea").html(lefty+tickerText+righty+anim)
+		tickerText = "";
+	}	
+}
+//END TICKERTYPE PLUGIN
 
 var currentEvent;
 var lefty = ""; var righty = "";
@@ -83,18 +153,20 @@ function setupGlassBox(action){
 	 }
 }
 
-function loadScene(order){
-  if(currentEvent==order){ return; }
-  var action = events[order-1];
+function loadScene(order, anyway){
+  if((currentEvent==order)&&(!anyway)){ return; }
+  var action = events[order];
   $("img.bg").attr("src",action["characters_present"][0][1]);
   $("img.characters").remove();
+  $("div.action-items-holder").removeClass("char-present").addClass("char-missing");
   var tag = '<img class="characters">';
     for(var i=1; i<3; i++){
       var charfile = action['characters_present'][i];
       if(charfile != null){ //skip blanks and nils
           $(tag).attr("src",charfile[1]).addClass("character"+i).insertBefore(".glassbox"); //put their body
           $(tag).attr("src",charfile[2]).addClass("character"+i).insertBefore(".glassbox"); //put their face
-          $("div.poses-for-"+charfile[0]).find("input.subfilename").val(charfile[2]); //put their face as default
+          $("div.poses-for-"+charfile[0]).find("input.subfilename").val(charfile[2]); //put their face as default in the form
+          $("div.action-items-for-"+charfile[0]).removeClass("char-missing").addClass("char-present"); //refresh action items
       }
     }
     if(["CharacterSpeaksEvent","NarrationEvent","CharacterThinksEvent"].indexOf(action["event_type"])>=0){
@@ -124,7 +196,7 @@ function setCurrentEvent(row){
   	$("textarea").val("");
   } else {
    	var order = row.attr("data-order-id");
-   	loadScene(order);
+   	loadScene(order, false);
     $("input.event_order").val(order);
      $("tr").removeClass('selected');
     $("tr#row"+num).addClass('selected');
@@ -149,6 +221,8 @@ function showOverlay(name){
 function confirmCharacterRemoval(){
   	  if(confirm("This will DELETE the character from all scenes where they appear. Are you sure?")){
   	  	$(this).closest("form").submit(); return false;
+  	  } else {
+  	  	top.location = top.location.href;
   	  }
 }
 $(document).ready(function() {
@@ -172,6 +246,8 @@ $(document).ready(function() {
 	$("#scene-editor .overlay-topper a").click(function(){
 		$(".overlay").slideUp();
 		$(".overlay-topper").fadeOut();
+		$("tr.selected").find(".more").show();
+		loadScene(currentEvent, true);
 		return false;
 	});
 	//drop down options when pencil is clicked
@@ -203,11 +279,18 @@ $(document).ready(function() {
 		return false;
 	});
 	//edit poses
+	$("#scene-editor .edit-clothes").click(function(){
+		 setCurrentEvent($(this).closest('tr'));
+		 var id = $(this).attr("data-character-id");
+		 showOverlay(".poses-for-"+id);
+		 $(".overlay-topper span").text("Choose Clothes...");
+		 return false;
+	});
 	$("#scene-editor .edit-pose").click(function(){
 		 setCurrentEvent($(this).closest('tr'));
 		 var id = $(this).attr("data-character-id");
 		 showOverlay(".poses-for-"+id);
-		 $(".overlay-topper span").text("Choose a Pose...");
+		 $(".overlay-topper span").text("Choose A Pose...");
 		 return false;
 	});
 	//edit faces
@@ -216,17 +299,11 @@ $(document).ready(function() {
 		 var id = $(this).attr("data-character-id");
 		 console.log(id);
 		 showOverlay(".faces-for-"+id);
+		 $("input.character_id").val(id);
 		 $(".overlay-topper span").text("Choose a Face...");
 		 return false;
 	});
-	// // //edit love poses
-	// $("#scene-editor .edit-love-pose").click(function(){
-	// 	 setCurrentEvent($(this).closest('tr'));
-	// 	 var id = $(this).attr("data-character-id");
-	// 	 showOverlay(".poses-for-"+id);
-	// 	 $(".overlay-topper span").text("Choose a Pose...");
-	// 	 return false;
-	// });
+
 	 $("#scene-editor .edit-speak").click(function(){
 	// 	 //select current row
 	 	 setCurrentEvent($(this).closest('tr'));
@@ -317,6 +394,7 @@ $(document).ready(function() {
 	//resize homepage trigger 			  
 	if($("body.homepage").length > 0){                  			
 	  $(window).resize(resizeHome).trigger("resize");
+	  createTicker();
     }
     if($("li .tiny-viewer").length > 0){
        $(window).resize(resizeThumbnail).trigger("resize");

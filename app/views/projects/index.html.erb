@@ -13,7 +13,7 @@
       </a>
       <p>
         <a class="btn btn-small" href="<%=project_path(project)%>" title="Change it!"><i class="icon-pencil"></i> Edit</a>
-        <a class="btn btn-small btn-primary" href="http://www.google.com" title="Watch it!"><i class="icon-play icon-white"></i> Play</a>
+        <a class="btn btn-small btn-primary" href="<%=project.play_path%>" title="Watch it!"><i class="icon-play icon-white"></i> Play</a>
         <%if project.public?%>
         <a class="btn btn-small share-link" href="#" title="To make private, go to Edit > Customize"><i class="icon-share"></i> Share</a>
         <%end%>

@@ -69,7 +69,8 @@ class Scene < ActiveRecord::Base
    end
 
    def get_ordered_events
-    events.ordered.concat([SceneEndEvent.new])
+    p = PreloadEvent.new.fill_data(self);
+    [p,events.ordered.concat([SceneEndEvent.new])]
    end
 
 end

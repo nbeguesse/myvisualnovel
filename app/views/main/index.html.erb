@@ -1,19 +1,25 @@
 <%content_for :head do%>
   <div id="wrapper">
-  <%=image_tag "glassbox.png"%>
-  <div class="textarea" style="position:absolute;border:1px solid black">Ami</div>
-  <div class="speaker" style="position:absolute;border:1px solid black">Ajax</div>
+  <%=image_tag "girl.png"%>  
+  <div class="textarea" id="textarea" style="position:absolute">Hi! And welcome to MyVisualNovel, where you can make your own visual novel in as little as 5 minutes! <a href="<%=new_project_path%>">Start Now!</a></div>
+  <div class="speaker" style="">Ami</div>
   </div>
 <%end%>
 <h3>What will you do?</h3>
 <div>
   <p>
-  	<%=link_to "Make My Own Visual Novel", new_project_path, {"title"=>"Make your fantasy!", "data-placement"=>"right"}%>
+  	<%=link_to "Make My Own Visual Novel", new_project_path, {"title"=>"Make your fantasy!", "data-placement"=>"bottom"}%>
   </p><hr/>
   <p>
-  	<%=link_to "View Finished Novels", projects_path, {"title"=>"See what others have created!", "data-placement"=>"right"}%>
-  </p> <p><hr/>
-  	<%=link_to "Go to Forums", forum_path, {"title"=>"", "data-placement"=>"right"}%>
+    <%if session_obj.projects.empty?%>
+  	  <%=link_to "View Finished Novels", projects_path, {"title"=>"See what others have made!", "data-placement"=>"bottom"}%>
+    <%else%>
+      <%=link_to "View My Visual Novels", projects_path, {"title"=>"Watch or change them!", "data-placement"=>"bottom"}%>
+    <%end%>
+  </p> 
+  <p><hr/>
+  	<%=link_to "Go to Forums", forum_path, {"title"=>"Share and make Requests!", "data-placement"=>"bottom"}%>
   </p>
   <p>&nbsp;</p>
+
 </div>

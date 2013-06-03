@@ -33,7 +33,7 @@
       <li class="span2" data-id="<%=scene.id%>" data-url="<%=reorder_project_scene_path(@project, scene)%>">
         <a href="<%=edit_project_scene_url(@project, scene)%>" class="thumbnail tiny-viewer" style="position:relative;" title="<%=sortable ? "Drag to Rearrange" : "Edit it"%>">
           <%= render :partial=> "scenes/thumbnail", :locals=>{:scene=>scene}%>
-        <p><%=scene.get_description %> <%=scene.order_index%></p>
+        <p><%=scene.get_description %></p>
       </a>
       </li>
   

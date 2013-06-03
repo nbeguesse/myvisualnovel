@@ -12,16 +12,16 @@ class CharacterVanishEvent < Event
       self.destroy
     end
   end
-  def effect_on_characters_present arr
-      if arr[1][0] == character_id
-        arr[1] = nil
-      elsif arr[2][0] == character_id
-        arr[2] = nil
-      else
-        arr.reject!{|e|e[0]==character_id}
-      end
-      arr
-  end
+  # def effect_on_characters_present arr
+  #     if arr[1][0] == character_id
+  #       arr[1] = nil
+  #     elsif arr[2][0] == character_id
+  #       arr[2] = nil
+  #     else
+  #       arr.reject!{|e|e[0]==character_id}
+  #     end
+  #     arr
+  # end
 
 
 end

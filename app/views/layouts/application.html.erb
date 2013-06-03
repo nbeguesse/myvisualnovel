@@ -6,9 +6,11 @@
   <%= stylesheet_link_tag "bootstrap.css","inlineplayer","flashblock","simple-slider","simple-slider-volume","application", :cache=>"mvn" %>
   
   <%= csrf_meta_tags %>
+  <%if false%>
   <%if @project.try(:title) || @include_cool_font%>
     <%text = @include_cool_font || @project.title.titleize%>
     <link href='http://fonts.googleapis.com/css?family=Great+Vibes&text=<%=text.gsub(/[^0-9A-Za-z\s]/, '')%>' rel='stylesheet' type='text/css'>
+  <%end%>
   <%end%>
 </head>
 <body class="<%=@body_class || ""%>">
@@ -53,6 +55,11 @@
       <%= notice%>
       </div>
   <%end%>
+  <noscript>
+    <div class="alert text-error">
+      You need Javascript enabled to view or play visual novels.
+      </div>
+  </noscript>
   <%= yield %>
   </div>
 </div>

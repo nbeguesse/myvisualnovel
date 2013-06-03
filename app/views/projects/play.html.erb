@@ -1,10 +1,19 @@
 <%content_for :javascript do%>
- <%=javascript_include_tag("soundmanager2/soundmanager2","viewer","simple-slider.min")%>
+ <%=javascript_include_tag("imagesloaded","soundmanager2/soundmanager2","viewer","simple-slider.min")%>
 <%end%>
+<%
+      unless @only_scene
+        @before_events << TitleCardEvent.text("<h1>".html_safe+coolify(@project.title)+"<h1>".html_safe)
+        @after_events << TitleCardEvent.text("<p>Character Art by<br/>T.O.P.</p><br/><p>Music by<br/>JEWELBEAT</p>".html_safe) 
+      end
+
+%>
+
+        <%if has_adult_cookie? || session_obj.projects.present?%>
         <script>
-          var scenes = <%=json_escape(@scenes.map{|scene| scene.get_ordered_events}.concat(@after_events).flatten.to_json(:methods=>[:event_type, :get_character_name], :except=>[:created_at, :updated_at]).html_safe)%>;
+          var scenes = <%=json_escape(@scenes.map{|scene| scene.get_ordered_events}.concat(@after_events).prepend(@before_events).flatten.to_json(:methods=>[:event_type, :get_character_name], :except=>[:created_at, :updated_at]).html_safe)%>;
+          
         </script>
-        <%if has_adult_cookie?%>
           <!-- Stage Viewer -->
           <div class="viewer">
           <%=image_tag BackgroundImageEvent.default.get_file, :class=>"bg bg-content hide img-rounded", :id=>"bg-content"%>
@@ -20,9 +29,12 @@
           <div style="text-align:left" id="sound-controls">
           <a id="pause-button" class="btn btn-mini" href="#"><i class="icon-pause"></i></a>
           <a class="btn btn-mini" href="#" title="Mute"><i class="icon-volume-up"></i></a>
-          <input id="volume-control" type="text" data-slider="true" data-slider-theme="volume" data-slider-highlight="true" data-slider-range="0,100">
+          <input id="volume-control" value="100" type="text" data-slider="true" data-slider-theme="volume" data-slider-highlight="true" data-slider-range="0,100">
           </div>
         <%else%>
+        <script>
+          var scenes = [];
+        </script>
         <div id="title-wrapper">
           <div id="title">
           <div><div>

@@ -36,9 +36,11 @@ class ProjectsController < ApplicationController
         redirect_to project_path
         return
       end
-      @after_events << TitleCardEvent.default_credits
-     # @scenes << Scene.after_credits_scene
-      #render :layout=>'viewer'
+      # unless @only_scene
+      #   @before_events << TitleCardEvent.title
+      #   @after_events << TitleCardEvent.default_credits 
+      # end
+
     else
       not_found
     end

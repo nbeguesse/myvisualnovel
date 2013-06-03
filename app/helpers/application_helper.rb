@@ -16,7 +16,7 @@ module ApplicationHelper
   end
 
   def humanize_title path
-    Rails.logger.info "PATH IS"+ path
+    #Rails.logger.info "PATH IS"+ path
     if ( path =~ /\/projects\/\d+\/edit/ )
      return "Customize"
     elsif ( path =~ /\/projects\/\d+\/characters/ )

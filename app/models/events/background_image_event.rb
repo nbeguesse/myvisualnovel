@@ -34,9 +34,9 @@ class BackgroundImageEvent < Event
     "filename"
   end
 
-  def effect_on_characters_present arr
-    arr[0] = ["BG", filename]
-    arr
-  end
+  # def effect_on_characters_present arr
+  #   arr[0] = ["BG", filename]
+  #   arr
+  # end
 
 end

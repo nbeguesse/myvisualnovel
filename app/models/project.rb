@@ -35,5 +35,6 @@ protected
    def setup_data
    	  self.characters << Ami.new
    	  self.characters << Narrator.new
+      self.characters << Ajax.new
    end
 end

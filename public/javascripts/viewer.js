@@ -4,43 +4,6 @@ var anim = "<img src='/images/7-1.gif'>";
 var titlecard = '<div id="title-wrapper"><div id="title"><div><div><span></span></div></div></div></div>';
 var afterCreditsText = "<h3><a href='javascript:location.reload()'>Play Again</a><br/></h3><p><small>Powered by <br/><a href='/'>MyVisualNovel.com</a></small></p>";
 
-//MODIFIED TICKERTYPE PLUGIN
-var tickerCursor, tickerText;
-function createTicker(){
-	tickerText = $("#textarea").html();
-	tickerCursor = 0;
-	textIsTyping = true;
-	typetext();
-}
-
-
-var isInTag = false;
-function typetext() {	
-	var thisChar = tickerText.substr(tickerCursor, 1);
-	if( thisChar == '<' ){ isInTag = true; }
-	if( thisChar == '>' ){ isInTag = false; }
-	var charTime = 50;
-	$('#textarea').html(lefty + tickerText.substr(0, tickerCursor++));
-	if(tickerCursor < tickerText.length+1)
-		if( isInTag ){ //skip HTML tags
-			typetext();
-		}else{
-			var curr = tickerText.substr(tickerCursor-2,1);
-      voiceSound.play();
-			if ((curr==".")||(curr=="?"||curr=="!")){ charTime = 200;}
-      if(!paused){
-			  setTimeout("typetext()", charTime);
-
-      }
-		}
-	else {
-		textIsTyping = false;
-		waitingForUser = true;
-		$("#textarea").html(lefty+tickerText+righty+anim)
-		tickerText = "";
-	}	
-}
-//END TICKERTYPE PLUGIN
 
 //START SOUNDS
   this.sounds = [];
@@ -92,13 +55,10 @@ function typetext() {
 var currentEvent = 0;
 var timeToWait = 1000;
 var action;
-var textIsTyping = false;
-var waitingForUser = false;
 var sm = soundManager;
-var paused = false;
 var pausedWhileTyping = false;
 var defaultVolume = 100;
-var femaleBlip, maleBlip, voiceSound;
+var femaleBlip, maleBlip;
 
 function speak(){
     $("#textarea").text("");
@@ -120,17 +80,20 @@ function nextEvent(){
   console.log('action',action);
   if(paused){ return; } 
   if(currentEvent >= scenes.length){
+
   	//we are finished!!
-
-
+    //show replay option!!
     $(".viewer").hide();
     $("#sound-controls").css("visibility","hidden");
     var title = $(titlecard);
     title.find("span").html(afterCreditsText);
-    title.insertAfter(".viewer");
+    title.hide().insertAfter(".viewer");
+    title.fadeIn('slow');
 
 
-    //$(".viewer").css("cursor", "auto");
+  } else if(action['event_type']=="PreloadEvent"){
+    currentEvent += 1;
+    nextEvent();
   } else if (action['event_type']=="BackgroundImageEvent"){
   	$(".glassbox").fadeOut();
   	$("#bg-content").fadeOut('slow', function(){ //fade out old background
@@ -149,10 +112,17 @@ function nextEvent(){
           $(".character"+i).addClass("character-old").fadeOut('slow',function(){ //remove old character if exists
             $(".character-old").remove();
           });
-          $(tag).addClass("character"+i).insertBefore(".glassbox").fadeIn('slow');
+          //if the character has the face, show the face and body. Otherwise (i.e. sex scene), just show the body.
+          //It's setup like this to prevent the handler from triggering twice
+          if(action["subfilename"] != null){
+            $(tag).addClass("character"+i).insertBefore(".glassbox").fadeIn('slow'); //show body before showing face
+          } else {
+            facetag = tag; //ignore face
+          }
           $(facetag).addClass("character"+i).insertBefore(".glassbox").fadeIn('slow', function(){ 
             currentEvent += 1;
-            setTimeout('nextEvent()',timeToWait);
+            //setTimeout('nextEvent()',timeToWait);
+            nextEvent();
           });
         }
       }
@@ -160,20 +130,24 @@ function nextEvent(){
 
   } else if (action['event_type']=="LovePoseEvent"){
     var black = $(cover);
-    var tag = '<img class="characters" src="'+action["filename"]+'">';
     black.insertAfter(".glassbox").fadeIn('slow', function(){
       $(".characters").remove();
-      if(action['characters_present'][0] != null){ //place bg
-        $("#bg-content").show().attr("src",action['characters_present'][0][1]);
-      }
-      if(action['characters_present'][1] != null){ //place love pose
-        $(tag).attr("id","character"+1).insertBefore(".glassbox");
-      }
-      black.fadeOut('slow', function(){
+       if(action['characters_present'][0] != null){ //place bg
+         $("#bg-content").show().attr("src",action['characters_present'][0][1]);
+       }
+       //look ahead at the next scene, and if its a CharacterPoseEvent
+       //show it all at once
+       var next = scenes[currentEvent+1];
+       if((next != null)&&(next['event_type']=="CharacterPoseEvent")){
         currentEvent += 1;
-        setTimeout('nextEvent()',timeToWait);
-        black.remove();
-      });
+        var tag = '<img class="characters character1" src="'+next["filename"]+'">';
+         $(tag).insertBefore(".glassbox");
+       }
+       black.fadeOut('slow', function(){
+         currentEvent += 1;
+         setTimeout('nextEvent()',timeToWait);
+         black.remove();
+       });
     });  
     
 
@@ -201,10 +175,21 @@ function nextEvent(){
   	setupGlassBox(action);
   	speak();
   } else if(action['event_type']=="TitleCardEvent"){
-    $(".viewer").hide();
+    //assume it comes after scene end event
+    // so everything is already black
     var title = $(titlecard);
-    title.find("span").text("ahooy!");
-    title.insertAfter(".viewer");
+    title.find("span").html(action['text']);
+    title.hide().insertBefore(".glassbox");
+    title.fadeIn('slow', function(){
+      currentEvent += 1;
+      setTimeout(function(){
+        title.fadeOut('slow',function(){
+          title.remove();
+          nextEvent();
+        });
+      },2000);
+    });
+
     
   } else if(action['event_type']=="SceneEndEvent"){
   	$(".glassbox").hide();
@@ -232,11 +217,15 @@ function nextEvent(){
       // already exists
       if (thisSound == self.lastSound) {
         //already playing. do nothing!
+        currentEvent += 1;
+        nextEvent();
       } else {
       	stopLastSound();
         //play already loaded sound
         thisSound.play({loops:9999});
         self.lastSound = thisSound;
+        currentEvent += 1;
+        setTimeout('nextEvent()',timeToWait);
       }
     } else {
 	  stopLastSound();
@@ -265,11 +254,11 @@ function pause(){
   pausedWhileTyping = textIsTyping;
   paused = true;
   sm.pauseAll();
-  console.log(pausedWhileTyping)
+  //console.log(pausedWhileTyping)
 }
 function unpause(){
   paused = false;
-  console.log(pausedWhileTyping)
+  //console.log(pausedWhileTyping)
   if(pausedWhileTyping){
     typetext();
   } else if(waitingForUser){
@@ -281,6 +270,75 @@ function unpause(){
     nextEvent();
   }
   sm.resumeAll();
+}
+
+
+
+var soundManagerLoaded = false;
+var titleLoaded = false;
+var started = false;
+var soundLoaded = false;
+var imagesLoaded = false;
+var currentSceneLoading = 0;
+var assetList = [];
+var initialAssetsLoaded = false;
+
+function preloadStuff(){
+  //start preloading
+  var assets = assetList[currentSceneLoading];
+  if(assets == null) { return; } //done!!
+  soundLoaded = true;
+  imagesLoaded = true;
+  var div = $("<div>");
+  //console.log(assets);
+  for(var i=0; i<assets.length; i++){
+    var asset = assets[i];
+    if(asset.indexOf(".mp3")> 0 ){
+      soundLoaded=false;
+      console.log('mp3',asset);
+      var thisSound = sm.createSound({
+        url:asset,
+        autoLoad:true,
+        onload:function(){
+          console.log('SOUND LOADED', thisSound.url);
+          soundLoaded=true;
+          scenePreloaded();
+          window.soundsByURL[thisSound.url] = thisSound;
+        }
+      });
+    } else {
+      imagesLoaded = false;
+      $("<img>").attr("src",asset).appendTo(div);
+    }
+  }
+  div.imagesLoaded()
+  .always( function( instance ) {
+    imagesLoaded=true;
+    console.log('loaded them');
+    scenePreloaded();
+  });
+}
+
+function scenePreloaded(){
+  if(imagesLoaded && soundLoaded){
+    console.log('done preloading both');
+    initialAssetsLoaded = true;
+    currentSceneLoading += 1;
+    startIfLoaded();
+    preloadStuff();
+  }
+}
+
+function startIfLoaded(){
+  if(started){ return true; }
+  if(soundManagerLoaded && titleLoaded && initialAssetsLoaded){
+    console.log("STARTING");
+    started = true;
+    $("#title-wrapper").fadeOut('slow',function(){
+      $("#title-wrapper").remove();
+      nextEvent();
+    });
+  }
 }
 
 $(document).ready(function() {
@@ -306,25 +364,45 @@ $(document).ready(function() {
 		}
     return false;
 	});
+
+  //prepare preloading
+  for(var i=0; i<scenes.length; i++){
+    if(scenes[i]['event_type']=="PreloadEvent"){
+      assetList.push(scenes[i].characters_present);
+    }
+  }
+  //put up loading animation
+    var title = $(titlecard);
+    title.find("span").html("<img src='/images/ajax-loader.gif'>");
+    title.hide().insertBefore(".glassbox");
+    title.fadeIn('slow', function(){
+      titleLoaded = true;
+      startIfLoaded();
+    });
+
 	soundManager.url = '/swf/soundmanager2_flash9.swf';
     soundManager.onload = function() {
-      nextEvent(); //starts viewer
+      soundManagerLoaded = true;
+      startIfLoaded();
+      preloadStuff(); //starts preloading which starts viewer
       femaleBlip = sm.createSound({
         id:'Blip1',
-        url:"/sounds/blipfemale2.mp3"
+        url:"/sounds/blipfemale2.mp3",
+        autoload:true
       });
       maleBlip = sm.createSound({
         id:'Blip2',
-        url:"/sounds/blipmale2.mp3"
+        url:"/sounds/blipmale2.mp3",
+        autoload:true
       });
     }
   $("#volume-control").bind("slider:changed", function (event, data) {
-    // The currently selected value of the slider
-    //console.log('value',data.value);
     setVolume(data.value);
-    // The value as a ratio of the slider (between 0 and 1)
-    //console.log('ratio',data.ratio);
   });
+
+
+  
+
 
 
 });
