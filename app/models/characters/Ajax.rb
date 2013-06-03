@@ -1,3 +1,4 @@
-class Ajax < Female
+require 'Male'
+class Ajax < Male
 
 end

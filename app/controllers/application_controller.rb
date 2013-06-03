@@ -37,8 +37,12 @@ class ApplicationController < ActionController::Base
   end
 
   
+  # def secure?
+  #   !(request.local? || Rails.env.development? || Rails.env.test?)
+  # end
+
   def secure?
-    !(request.local? || Rails.env.development? || Rails.env.test?)
+    false
   end
 
   def has_car?(vin)

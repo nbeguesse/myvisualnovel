@@ -336,7 +336,7 @@ li.span2 .textarea, li.span3 .textarea {
     max-height:80px;*/
 }
 .mini-viewer textarea, .mini-viewer .textarea {
-    font-size:105%;
+    font-size:110%;
     top:339px;
     width:503px;
     max-width:503px;
@@ -352,7 +352,8 @@ li.span2 .textarea, li.span3 .textarea {
     left:56px;
     height:100px;
     max-height:100px;
-    font-size:125%;
+    font-size:130%;
+    line-height:140%;
 }
 .textarea, .script .detail {
   white-space:pre-wrap;
