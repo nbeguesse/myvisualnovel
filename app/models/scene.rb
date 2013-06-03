@@ -5,6 +5,7 @@ class Scene < ActiveRecord::Base
   has_many :events, :dependent=>:delete_all
   validates_presence_of :project
   before_validation :set_order_index, :on=>:create
+  after_destroy :reorder_indexes
 
   scope :ordered,  lambda { {:order=>"order_index ASC, id ASC"} }
   scope :for_project, lambda { |project| {:conditions => ["project_id=? ", project.id] } }
@@ -12,11 +13,14 @@ class Scene < ActiveRecord::Base
 
   scope :at, lambda { |order_index| {:conditions => ["order_index = ?", order_index], :limit=>1} }
 
-  # def self.after_credits_scene
-  #   s = Scene.new
-  #   s.events <<  TitleCardEvent.restart
-  #   s
-  # end
+  def reorder_indexes
+    all = project.scenes.ordered.to_a
+    all.each_index do |i|
+      scene = all[i]
+      scene.order_index = i+1
+      scene.save if scene.changed?
+    end
+  end
 
   def move_to(order_index)
     scenes = project.scenes.to_a
@@ -37,10 +41,12 @@ class Scene < ActiveRecord::Base
   end
 
   def load_initial_events
-    if i = self.initial_event_pack.to_i
+    if self.initial_event_pack.present?
+      i = self.initial_event_pack.to_i
       scenes = EventPacks.locations(project)
       self.events = scenes[i].events
       self.custom_description = scenes[i].name
+      
     end
   end
 

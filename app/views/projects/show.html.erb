@@ -25,6 +25,7 @@
 </ul>
 
 <%if @project.scenes.present?%>
+
   <h2>Add to the Script</h2>
 
     <%sortable = @project.scenes.count > 1%>
@@ -33,14 +34,15 @@
       <li class="span2" data-id="<%=scene.id%>" data-url="<%=reorder_project_scene_path(@project, scene)%>">
         <a href="<%=edit_project_scene_url(@project, scene)%>" class="thumbnail tiny-viewer" style="position:relative;" title="<%=sortable ? "Drag to Rearrange" : "Edit it"%>">
           <%= render :partial=> "scenes/thumbnail", :locals=>{:scene=>scene}%>
-        <p><%=scene.get_description %></p>
+        <p><%=scene.get_description%></p>
       </a>
       </li>
   
       <% end %>
     </ul>
-<%end%>
 
+<%end%>
+<p class="lead">&nbsp;</p>
   <h2>Add A New Scene</h2>
   <ul class="thumbnails event-packs">
     <%scenes = EventPacks.locations(@project)%>
@@ -48,7 +50,7 @@
       <li class="span2">
         <%=form_for [@project, Scene.new] do |f|%>
           <%event_pack = scenes[i]%>
-        <a href="#" class="submitable thumbnail" title="Add This Scene!">
+          <a href="#" class="submitable thumbnail" title="Add This Scene!">
           <input type="hidden" value="<%=event_pack.love_scene%>" name="scene[love_scene]">
           <input type="hidden" value="<%=i%>" name="scene[initial_event_pack]">
           <%=image_tag event_pack.bg_image%>
@@ -58,11 +60,26 @@
             <p><span><%=event_pack.name%></span>
               <br/><small class='muted'><i class="icon-music"></i> <%=event_pack.music%></small>
             </p>
-
           </a>
-    
         <%end%>
       </li>
     <%end%>
+      <li class="span2">
+        <%=form_for [@project, Scene.new] do |f|%>
+          <a href="#" class="submitable thumbnail" title="Start A New Scene">
+            <%=image_tag "blur4.jpg"%>
+            <p><span>New Blank Scene</span></p>
+          </a>
+        <%end%>
+      </li>
+      <li class="span2">
+        <%=form_for [@project, Scene.new] do |f|%>
+          <a href="#" class="submitable thumbnail" title="Start A New Scene">
+            <input type="hidden" value="1" name="scene[love_scene]">
+            <%=image_tag "blur2.jpg"%>
+            <p><span>New Blank Love Scene</span></p>
+          </a>
+        <%end%>
+      </li>
     </ul>
 

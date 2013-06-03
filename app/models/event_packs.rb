@@ -30,7 +30,7 @@ class EventPacks
       ])
     out << EventPack.new("House Front",[
       BackgroundMusicEvent.new(:filename => "/#{BackgroundMusicEvent.folder}/Base/City_Fun.mp3", :order_index=>1),
-      BackgroundImageEvent.new(:filename => "#{BackgroundImageEvent.folder}/house_front.jpg", :order_index=>2)
+      BackgroundImageEvent.new(:filename => "#{BackgroundImageEvent.folder}/restaurant_ext.jpg", :order_index=>2)
       ])
     out << EventPack.new("Infirmary",[
       BackgroundMusicEvent.new(:filename => "/#{BackgroundMusicEvent.folder}/Base/Not_So_Simple_Life.mp3", :order_index=>1),

@@ -43,3 +43,9 @@ style.css (line 744)
 .post .details i {
     padding-right:5px;
 }
+#disqus_thread {
+  width:70%;
+  margin:0 auto;
+  border:1px solid lightgray;
+  padding:20px;
+}

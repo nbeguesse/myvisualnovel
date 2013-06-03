@@ -51,7 +51,7 @@ class ScenesController < ApplicationController
   def edit
     @body_class = "scene-editor"
     @event_index =  params[:event_index] ? params[:event_index].to_i : @scene.events.count
-    if params[:event_index].blank?
+    if params[:event_index].blank? && @scene.events.present?
       redirect_to :action=>:edit, :event_index=>@event_index #always scroll to current event
     end
     @event_count = @scene.events.count

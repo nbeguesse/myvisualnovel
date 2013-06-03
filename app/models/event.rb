@@ -138,7 +138,6 @@ class Event < ActiveRecord::Base
   end
 
   def reorder_indexes
-    Rails.logger.info "IN REORDER INDEXES"
     all = scene.events.ordered.to_a
     prev = nil
     all.each_index do |i|

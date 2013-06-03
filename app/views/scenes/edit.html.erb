@@ -2,7 +2,7 @@
  <%=javascript_include_tag("soundmanager2/soundmanager2","inlineplayer")%>
 <%end%>
 <%
-  current_event = Event.for_scene(@scene).at(@event_index).first
+  current_event = Event.for_scene(@scene).at(@event_index).first || Event.new()
   bg_file =  current_event.try(:characters_present).try(:first).try(:second) || BackgroundImageEvent.default.get_file
 %>
 <table id="scene-editor">
@@ -61,19 +61,21 @@
 			  	 	<tr><td class="btn btn-small"><a href="#" class="edit-speak" data-type="CharacterThinksEvent" data-character-id="<%=character.id%>" data-name="<%=character.name%>"><%=character.name%> thinks</td></tr>
 			  	 	<tr><td class="btn btn-small"><a href="#" class="edit-speak" data-type="CharacterSpeaksEvent" data-character-id="<%=character.id%>" data-name="<%=character.name%>"><%=character.name%> speaks</a></td></tr>
 	  	        </table>
-	  	        	<%@current_event = current_event%>
-	  	        	<%if num = current_event.characters_present[1].try(:first)%>
-	  	        	  <%=render :partial=>"character_action_items", :locals=>{:character=>Character.find(num)}%>
-	  	        	<%end%>
-	  	        	<%if num = current_event.characters_present[2].try(:first)%>
-	  	        	  <%=render :partial=>"character_action_items", :locals=>{:character=>Character.find(num)}%>
-	  	        	<%end%>
-				  	<%@project.characters.without_narrator.each do |character|%>
-				  	  <!-- show present characters first, then non-present characters -->
-				  	  <%if !current_event.has_character?(character)%>
-				  	    <%=render :partial=>"character_action_items", :locals=>{:character=>character}%>
-				  	  <%end%>
-					<%end%>
+	  	        	   <%@current_event = current_event%>
+		  	        	<%if num = current_event.characters_present.try(:second).try(:first)%>
+		  	        	  <%=render :partial=>"character_action_items", :locals=>{:character=>Character.find(num)}%>
+		  	        	<%end%>
+		  	        	<%if num = current_event.characters_present.try(:third).try(:first)%>
+		  	        	  <%=render :partial=>"character_action_items", :locals=>{:character=>Character.find(num)}%>
+		  	        	<%end%>
+		  	   
+					  	<%@project.characters.without_narrator.each do |character|%>
+					  	  <!-- show present characters first, then non-present characters -->
+					  	  <%if !current_event.has_character?(character)%>
+					  	    <%=render :partial=>"character_action_items", :locals=>{:character=>character}%>
+					  	  <%end%>
+						<%end%>
+					
 
 			  	 <table class="action-items">
 			  	 	<tr>
@@ -101,12 +103,9 @@
 		    <div class="mini-viewer">
 		      
 			  
-			  <%if current_event%>
-			    <%char = current_event.characters_present.first%>
-			      <%if char%>
-			      <%=image_tag char[1], :class=>"bg"%>
-			    <%end%>
-			  <%end%>
+
+			    <%=image_tag bg_file, :class=>"bg"%>
+
 			  
 			    <!-- edit text -->
 			    <div class="glassbox" style="display:none">
@@ -242,6 +241,8 @@
 <script>
   var events = <%=json_escape([@scene].map{|scene| scene.get_ordered_events}.flatten.to_json(:methods=>[:event_type, :get_character_name], :except=>[:created_at, :updated_at, :character_type]).html_safe)%>
   window.onload = function(){
-  	setCurrentEvent($("#row<%=current_event.id%>"));
+  	<%if current_event%>
+  	  setCurrentEvent($("#row<%=current_event.id%>"));
+  	<%end%>
   }
 </script>
