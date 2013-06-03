@@ -30,13 +30,13 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(params[:user])
-
+    x = session_obj
     if @user.save
         @user_session = UserSession.new(:email=>params[:user][:email], :password=>params[:user][:password])
         @user_session.save
-        session_obj.copy_to(@user)
-        flash[:notice] = "Thanks for signing up! You're ready to start making your own visual novels."
-        redirect_to root_url
+        x.copy_to(@user)
+        flash[:notice] = "Thanks for signing up!"
+        redirect_to projects_path
     else
       flash[:error] = "-- " + @user.errors.full_messages.join('<br/> -- ')
       render :action => :new

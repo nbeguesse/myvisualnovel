@@ -52,7 +52,10 @@
  <p>&nbsp;</p>
  <p>
   <%if @project.owner?(session_obj)%>
-  This visual novel is set to <a href="<%=edit_project_path(@project)%>"><b><%=@project.public? ? "Public" : "Private"%></b></a>
+    This visual novel is set to <a href="<%=edit_project_path(@project)%>"><b><%=@project.public? ? "Public" : "Private"%></b></a><br/>
+    <%if @project.public?%>
+    <small>Cut-and-paste the URL to share:<br/><%=play_url(@project.id, @project.basename)%></small>
+    <%end%>
   <%else%>
   &nbsp;
   <%end%>

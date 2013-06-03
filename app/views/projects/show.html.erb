@@ -42,7 +42,7 @@
 <%end%>
 
   <h2>Add A New Scene</h2>
-  <ul class="thumbnails">
+  <ul class="thumbnails event-packs">
     <%scenes = EventPacks.locations(@project)%>
     <% scenes.each_index do |i| %>
       <li class="span2">
@@ -52,10 +52,13 @@
           <input type="hidden" value="<%=event_pack.love_scene%>" name="scene[love_scene]">
           <input type="hidden" value="<%=i%>" name="scene[initial_event_pack]">
           <%=image_tag event_pack.bg_image%>
-          <%if event_pack.events[1]%>
-            <%=image_tag event_pack.events[1].filename, :class=>"characters"%>
+          <%if event_pack.events[2]%>
+            <%=image_tag event_pack.events[2].filename, :class=>"characters"%>
           <%end%>
-            <p><%=event_pack.name%></p>
+            <p><span><%=event_pack.name%></span>
+              <br/><small class='muted'><i class="icon-music"></i> <%=event_pack.music%></small>
+            </p>
+
           </a>
     
         <%end%>

@@ -104,30 +104,39 @@ function nextEvent(){
     });
   } else if (action['event_type']=="CharacterPoseEvent"){
     $(".glassbox").hide();
-	   var tag = '<img class="characters" src="'+action["filename"]+'" style="display: none;">';
-     var facetag = '<img class="characters" src="'+action["subfilename"]+'" style="display: none;">';
     for(var i=1; i<3; i++){
-      if(action['characters_present'][i] != null){ //skip blanks and nils
-        if(action["characters_present"][i][0] == action['character_id']){ //if character file src changed
-          $(".character"+i).addClass("character-old").fadeOut('slow',function(){ //remove old character if exists
+      var list = action['characters_present'][i];
+      if(list != null){ //skip blanks and nils
+
+        if(list[0] == action['character_id']){ //if character file src changed
+          //if the character appears, show both body and face. Otherwise (i.e. sex scene), just show the body.
+          //If it's a face-change, just show the face.
+          
+          var tag = '<img class="characters body" src="'+list[1]+'">';
+          var facetag = '<img class="characters face" src="'+list[2]+'">';
+          var classToRemove = ".character"+i;
+          if (action['filename']==null){ //change only face
+            classToRemove += ".face" //remove only old face
+          }
+          //remove old character if exists
+          $(classToRemove).addClass("character-old").fadeOut('slow',function(){ 
             $(".character-old").remove();
           });
-          //if the character has the face, show the face and body. Otherwise (i.e. sex scene), just show the body.
-          //It's setup like this to prevent the handler from triggering twice
-          if(action["subfilename"] != null){
-            $(tag).addClass("character"+i).insertBefore(".glassbox").fadeIn('slow'); //show body before showing face
-          } else {
-            facetag = tag; //ignore face
+
+          if(action['subfilename'] == null){ //change only body
+            facetag = tag; //It's setup like this to prevent the handler from triggering twice
+          } else if (action['filename']!=null){ //change body and face
+            $(tag).addClass("character"+i).hide().insertBefore(".glassbox").fadeIn('slow'); 
           }
-          $(facetag).addClass("character"+i).insertBefore(".glassbox").fadeIn('slow', function(){ 
+
+          $(facetag).addClass("character"+i).hide().insertBefore(".glassbox").fadeIn('slow', function(){ 
             currentEvent += 1;
-            //setTimeout('nextEvent()',timeToWait);
             nextEvent();
           });
         }
       }
     }
-
+ 
   } else if (action['event_type']=="LovePoseEvent"){
     var black = $(cover);
     black.insertAfter(".glassbox").fadeIn('slow', function(){

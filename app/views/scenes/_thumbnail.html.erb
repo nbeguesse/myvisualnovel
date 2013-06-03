@@ -1,6 +1,9 @@
 		
 		<%play ||= false%>
-		<%if scene%>  
+		<%if scene%>
+		  <%last_index = scene.events.count%>
+	      <%event = Event.for_scene(scene).at(last_index).first%>
+		<%elsif scene%>  
 		  <%middle_index = scene.middle_index%>
 	      <%event = Event.for_scene(scene).at(middle_index).first%>
 	    <%end%>

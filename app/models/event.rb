@@ -10,7 +10,7 @@ class Event < ActiveRecord::Base
   serialize :characters_present
   after_save :set_defaults
   after_save :partial_set_characters_present
-  before_create :before_creates
+  #before_create :before_creates
 
   #scope :latest, lambda { {:order=>"order_index DESC", :limit=>1} }
   scope :ordered,  lambda { {:order=>"order_index ASC, id ASC"} }
@@ -22,15 +22,15 @@ class Event < ActiveRecord::Base
   scope :character_pose, lambda { |character| {:conditions=>["type=? and character_id=?","CharacterPoseEvent", character.id]}}
   scope :character_vanishes, lambda { |character| {:conditions=>["type=? and character_id=?","CharacterVanishEvent", character.id]}}
 
-  def before_creates
-    if self.type=="CharacterPoseEvent" && filename.blank?
-      before = Event.for_scene(scene).character_pose(character).at_or_before(order_index).first
-      Rails.logger.info "FILENAME IS #{before.filename}"
+  # def before_creates
+  #   if self.type=="CharacterPoseEvent" && filename.blank?
+  #     #i.e. Changing face only
+  #     before = Event.for_scene(scene).character_pose(character).at_or_before(order_index).first
       
-      self.filename = before.filename
+  #     self.filename = before.filename
       
-    end
-  end
+  #   end
+  # end
 
   def set_defaults
     if [CharacterSpeaksEvent, CharacterThinksEvent,NarrationEvent].include?(self.type.constantize)
@@ -88,18 +88,18 @@ class Event < ActiveRecord::Base
   def set_characters_present prev
     arr = prev.try(:characters_present) || []
     arr[0] ||= ["BG", BackgroundImageEvent.default.get_file]
-    if self.type=="CharacterPoseEvent" && scene.love_scene?
+    if self.type=="CharacterPoseEvent" && scene.try(:love_scene)
         arr[1] = [character_id, filename]
     elsif self.type=="CharacterPoseEvent"
       if arr[1] && arr[1][0]==character_id #character in position 1
-        arr[1][1] = filename
+        arr[1][1] = filename if filename
         arr[1][2] = subfilename
       elsif arr[2] && arr[2][0]==character_id #character in position 2
-        arr[2][1] = filename
+        arr[2][1] = filename if filename
         arr[2][2] = subfilename
-      elsif arr[1].nil?
+      elsif arr[1].nil? 
         arr[1] = [character_id, filename, subfilename]
-      elsif arr[2].nil?
+      elsif arr[2].nil? 
         arr[2] = [character_id, filename, subfilename]
       else
         #TODO: Throw error if already 2 chars present

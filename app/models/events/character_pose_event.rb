@@ -1,7 +1,14 @@
 class CharacterPoseEvent < Event
   belongs_to :character
   belongs_to :scene
+  after_save :check_existence
 
+  def check_existence
+    if filename.blank? && !scene.has_character?(character, order_index-1)
+      #i.e. only a face with no body
+      self.destroy
+    end
+  end
  
   # def self.folder
   #  "Character/#{character_type}"
@@ -42,12 +49,13 @@ class CharacterPoseEvent < Event
   end
 
   def detail
+    out = ""
     if scene.love_scene?
-      out = "Pose: #{humanize(filename)}".html_safe
+      out << "Pose: #{humanize(filename)} /".html_safe
     else
-      out = "Clothes: #{humanize(filename)}".html_safe
+      out << "Clothes: #{humanize(filename)} /".html_safe if filename
     end
-    out << " / Face: #{humanize(subfilename)}" if subfilename.present?
+    out << "Face: #{humanize(subfilename)}" if subfilename.present?
     out
   end
 

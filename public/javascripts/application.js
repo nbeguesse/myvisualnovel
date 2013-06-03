@@ -373,9 +373,9 @@ $(document).ready(function() {
 	$("a.share-link").click(function(){
 		$(this).closest("li").find("p.share").slideToggle('slow');
 	});
-	$("p.share .share-link").live('focus', function () {
-            $(this).select();
-     });
+	// $("p.share .share-link").live('focus', function () {
+ //            $(this).select();
+ //     });
 	//drag sorting
 	$(function() {
 		$( "#sortable" ).sortable({
@@ -397,7 +397,10 @@ $(document).ready(function() {
 	  createTicker();
     }
     if($("li .tiny-viewer").length > 0){
-       $(window).resize(resizeThumbnail).trigger("resize");
-    }
+      setTimeout(
+    	function(){
+         $(window).resize(resizeThumbnail).trigger("resize");
+   		},250);
+      }
 
 });

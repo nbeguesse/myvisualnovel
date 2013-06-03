@@ -521,3 +521,28 @@ li .characters {
   .char-missing .char-present {
     display:none;
   }
+#error_explanation ul{
+  list-style:none;
+}
+ul.event-packs a {
+  text-decoration:none;
+  }
+ul.event-packs span {
+  text-decoration:underline;
+}
+ul.event-packs i.icon-music {
+  /* IE 8 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+
+  /* IE 5-7 */
+  filter: alpha(opacity=50);
+
+  /* Netscape */
+  -moz-opacity: 0.5;
+
+  /* Safari 1.x */
+  -khtml-opacity: 0.5;
+
+  /* Good browsers */
+  opacity: 0.5;
+  }

@@ -36,10 +36,6 @@ class ProjectsController < ApplicationController
         redirect_to project_path
         return
       end
-      # unless @only_scene
-      #   @before_events << TitleCardEvent.title
-      #   @after_events << TitleCardEvent.default_credits 
-      # end
 
     else
       not_found
@@ -85,8 +81,13 @@ class ProjectsController < ApplicationController
     respond_to do |format|
       if @project.save
         if first_project
-          flash[:notice] = "Congrats on making your first visual novel! I gave you an example scene to get you up and running."
+          flash[:notice] = "Congrats on making your first visual novel! We gave you an example scene to get you up and running."
           #TODO: Add Example Scene
+          pack = EventPacks.starter_scene(@project).first
+          scene = @project.scenes.new(:custom_description=>pack.name)
+          scene.events = pack.events
+          scene.save!
+          scene.events.first.reorder_indexes
         end
         format.html { redirect_to @project }
         format.json { render json: @project, status: :created, location: @project }
