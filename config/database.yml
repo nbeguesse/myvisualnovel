@@ -33,9 +33,8 @@ development:
   port:      5432
 production:
   adapter:   postgresql
-  database:  mvn
-  username:  deploy
-  password:  Bb2Y76RNJa
-  host:      localhost
+  database:  'mvn'
+  username:  'deploy'
+  password:  'Bb2Y76RNJa'
+  host:      'ec2-107-20-189-97.compute-1.amazonaws.com'
   reconnect: true
-  port:      5436
