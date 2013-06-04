@@ -28,6 +28,10 @@ GEM
     activesupport (3.2.13)
       i18n (= 0.6.1)
       multi_json (~> 1.0)
+    airbrake (3.1.9)
+      activesupport
+      builder
+      json
     arel (3.0.2)
     authlogic (3.2.0)
       activerecord (>= 3.0.0)
@@ -108,6 +112,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  airbrake
   authlogic (= 3.2.0)
   bartt-ssl_requirement
   bcrypt-ruby (= 3.0.1)

@@ -1,0 +1,17 @@
+
+* Other
+ - image uploading
+* Payment
+ - Amazon/Paypal signup & integration
+ - Expansion packs
+
+
+2
+make repository private
+new forum posts
+
+3
+browser testing
+optimization
+
+
