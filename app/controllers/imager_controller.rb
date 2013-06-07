@@ -46,6 +46,10 @@ class ImagerController < ApplicationController
     else
       image = MiniMagick::Image.open outpath
     end
+    if params[:width] #resize the image thumbnail. Only really necessary for ie
+      height = params[:width].to_i*600/800
+      image.resize "#{params[:width]}x#{height}"
+    end
     send_data(image.to_blob, :type=>"image/jpg", :disposition=>'inline')
   end
 

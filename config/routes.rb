@@ -2,6 +2,7 @@ MyVisualNovel::Application.routes.draw do
 
 
   resource :user_sessions
+  match 'play/:id/null' => proc { [404, {}, ['']] }#for IE9 SoundManager
   match 'play/:id/:basename' => 'projects#play', :as=>:play
   resources :projects do
     resources :characters
@@ -17,7 +18,8 @@ MyVisualNovel::Application.routes.draw do
   match 'events/:id/delete' => 'events#delete', :as => :delete_event
   match 'events/:id/moveup' => 'events#moveup', :as => :moveup_event
   match 'events/:id/movedown' => 'events#movedown', :as => :movedown_event
-  match 'play/:id/:basename/scene/:scene_id' => 'projects#play', :as=>:play_scene
+  match 'play/:id/:basename/scene/null' => proc { [404, {}, ['']] }#for IE9 SoundManager
+  match 'play/:id/:basename/scene/:scene_id' => 'projects#play', :as=>:play_scene 
 
   resources :users do
     member do

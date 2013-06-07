@@ -1,13 +1,14 @@
 module ApplicationHelper
 
-  def compiled_image event #the same code also in PreloadEvent
-    PreloadEvent.compiled_image(event)
+  def compiled_image event, width=nil#the same code also in PreloadEvent
+    PreloadEvent.compiled_image(event, width)
   end
 
   def event_pack_image event_pack
     para = {}
     para[:bg] = event_pack.bg_image
     para[:character1] = event_pack.events[2].try(:filename)
+    para[:width] = 160
     imager_path(para)
   end
 

@@ -8,7 +8,7 @@
 	      <%event = Event.for_scene(scene).at(middle_index).first%>
 	    <%end%>
 	    <%if scene && event%>
-	        <%=image_tag compiled_image(event)%>
+	        <%=image_tag compiled_image(event, 160)%>
 		    <%if event.glassbox?%>
 		      <%=image_tag "glassbox.png", :class=>"glass"%>
 		      <div class="speaker"><%=event.character_name%></div>

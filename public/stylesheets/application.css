@@ -7,7 +7,10 @@ html.normal {
   /*filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/festival.jpg', sizingMethod='scale');
   -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/festival.jpg', sizingMethod='scale')";*/
 }
-img { -ms-interpolation-mode: bicubic; }
+img
+{
+-ms-interpolation-mode: bicubic;
+}
 #wrapper {
   position:absolute;
   height:100%;
@@ -298,7 +301,7 @@ margin-bottom:20px;
     top:0px;
     left:0;
 }
-.textarea {
+.textarea , textarea{
   overflow:hidden;
 }
 #wrapper .textarea {
@@ -450,7 +453,7 @@ form.edit_project .table td {
 }
 form.edit_project input[type="radio"] {
   float:left;
-  margin: 5px 10px 0;
+  margin: 0px 10px 0;
   }
 .script .jump-to {
   cursor:pointer;
@@ -552,3 +555,7 @@ ul.event-packs i.icon-music {
   /* Good browsers */
   opacity: 0.5;
   }
+.table-verycondensed th, .table-verycondensed td {
+    padding: 0;
+    vertical-align:middle;
+}

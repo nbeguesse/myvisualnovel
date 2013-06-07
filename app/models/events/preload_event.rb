@@ -5,7 +5,7 @@ class PreloadEvent < Event
   	return self
   end
 
-  def self.compiled_image event
+  def self.compiled_image event, width=nil
     c = event.characters_present
     return BackgroundImageEvent.default.filename if c.blank?
     #if [BackgroundImageEvent, LovePoseEvent, CharacterPoseEvent].include?(event.type.constantize)
@@ -14,7 +14,8 @@ class PreloadEvent < Event
       para[:character1] = c.try(:second).try(:second)
       para[:face1] = c.try(:second).try(:third)
       para[:character2] = c.try(:third).try(:second)
-      para[:face2] = c.try(:third).try(:third)    
+      para[:face2] = c.try(:third).try(:third)   
+      para[:width] = width
       return Rails.application.routes.url_helpers.imager_path(para)
     #end
     #return BackgroundImageEvent.default.filename

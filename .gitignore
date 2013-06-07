@@ -1,10 +1,10 @@
 .DS_Store
 log
-log/*
+log/*.log
 tmp/*
 .idea
 *.iml
-public/photos
+public/Compiled
 public/files
 db/sphinx/*
 config/*.sphinx.conf

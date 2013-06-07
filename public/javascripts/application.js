@@ -29,17 +29,6 @@ function resizeThumbnail(container, div) {
 		    div.css("top",(width*5.9)+"px");
 		    div.css("font-size",(width/3.8)+"px");
 	    }
-	    $("li .characters").css("width",$("img.bg").width()+"px"); //manual adjust to make them look right
-	    var character2 = $("li .character2");
-	    if(character2.length != 0){
-	    	var width = character2.width()/2;
-	    	var height = character2.height();
-	    	console.log(width)
-	    	console.log(height)
-	    	character2.css("margin-left",width+"px");
-	    	character2.css("clip","rect(0 "+width+"px "+height+"px 0px)");
-	    }
-
 
 				
 } 
