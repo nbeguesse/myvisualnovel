@@ -170,15 +170,15 @@ function loadScene(order, anyway){
       }
     }
     if(["CharacterSpeaksEvent","NarrationEvent","CharacterThinksEvent"].indexOf(action["event_type"])>=0){
-    	$(".glassbox").show();
-    	$(".glassbox .controls").hide();
+    	$(".glassbox").css("visibility","visible");
+    	$(".glassbox .controls").css("visibility","hidden");
     	 $(".glassbox .speaker").text(action['get_character_name']);
     	 setupGlassBox(action);
 		 $(".textarea").html(lefty+action['text']+righty);
 
 		 $(".glassbox textarea").val(action['text']);
     } else {
-    	$(".glassbox").hide();
+    	$(".glassbox").css("visibility","hidden");
     }
     currentEvent = order;
 }
@@ -187,14 +187,14 @@ function setCurrentEvent(row){
   // var row = $(obj).closest('tr');
   if(row.hasClass('selected')){return;}
    var num = row.attr("data-id");
-  $(".script .more").hide();
-  //$(".script .dropdown i").removeClass('icon-minus-sign').addClass('icon-pencil');
-  row.find('.more').show();
+
   $("input.event_id").val(num);
   if(typeof num === "undefined"){
   	//i.e. clicked "Add to Script!" instead of a row change
   	$("textarea").val("");
   } else {
+  $(".script .more").hide();
+  row.find('.more').show();
    	var order = row.attr("data-order-id");
    	loadScene(order, false);
     $("input.event_order").val(order);
@@ -203,7 +203,7 @@ function setCurrentEvent(row){
   }
 }
 function showOverlay(name){
-  $(".glassbox").hide();
+  $(".glassbox").css("visibility","hidden");
   $(".overlay .thumbnails").css("visibility","hidden");
 ;  $(".overlay").slideUp("slow", function(){
   	setTimeout(
@@ -324,9 +324,9 @@ $(document).ready(function() {
 	 	 $(".glassbox input.event_type").val(event_type);
 	 	 $(".overlay").add(".overlay-topper").hide();
 	// 	 //hide the glassbox dialogue and show the editor
-	 	 $(".glassbox").css("display","block");
+	 	 $(".glassbox").css("visibility","visible");
 	 	 $(".glassbox .textarea").hide();
-	 	 $(".glassbox .controls").css("display","inline-block");
+	 	 $(".glassbox .controls").css("visibility","visible");
 	 	 $(".glassbox textarea").show().focus();
 	 	 return false;
 	 });

@@ -1,5 +1,4 @@
 html.normal { 
-  background-color:black;
   background: url(/images/festival.jpg) no-repeat center center fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -158,13 +157,14 @@ li.span2, li.span3 {
     margin-bottom: 20px;
 }
 .romantic-font {
-/* font-family: 'Great Vibes', cursive; */
-font-family: cursive;
+ font-family: 'Great Vibes', cursive; 
+/*font-family: cursive; */
 font-size:120%;
 font-weight:normal;
 }
 .character-index input.checkbox {
-  float:none; margin-bottom:5px
+  float:none; margin-bottom:5px;
+  width:20px;
 }
 .character-index input.name {
     margin-bottom:0;
@@ -296,6 +296,9 @@ margin-bottom:20px;
     position:absolute;
     top:0px;
     left:0;
+}
+.textarea {
+  overflow:hidden;
 }
 #wrapper .textarea {
   color:white;

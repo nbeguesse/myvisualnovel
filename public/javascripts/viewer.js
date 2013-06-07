@@ -216,7 +216,7 @@ function nextEvent(){
     if(action['filename'] == ""){
       stopLastSound();
       currentEvent+=1;
-      setTimeout('nextEvent()',timeToWait);
+      setTimeout('nextEvent()',timeToWait/2);
       return false;
     }
     var soundURL = action['filename'];
@@ -234,7 +234,7 @@ function nextEvent(){
         thisSound.play({loops:9999});
         self.lastSound = thisSound;
         currentEvent += 1;
-        setTimeout('nextEvent()',timeToWait);
+        setTimeout('nextEvent()',timeToWait/2);
       }
     } else {
 	  stopLastSound();
@@ -245,7 +245,7 @@ function nextEvent(){
        url:soundURL,
         onplay: function(){
         	currentEvent += 1;
-        	setTimeout('nextEvent()',timeToWait);
+        	setTimeout('nextEvent()',timeToWait/2);
         },
       });
       self.soundsByURL[soundURL] = thisSound;
