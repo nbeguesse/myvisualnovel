@@ -14,14 +14,14 @@ $(document).ready(function() {
 	//Load threads
 	$.ajax({
 		type: "GET",
-		url: "https://disqus.com/api/3.0/forums/listThreads.json",
+		url: "https://disqus.com/api/3.0/forums/listThreads.jsonp",
 		data: {
 			api_key: disqus_api_key,
 			forum: "mvnforum2",
 			limit: 100,
 			include: ["open"],
 		},
-		dataType: "json",
+		dataType: "jsonp",
 		success: gotThreadList,
 		error: function(json){
 			$("#threadList").text("ERROR: " + JSON.stringify(json));
