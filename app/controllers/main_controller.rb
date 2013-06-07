@@ -11,6 +11,7 @@ class MainController < ApplicationController
 
   def forum
     @backlink = root_path
+     headers['Access-Control-Allow-Origin'] = "*"
 
   	
   end
