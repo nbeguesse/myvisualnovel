@@ -1,4 +1,4 @@
-var disqus_shortname = 'mvnforum';
+var disqus_shortname = 'mvnforum2';
 var disqus_url = location.href;
 var disqus_config = function () { 
 	this.language = "en";
@@ -14,14 +14,14 @@ $(document).ready(function() {
 	//Load threads
 	$.ajax({
 		type: "GET",
-		url: "https://disqus.com/api/3.0/forums/listThreads.jsonp",
+		url: "https://disqus.com/api/3.0/forums/listThreads.json",
 		data: {
 			api_key: disqus_api_key,
-			forum: "mvnforum",
+			forum: "mvnforum2",
 			limit: 100,
 			include: ["open"],
 		},
-		dataType: "jsonp",
+		dataType: "json",
 		success: gotThreadList,
 		error: function(json){
 			$("#threadList").text("ERROR: " + JSON.stringify(json));
@@ -62,7 +62,7 @@ function createThread(t)
 function newThread(){
 	var title = $("#newThreadName").val();
 	var t = {
-				//TODO: Change this and also change the URL at Disque > API 
+				//TODO: Change this and also change the URL at http://disqus.com/api/applications/2355017/
                 link: "http://myvisualnovel.com/forum/#!" + title,
                 title: title,
         }
