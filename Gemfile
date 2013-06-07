@@ -26,6 +26,7 @@ gem "authlogic",			  "= 3.2.0"
 gem 'bartt-ssl_requirement', :require => 'ssl_requirement'
 gem "bcrypt-ruby",            "= 3.0.1" #for password hashing
 gem 'airbrake'
+gem 'mini_magick'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

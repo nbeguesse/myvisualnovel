@@ -1,4 +1,16 @@
 module ApplicationHelper
+
+  def compiled_image event #the same code also in PreloadEvent
+    PreloadEvent.compiled_image(event)
+  end
+
+  def event_pack_image event_pack
+    para = {}
+    para[:bg] = event_pack.bg_image
+    para[:character1] = event_pack.events[2].try(:filename)
+    imager_path(para)
+  end
+
   def has_adult_cookie?
     !cookies[:adult].blank?
   end

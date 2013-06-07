@@ -51,7 +51,7 @@ class CharacterPoseEvent < Event
   def detail
     out = ""
     if scene.love_scene?
-      out << "Pose: #{humanize(filename)} /".html_safe
+      out << "Pose: #{humanize(filename)} ".html_safe
     else
       out << "Clothes: #{humanize(filename)} /".html_safe if filename
     end

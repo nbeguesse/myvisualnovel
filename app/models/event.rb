@@ -22,15 +22,6 @@ class Event < ActiveRecord::Base
   scope :character_pose, lambda { |character| {:conditions=>["type=? and character_id=?","CharacterPoseEvent", character.id]}}
   scope :character_vanishes, lambda { |character| {:conditions=>["type=? and character_id=?","CharacterVanishEvent", character.id]}}
 
-  # def before_creates
-  #   if self.type=="CharacterPoseEvent" && filename.blank?
-  #     #i.e. Changing face only
-  #     before = Event.for_scene(scene).character_pose(character).at_or_before(order_index).first
-      
-  #     self.filename = before.filename
-      
-  #   end
-  # end
 
   def set_defaults
     if [CharacterSpeaksEvent, CharacterThinksEvent,NarrationEvent].include?(self.type.constantize)
@@ -107,9 +98,9 @@ class Event < ActiveRecord::Base
       end
     elsif self.type=="CharacterVanishEvent"
       #remove the char
-      if arr[1][0] == character_id
+      if arr[1].try(:first) == character_id
         arr[1] = nil
-      elsif arr[2][0] == character_id
+      elsif arr[2].try(:first) == character_id
         arr[2] = nil
       else
         arr.reject!{|e|e[0]==character_id}

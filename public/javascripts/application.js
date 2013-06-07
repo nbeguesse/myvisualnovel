@@ -156,15 +156,11 @@ function setupGlassBox(action){
 function loadScene(order, anyway){
   if((currentEvent==order)&&(!anyway)){ return; }
   var action = events[order];
-  $("img.bg").attr("src",action["characters_present"][0][1]);
-  $("img.characters").remove();
+   $("img.bg").attr("src",images[order]);
   $("div.action-items-holder").removeClass("char-present").addClass("char-missing");
-  var tag = '<img class="characters">';
     for(var i=1; i<3; i++){
       var charfile = action['characters_present'][i];
       if(charfile != null){ //skip blanks and nils
-          $(tag).attr("src",charfile[1]).addClass("character"+i).insertBefore(".glassbox"); //put their body
-          $(tag).attr("src",charfile[2]).addClass("character"+i).insertBefore(".glassbox"); //put their face
           $("div.poses-for-"+charfile[0]).find("input.subfilename").val(charfile[2]); //put their face as default in the form
           $("div.action-items-for-"+charfile[0]).removeClass("char-missing").addClass("char-present"); //refresh action items
       }

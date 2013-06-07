@@ -2,7 +2,7 @@
 var cover = "<div class='black glass' style='display:none; width:800px; height:600px'></div>;";
 var anim = "<img src='/images/7-1.gif'>";
 var titlecard = '<div id="title-wrapper"><div id="title"><div><div><span></span></div></div></div></div>';
-var afterCreditsText = "<h3><a href='javascript:location.reload()'>Play Again</a><br/></h3><p><small>Powered by <br/><a href='/'>MyVisualNovel.com</a></small></p>";
+var afterCreditsText = "<h3><a href='javascript:location.reload()'>Play Again</a><br/></h3><p><small>Powered by <br/><a href='/'>MyVisualNovel.com</a><br/>Create your own!</small></p>";
 
 
 //START SOUNDS
@@ -40,6 +40,7 @@ var afterCreditsText = "<h3><a href='javascript:location.reload()'>Play Again</a
    if (self.lastSound) {
     fadeOutSound(self.lastSound.id, -5);
    }
+   self.lastSound = null;
  }
  function setVolume(g){
   soundManager.defaultOptions.volume = g;
@@ -77,7 +78,7 @@ function speak(){
 
 function nextEvent(){
   action = scenes[currentEvent];
-  console.log('action',action);
+  //console.log('action',action);
   if(paused){ return; } 
   if(currentEvent >= scenes.length){
 
@@ -97,61 +98,35 @@ function nextEvent(){
   } else if (action['event_type']=="BackgroundImageEvent"){
   	$(".glassbox").fadeOut();
   	$("#bg-content").fadeOut('slow', function(){ //fade out old background
-	  	$("#bg-content").attr("src",action['filename']).fadeIn('slow', function(){
+	  	$("#bg-content").attr("src",images[currentEvent]).fadeIn('slow', function(){
 	  		 currentEvent += 1;
 	  		 setTimeout('nextEvent()',timeToWait);
 	  	});
     });
   } else if (action['event_type']=="CharacterPoseEvent"){
     $(".glassbox").hide();
-    for(var i=1; i<3; i++){
-      var list = action['characters_present'][i];
-      if(list != null){ //skip blanks and nils
+    //smooth fade new content over old
+    var black = $("<img src='"+images[currentEvent]+"' class='characters img-rounded'>");
+    black.insertBefore("#bg-content");
+    $("#bg-content").addClass("old").fadeOut('slow', function(){
+      $(".old").remove();
+      black.attr("id","bg-content")
+      currentEvent += 1;
+      setTimeout('nextEvent()',timeToWait);
+    });
 
-        if(list[0] == action['character_id']){ //if character file src changed
-          //if the character appears, show both body and face. Otherwise (i.e. sex scene), just show the body.
-          //If it's a face-change, just show the face.
-          
-          var tag = '<img class="characters body" src="'+list[1]+'">';
-          var facetag = '<img class="characters face" src="'+list[2]+'">';
-          var classToRemove = ".character"+i;
-          if (action['filename']==null){ //change only face
-            classToRemove += ".face" //remove only old face
-          }
-          //remove old character if exists
-          $(classToRemove).addClass("character-old").fadeOut('slow',function(){ 
-            $(".character-old").remove();
-          });
-
-          if(action['subfilename'] == null){ //change only body
-            facetag = tag; //It's setup like this to prevent the handler from triggering twice
-          } else if (action['filename']!=null){ //change body and face
-            $(tag).addClass("character"+i).hide().insertBefore(".glassbox").fadeIn('slow'); 
-          }
-
-          $(facetag).addClass("character"+i).hide().insertBefore(".glassbox").fadeIn('slow', function(){ 
-            currentEvent += 1;
-            nextEvent();
-          });
-        }
-      }
-    }
  
   } else if (action['event_type']=="LovePoseEvent"){
     var black = $(cover);
     black.insertAfter(".glassbox").fadeIn('slow', function(){
-      $(".characters").remove();
-       if(action['characters_present'][0] != null){ //place bg
-         $("#bg-content").show().attr("src",action['characters_present'][0][1]);
-       }
        //look ahead at the next scene, and if its a CharacterPoseEvent
        //show it all at once
        var next = scenes[currentEvent+1];
        if((next != null)&&(next['event_type']=="CharacterPoseEvent")){
         currentEvent += 1;
-        var tag = '<img class="characters character1" src="'+next["filename"]+'">';
-         $(tag).insertBefore(".glassbox");
        }
+       $("#bg-content").attr("src",images[currentEvent]).show();
+
        black.fadeOut('slow', function(){
          currentEvent += 1;
          setTimeout('nextEvent()',timeToWait);
@@ -161,18 +136,17 @@ function nextEvent(){
     
 
 	} else if(action['event_type']=="CharacterVanishEvent"){
-    for(var i=1; i<3; i++){
-      if(action['characters_present'][i] == null){
-        var character = $(".character"+i);
-        if(character.length > 0){
-          character.fadeOut('slow',function(){
-          });
-          currentEvent += 1;
-          setTimeout('nextEvent()',timeToWait+600);
-        }
-        
-      }
-    }
+    //same as CharacterPoseEvent
+    $(".glassbox").hide();
+    //smooth fade new content over old
+    var black = $("<img src='"+images[currentEvent]+"' class='characters img-rounded'>");
+    black.insertBefore("#bg-content");
+    $("#bg-content").addClass("old").fadeOut('slow', function(){
+      $(".old").remove();
+      black.attr("id","bg-content")
+      currentEvent += 1;
+      setTimeout('nextEvent()',timeToWait);
+    });
     
   } else if(action['event_type']=="CharacterSpeaksEvent"){
   	setupGlassBox(action);
@@ -205,7 +179,6 @@ function nextEvent(){
     stopLastSound();
     var black = $(cover);
     black.insertAfter(".glassbox").fadeIn('slow', function(){
-      $(".characters").remove();
       $("#bg-content").hide();
       black.remove();
       currentEvent += 1;
@@ -214,6 +187,7 @@ function nextEvent(){
   } else if(action['event_type']=="BackgroundMusicEvent"){
     //$(".glassbox").hide();
     if(action['filename'] == ""){
+      //console.log('Starting Silence...');
       stopLastSound();
       currentEvent+=1;
       setTimeout('nextEvent()',timeToWait/2);
@@ -225,20 +199,23 @@ function nextEvent(){
     if (thisSound) {
       // already exists
       if (thisSound == self.lastSound) {
+        //console.log('Already playing...')
         //already playing. do nothing!
         currentEvent += 1;
         nextEvent();
+        return false;
       } else {
+        //console.log("playing already loaded sound")
       	stopLastSound();
-        //play already loaded sound
+
         thisSound.play({loops:9999});
         self.lastSound = thisSound;
-        currentEvent += 1;
-        setTimeout('nextEvent()',timeToWait/2);
+        //no need to go to nextEvent, since its in onplay
+        return false;
       }
     } else {
 	  stopLastSound();
-
+      //console.log('making new sound');
       // create sound
       thisSound = sm.createSound({
        id:'MP3Sound'+(self.soundCount++),
@@ -246,6 +223,7 @@ function nextEvent(){
         onplay: function(){
         	currentEvent += 1;
         	setTimeout('nextEvent()',timeToWait/2);
+
         },
       });
       self.soundsByURL[soundURL] = thisSound;
@@ -304,12 +282,12 @@ function preloadStuff(){
     var asset = assets[i];
     if(asset.indexOf(".mp3")> 0 ){
       soundLoaded=false;
-      console.log('mp3',asset);
+      //console.log('mp3',asset);
       var thisSound = sm.createSound({
         url:asset,
         autoLoad:true,
         onload:function(){
-          console.log('SOUND LOADED', thisSound.url);
+          //console.log('SOUND LOADED', thisSound.url);
           soundLoaded=true;
           scenePreloaded();
           window.soundsByURL[thisSound.url] = thisSound;
@@ -323,14 +301,14 @@ function preloadStuff(){
   div.imagesLoaded()
   .always( function( instance ) {
     imagesLoaded=true;
-    console.log('loaded them');
+    //console.log('loaded them');
     scenePreloaded();
   });
 }
 
 function scenePreloaded(){
   if(imagesLoaded && soundLoaded){
-    console.log('done preloading both');
+    //console.log('done preloading both');
     initialAssetsLoaded = true;
     currentSceneLoading += 1;
     startIfLoaded();
@@ -341,7 +319,7 @@ function scenePreloaded(){
 function startIfLoaded(){
   if(started){ return true; }
   if(soundManagerLoaded && titleLoaded && initialAssetsLoaded){
-    console.log("STARTING");
+   // console.log("STARTING");
     started = true;
     $("#title-wrapper").fadeOut('slow',function(){
       $("#title-wrapper").remove();
@@ -377,7 +355,7 @@ $(document).ready(function() {
   //prepare preloading
   for(var i=0; i<scenes.length; i++){
     if(scenes[i]['event_type']=="PreloadEvent"){
-      assetList.push(scenes[i].characters_present);
+      assetList.push(scenes[i].text);
     }
   }
   //put up loading animation

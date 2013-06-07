@@ -32,8 +32,8 @@ MyVisualNovel::Application.routes.draw do
   match 'forum' => "main#forum", :as=>:forum
   match 'not_found' => 'main#not_found', :as => :not_found
   match 'main/cookie' => "main#cookie", :as=>:cookie
-  match 'i/BackgroundImage/:folder/:filename' => "imager#get", :as=>:imager
-
+  match 'i' => "imager#get", :as=>:imager
+  # match 'i/BackgroundImage/:folder/:filename.:format' => "imager#get", :as=>:imager
   root :to => 'main#index'
 
 

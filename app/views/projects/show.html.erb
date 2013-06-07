@@ -53,10 +53,7 @@
           <a href="#" class="submitable thumbnail" title="Add This Scene!">
           <input type="hidden" value="<%=event_pack.love_scene%>" name="scene[love_scene]">
           <input type="hidden" value="<%=i%>" name="scene[initial_event_pack]">
-          <%=image_tag event_pack.bg_image%>
-          <%if event_pack.events[2]%>
-            <%=image_tag event_pack.events[2].filename, :class=>"characters"%>
-          <%end%>
+          <%=image_tag event_pack_image(event_pack)%>
             <p><span><%=event_pack.name%></span>
               <br/><small class='muted'><i class="icon-music"></i> <%=event_pack.music%></small>
             </p>
