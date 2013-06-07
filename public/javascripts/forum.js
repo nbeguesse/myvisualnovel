@@ -63,7 +63,7 @@ function newThread(){
 	var title = $("#newThreadName").val();
 	var t = {
 				//TODO: Change this and also change the URL at Disque > API 
-                link: "http://localhost:3000/forum/#!" + title,
+                link: "http://myvisualnovel.com/forum/#!" + title,
                 title: title,
         }
 
