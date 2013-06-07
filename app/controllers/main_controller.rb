@@ -1,11 +1,6 @@
 class MainController < ApplicationController
-  before_filter :set_access_control_headers
-def  set_access_control_headers
-          headers['Access-Control-Allow-Origin'] = '*'
-          headers['Access-Control-Request-Method'] = '*'
-          headers['Access-Control-Allow-Headers'] = '*'
-          headers['Access-Control-Allow-Credentials'] = "true"
-  end
+  #before_filter :set_access_control_headers
+
 
   def cookie
     set_adult_cookie
@@ -18,6 +13,14 @@ def  set_access_control_headers
 
   def forum
     @backlink = root_path
+
+    api_key = "r66MDumZy08VXMs9gJS2Lz3Ko9cVGQB00iv08DsHHkSOFs6T8kw0WsZEvJ5y4Aaj"
+    url = "https://disqus.com/api/3.0/forums/listThreads.json?&api_key=#{api_key}&forum=mvnforum2&limit=100"
+    @http = Net::HTTP.new('disqus.com')  
+    @http = @http.start    
+    req = Net::HTTP::Get.new(URI.encode(url))
+    res = @http.request(req) 
+    @posts = res.body.html_safe
 
 
   	

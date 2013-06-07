@@ -1,6 +1,9 @@
 <%content_for :javascript do %>
 	<%=javascript_include_tag("forum","http://mvnforum2.disqus.com/embed.js") %>
 	<%=stylesheet_link_tag("forum")%>
+	<script>
+	  var posts = <%=json_escape(@posts)%>;
+	</script>
 	<%end%>
 <div class="wrapper">
 

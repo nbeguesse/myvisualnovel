@@ -12,26 +12,28 @@ $(document).ready(function() {
 		$('#topic').hide();
 
 	//Load threads
-	$.ajax({
-		type: "GET",
-		url: "https://disqus.com/api/3.0/forums/listThreads.jsonp",
-		data: {
-			api_key: disqus_api_key,
-			forum: "mvnforum2",
-			limit: 100,
-			include: ["open"],
-		},
-		dataType: "jsonp",
-		success: gotThreadList,
-		error: function(json){
-			$("#threadList").text("ERROR: " + JSON.stringify(json));
-		},
-	});	
+	// $.ajax({
+	// 	type: "GET",
+	// 	url: "https://disqus.com/api/3.0/forums/listThreads.jsonp",
+	// 	data: {
+	// 		api_key: disqus_api_key,
+	// 		forum: "mvnforum2",
+	// 		limit: 100,
+	// 		include: ["open"],
+	// 	},
+	// 	dataType: "jsonp",
+	// 	success: gotThreadList,
+	// 	error: function(json){
+	// 		$("#threadList").text("ERROR: " + JSON.stringify(json));
+	// 	},
+	// });
+	gotThreadList(posts);	
 
 });
 
 function gotThreadList(resp)
 {
+	//console.log('resp',resp)
 	var tl = $("#threadList");
 	tl.empty();
 
