@@ -1,11 +1,12 @@
 html.normal { 
+  background-color:black;
   background: url(/images/festival.jpg) no-repeat center center fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/festival.jpg', sizingMethod='scale');
-  -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/festival.jpg', sizingMethod='scale')";
+  /*filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/festival.jpg', sizingMethod='scale');
+  -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/festival.jpg', sizingMethod='scale')";*/
 }
 #wrapper {
   position:absolute;

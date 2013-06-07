@@ -81,7 +81,7 @@ class ProjectsController < ApplicationController
     respond_to do |format|
       if @project.save
         if first_project
-          flash[:notice] = "Congrats on making your first visual novel! We gave you an example scene to get you up and running."
+          flash[:notice] = "Congrats on starting your first visual novel! We gave you an example scene to get you up and running."
           #TODO: Add Example Scene
           pack = EventPacks.starter_scene(@project).first
           scene = @project.scenes.new(:custom_description=>pack.name)

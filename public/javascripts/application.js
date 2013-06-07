@@ -229,6 +229,7 @@ $(document).ready(function() {
 	//enable tooltips on links
 	$("a").tooltip({animation:false});
 	$(".tippable").tooltip({animation:false});
+	$('form input').placeholder(); //enable placeholder text in lower browsers
 	$(".confirmable").click(function(){
 		return confirm("Are you sure?");
 	});

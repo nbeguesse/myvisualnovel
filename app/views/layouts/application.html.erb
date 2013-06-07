@@ -4,7 +4,7 @@
   <%@page_title = @page_title || humanize_title(@current_uri)%>
   <title><%=wrap_title @page_title.titleize%></title>
   <%= stylesheet_link_tag "bootstrap.css","inlineplayer","flashblock","simple-slider","simple-slider-volume","application", :cache=>"mvn" %>
-  
+
   <%= csrf_meta_tags %>
   <%if false%>
   <%if @project.try(:title) || @include_cool_font%>
@@ -71,7 +71,7 @@
   <a id="nextlink" class="carousel-control right" href="<%=@nextlink%>">&rsaquo;<!--<br/><span class="backlink"><%=humanize_title(@nextlink)%></span></a>-->
  
 <%end%>
-<%= javascript_include_tag "jquery","jquery-ui-1.10.3.custom.min.js","bootstrap.js","slide","popups","application", :cache=>"mvn" %>
+<%= javascript_include_tag "jquery","jquery-ui-1.10.3.custom.min.js","bootstrap.js","jquery.placeholder.min","slide","popups","application", :cache=>"mvn" %>
 <%= yield(:javascript) || "" %>
 <script type="text/javascript">
 
