@@ -22,11 +22,11 @@ class EventPacks
       ])
     out << EventPack.new("School Hallway",[
       BackgroundMusicEvent.new(:filename => "/#{BackgroundMusicEvent.folder}/Base/Busy_Bodies.mp3", :order_index=>1),
-      BackgroundImageEvent.new(:filename => "#{BackgroundImageEvent.folder}/School_Hallway.jpg", :order_index=>2)
+      BackgroundImageEvent.new(:filename => "#{BackgroundImageEvent.folder}/school_hallway.jpg", :order_index=>2)
         ])
     out << EventPack.new("Classroom",[
       BackgroundMusicEvent.new(:filename => "/#{BackgroundMusicEvent.folder}/Base/Busy_Bodies.mp3", :order_index=>1),
-      BackgroundImageEvent.new(:filename => "#{BackgroundImageEvent.folder}/School_Classroom.jpg", :order_index=>2)
+      BackgroundImageEvent.new(:filename => "#{BackgroundImageEvent.folder}/school_classroom.jpg", :order_index=>2)
       ])
     out << EventPack.new("Eating Out",[
       BackgroundMusicEvent.new(:filename => "/#{BackgroundMusicEvent.folder}/Base/City_Fun.mp3", :order_index=>1),
