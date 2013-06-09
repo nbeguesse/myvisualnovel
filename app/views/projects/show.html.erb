@@ -53,7 +53,7 @@
           <a href="#" class="submitable thumbnail" title="Add This Scene!">
           <input type="hidden" value="<%=event_pack.love_scene%>" name="scene[love_scene]">
           <input type="hidden" value="<%=i%>" name="scene[initial_event_pack]">
-          <%=image_tag event_pack_image(event_pack)%>
+          <%=image_tag event_pack_image(event_pack), :alt=>event_pack.name%>
             <p><span><%=event_pack.name%></span>
               <br/><small class='muted'><i class="icon-music"></i> <%=event_pack.music%></small>
             </p>
@@ -64,7 +64,7 @@
       <li class="span2">
         <%=form_for [@project, Scene.new] do |f|%>
           <a href="#" class="submitable thumbnail" title="Start A New Scene">
-            <%=image_tag "blur4.jpg"%>
+            <%=image_tag "blur4.jpg", :alt=>"Blank Scene"%>
             <p><span>New Blank Scene</span></p>
           </a>
         <%end%>
@@ -73,7 +73,7 @@
         <%=form_for [@project, Scene.new] do |f|%>
           <a href="#" class="submitable thumbnail" title="Start A New Scene">
             <input type="hidden" value="1" name="scene[love_scene]">
-            <%=image_tag "blur2.jpg"%>
+            <%=image_tag "blur2.jpg", :alt=>"Blank Love Scene"%>
             <p><span>New Blank Love Scene</span></p>
           </a>
         <%end%>

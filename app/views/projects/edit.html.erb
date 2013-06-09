@@ -9,7 +9,10 @@
       <table class="table-verycondensed"><!-- only in a table because ie9 won't display it correctly -->
       <tr><td><%=f.radio_button :public, :true%></td><td><b>Public</b> - Others will be allowed to view it and make comments.</td></tr>
       <tr><td><%=f.radio_button :public, :false%></td><td><b>Private</b> - Only you can view it while logged in.</td></tr></table>
-    </td>
+    </td></tr>
+    <tr>
+      <td class="attr"><%=f.label :author, "Author's Name"%><br/></td>
+      <td><%=f.text_field :author, :placeholder=>"Your Name Here"%><br/><small>Put your name to appear in the credits!</small></td>
     </tr>
   </table>
   <button type="submit" class="btn btn-primary">Change</button>

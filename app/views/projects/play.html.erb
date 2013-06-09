@@ -3,8 +3,21 @@
 <%end%>
 <%
       unless @only_scene
+        author = @project.author.blank? ? link_to("ADD YOUR NAME HERE",edit_project_path(@project.id)) : (@project.author.upcase)
+        credits = "
+        <h4>By
+        #{author}</h4>
+
+
+        Character Art by
+        T.O.P.
+
+
+
+        Music by
+        JEWELBEAT"
         @before_events << TitleCardEvent.text("<h1>".html_safe+coolify(@project.title)+"<h1>".html_safe)
-        @after_events << TitleCardEvent.text("<p>Character Art by<br/>T.O.P.</p><br/><p>Music by<br/>JEWELBEAT</p>".html_safe) 
+        @after_events << TitleCardEvent.text(simple_format(credits)) 
       end
       event_list = @scenes.map{|scene| scene.get_ordered_events}.concat(@after_events).prepend(@before_events).flatten
 

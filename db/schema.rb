@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130526212953) do
+ActiveRecord::Schema.define(:version => 20130609030019) do
 
   create_table "characters", :force => true do |t|
     t.integer  "project_id"
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(:version => 20130526212953) do
     t.string   "owner_id"
     t.string   "owner_type"
     t.integer  "views",      :default => 0
+    t.string   "author"
   end
 
   create_table "scenes", :force => true do |t|

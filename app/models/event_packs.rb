@@ -32,9 +32,9 @@ class EventPacks
       BackgroundMusicEvent.new(:filename => "/#{BackgroundMusicEvent.folder}/Base/City_Fun.mp3", :order_index=>1),
       BackgroundImageEvent.new(:filename => "#{BackgroundImageEvent.folder}/Restaurant_Ext.jpg", :order_index=>2)
       ])
-    out << EventPack.new("Infirmary",[
+    out << EventPack.new("Her Bedroom",[
       BackgroundMusicEvent.new(:filename => "/#{BackgroundMusicEvent.folder}/Base/Not_So_Simple_Life.mp3", :order_index=>1),
-      BackgroundImageEvent.new(:filename => "#{BackgroundImageEvent.folder}/School_infirmary.jpg", :order_index=>2)
+      BackgroundImageEvent.new(:filename => "#{BackgroundImageEvent.folder}/Her_Bedroom.jpg", :order_index=>2)
       ])
     if ami = Character.by_name_and_project(Ami, project).first
       out << EventPack.new("Fun with #{ami.name}",[
